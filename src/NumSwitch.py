@@ -45,6 +45,29 @@ def NS(Ainv, eps, k, l):
 			ns_sum += ind_switch(Ainv, eps, i, j, k, l)
 	return ns_sum
 
+
+def interval_of_stability(A, Ainv, k, l, max_bound=10):
+	"""
+	This function will return the interval of stability when perturbing just the (k,l) entry of A
+	:param A: numpy array
+	:param Ainv: inverse of A
+	:param k: index
+	:param l: index
+	:param max_bound: some are always stable on one side, only go out this far), scalar > 0
+	:return: (a:scalar, b:scalar) the largest interval where A[k,l]+eps is stable
+	"""
+	if A[k, l] > 0 and Ainv[k, l] < 0:  # pos neg
+		initial_interval = (-A[k, l], -1/float(Ainv[l, k]))
+	if A[k, l] < 0 and Ainv[k, l] > 0:  # neg pos
+		initial_interval = (-1 / float(Ainv[l, k]), -A[k, l])
+	if A[k, l] < 0 and Ainv[k, l] < 0:  # neg neg
+		initial_interval = (-max_bound, min([-1 / float(Ainv[l, k]), -A[k, l]]))
+	if A[k, l] > 0 and Ainv[k, l] > 0:  # pos pos
+		initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
+	return initial_interval
+
+
+
 def exp_num_switch(A, Ainv, k, l, dist=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
@@ -60,7 +83,8 @@ def exp_num_switch(A, Ainv, k, l, dist=None):
 	# use a default normal distribution
 	# TODO: make sure this stays in the region of stability
 	if not dist:
-		# TODO: put custom pdf in here
+		pass# TODO: put custom pdf in here
+	return
 
 
 
@@ -76,36 +100,5 @@ assert NS(Aigpinv, -.5, 1, 2) == 16
 assert NS(Aigpinv, .5, 1, 2) == 1
 
 
-exp_num_switch(Atri, Atriinv, 0, 0)
 
-A = Atri
-Ainv = Atriinv
-k = 0
-l = 0
 
-class my_pdf(st.rv_continuous):
-	c = A[k, l]
-	if A[k, l] > 0:
-		max_pert = np.inf
-		min_pert = -A[k, l]
-	else:
-		max_pert = -A[k, l]
-		min_pert = -np.inf
-
-	def _pdf(self, x):
-		a = self.min_pert
-		b = self.max_pert
-		c = self.c
-		if a < x and x <= b:
-			# this is the result of Mathematica: PDF[TruncatedDistribution[{a, b}, NormalDistribution[c, 1]], x]
-			numerator = np.exp(-1 / 2. * (-c + x) ** 2)
-			denom = np.sqrt(2 * np.pi) * (
-						-1 / 2. * special.erfc((-a + c) / (np.sqrt(2))) + 1 / 2. * special.erfc((-b + c) / np.sqrt(2)))
-			value = numerator / float(denom)
-			return value
-		else:
-			return 0
-
-my_cv = my_pdf(a=my_pdf.min_pert, b=my_pdf.max_pert, name='my_pdf')
-
-print(integrate.quad(my_pdf, -np.inf, np.inf))
