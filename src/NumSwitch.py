@@ -97,7 +97,6 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=100):
 	return (lower_bound, upper_bound)
 
 
-
 def interval_of_stability_crawl(A, Ainv, k, l, max_bound=10, step_size=.0001):
 	"""
 	This function will return the interval of stability when perturbing just the (k,l) entry of A
@@ -157,8 +156,6 @@ def interval_of_stability_crawl(A, Ainv, k, l, max_bound=10, step_size=.0001):
 	return (lower_bound, upper_bound)
 
 
-
-
 def exp_num_switch(A, Ainv, k, l, dist=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
@@ -190,6 +187,13 @@ assert NS(Aigpinv, .2, 3, 2) == 1
 assert NS(Aigpinv, -.5, 1, 2) == 16
 assert NS(Aigpinv, .5, 1, 2) == 1
 
+interval = interval_of_stability(Aigp, Aigpinv, 0, 0, num_sample=1000)
+assert np.abs(interval[0] - -0.08298659074229853) < .001
+assert np.abs(interval[1] - 0.10901820241962716) < .001
+
+interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
+assert np.abs(interval[0] - -0.08298659074229853) < .001
+assert np.abs(interval[1] - 0.10901820241962716) < .001
 
 
 
