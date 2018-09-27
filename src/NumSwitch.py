@@ -109,6 +109,7 @@ def interval_of_stability_crawl(A, Ainv, k, l, max_bound=10, step_size=.0001):
 	:param step_size: step size for perturbation values
 	:return: (a:scalar, b:scalar) the largest interval where A[k,l]+eps is stable
 	"""
+	# TODO: this is too slow when it's stable unbounded on one end
 	# Input matrix needs to be stable
 	[s, _] = np.linalg.eig(A)
 	if not all([np.real(i) < 0 for i in s]):
@@ -195,5 +196,13 @@ interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
 assert np.abs(interval[0] - -0.08298659074229853) < .001
 assert np.abs(interval[1] - 0.10901820241962716) < .001
 
+interval = interval_of_stability(Aigp, Aigpinv, 1, 0, num_sample=1000)
+assert np.abs(interval[0] - -0.025934401526958355) < .001
+assert np.abs(interval[1] - 10) < .001
+
+# This test case takes too long
+#interval = interval_of_stability_crawl(Aigp, Aigpinv, 1, 0, step_size=.0001)
+#assert np.abs(interval[0] - -0.025934401526958355) < .001
+#assert np.abs(interval[1] - 10) < .001
 
 
