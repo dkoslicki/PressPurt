@@ -159,7 +159,7 @@ def interval_of_stability_crawl(A, Ainv, k, l, max_bound=10, step_size=.0001):
 	return (lower_bound + step_size, upper_bound - step_size)
 
 
-def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None):
+def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
 	:param A: The original input matrix (numpy array)
@@ -167,13 +167,15 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None):
 	:param k: index
 	:param l: index
 	:param dist: A probability density function: function of a single argument
+	:param interval: the interval of stability (optional, can be pre-computed with interval_of_stability())
 	:return:
 	"""
 	m, n = A.shape
 	if A[k, l] == 0:
 		raise Exception("You can only perturb non-zero entries: A[%d, %d] is zero." % (k, l))
 	# get the region of stability
-	interval = interval_of_stability(A, Ainv, k, l, num_sample=num_sample)
+	if not interval:
+		interval = interval_of_stability(A, Ainv, k, l, num_sample=num_sample)
 	# NS is a step function, so find the respective values and intervals
 	(to_sample, step_size) = np.linspace(interval[0], interval[1], num_sample, retstep=True)
 	ns_values = [NS(Ainv, eps, k, l) for eps in to_sample]
