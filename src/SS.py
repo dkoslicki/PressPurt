@@ -96,6 +96,8 @@ for i, j in zip(pert_locations_i, pert_locations_j):
 B = sp.Matrix(B_temp)
 AplusB = A + B
 AplusBinv = AplusB.inv()
+
+# component-wise division
 AplusBinvDivAinv = sp.Matrix(np.zeros(A.shape))
 for i in range(A.shape[0]):
 	for j in range(A.shape[1]):
@@ -106,8 +108,8 @@ AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
 AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
 
 
-num_iterates = 10000
-interval_length = 0.01
+num_iterates = 20000
+interval_length = 0.015
 switch_count = 0
 is_stable_count = 0
 
