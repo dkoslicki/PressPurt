@@ -109,19 +109,34 @@ AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
 num_iterates = 10000
 interval_length = 0.01
 switch_count = 0
+is_stable_count = 0
+
+# initialize the dictionaries of values to pass
+eps_dicts = []
 for iterate in range(num_iterates):
-	eps_dict = dict()
-	for symbol in symbol_tup:
-		symbol_name = symbol.name
-		i = eval(symbol_name.split('_')[1])
-		j = eval(symbol_name.split('_')[2])
-		interval = intervals(A[i, j], interval_length)
-		dist = st.uniform(interval[0], interval[1])
-		val = dist.rvs(1)[0]  # TODO: could make this more efficient by simulating a ton of these at once, then unwrapping
-		eps_dict[symbol_name] = val
+	eps_dicts.append(dict())
+
+# for each one of the symbols, sample from the appropriate distribution
+for symbol in symbol_tup:
+	symbol_name = symbol.name
+	i = eval(symbol_name.split('_')[1])
+	j = eval(symbol_name.split('_')[2])
+	interval = intervals(A[i, j], interval_length)
+	dist = st.uniform(interval[0], interval[1])
+	vals = dist.rvs(num_iterates)
+	iter = 0
+	for eps_dict in eps_dicts:
+		eps_dict[symbol_name] = vals[iter]
+		iter += 1
+
+# check for sign switches and stability
+for eps_dict in eps_dicts:
+	if is_stable(AplusBEval(**eps_dict)):
+		is_stable_count += 1
 	if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
 		switch_count += 1
 print(switch_count / float(num_iterates))
+print(switch_count / float(is_stable_count))
 
 
 
