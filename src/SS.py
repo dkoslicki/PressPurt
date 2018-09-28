@@ -41,6 +41,26 @@ def intervals(aij, x=0.01):
 	return [lower_bound, upper_bound]
 
 
+# if any of the entries of AplusBinvDivAinveval are < 0, then a sign switch has occurred
+def exists_switch(eps_dict, AplusBinvDivAinvEval):
+	"""
+	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
+	Returns 1 if a switch has occurred, 0 otherwise
+	:param eps_dict: dictionary {eps_symbols: eps_values}
+	:return: 0 or 1
+	"""
+	AplusBinvDivAinvEvalulated = AplusBinvDivAinvEval(**eps_dict)
+	(m, n) = AplusBinvDivAinvEvalulated.shape
+	switch = 0
+	for i in range(m):
+		for j in range(n):
+			if AplusBinvDivAinvEvalulated[i, j] < 0:
+				switch = 1
+				break
+		if switch == 1:
+			break
+	return switch
+
 # TODO: will also want a function that gives me 1 or 0 depending on stability/non-stability
 
 #entries_to_perturb = np.ones((4,4))
@@ -75,9 +95,12 @@ for i in range(A.shape[0]):
 		AplusBinvDivAinv[i, j] = AplusBinv[i, j] / Ainv[i, j]
 
 # lambdafy the symbolic quantity
-AplusBinvDivAinveval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
+AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
 
-# if any of the entries of AplusBinvDivAinveval are < 0, then a sign switch has occurred
+
+
+
+
 
 
 
