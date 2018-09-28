@@ -61,10 +61,17 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 			break
 	return switch
 
-# TODO: will also want a function that gives me 1 or 0 depending on stability/non-stability
+
+def is_stable(A):
+	[s, _] = np.linalg.eig(A)
+	if all([np.real(i) < 0 for i in s]):
+		return 1
+	else:
+		return 0
 
 #entries_to_perturb = np.ones((4,4))
-entries_to_perturb = np.array([[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+#entries_to_perturb = np.array([[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+entries_to_perturb = np.array([[1,1,0,0],[1,1,1,1],[0,1,1,1],[0,1,1,1]])  # TODO: programmatically make it perturb all non-zero values
 A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
 Ainv = sp.Matrix(A.inv())
 
@@ -72,7 +79,7 @@ Ainv = sp.Matrix(A.inv())
 pert_locations_i, pert_locations_j = np.where(entries_to_perturb)
 symbol_string = ""
 for i, j in zip(pert_locations_i, pert_locations_j):
-	symbol_string += "eps_%d_%d" % (i, j)
+	symbol_string += "eps_%d_%d " % (i, j)
 if len(pert_locations_i) == 1:
 	symbol_tup = [sp.symbols(symbol_string)]
 else:
@@ -96,8 +103,25 @@ for i in range(A.shape[0]):
 
 # lambdafy the symbolic quantity
 AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
+AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
 
 
+num_iterates = 10000
+interval_length = 0.01
+switch_count = 0
+for iterate in range(num_iterates):
+	eps_dict = dict()
+	for symbol in symbol_tup:
+		symbol_name = symbol.name
+		i = eval(symbol_name.split('_')[1])
+		j = eval(symbol_name.split('_')[2])
+		interval = intervals(A[i, j], interval_length)
+		dist = st.uniform(interval[0], interval[1])
+		val = dist.rvs(1)[0]  # TODO: could make this more efficient by simulating a ton of these at once, then unwrapping
+		eps_dict[symbol_name] = val
+	if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
+		switch_count += 1
+print(switch_count / float(num_iterates))
 
 
 

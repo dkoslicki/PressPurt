@@ -4,6 +4,7 @@ import scipy.integrate as integrate
 import scipy.stats as st
 from scipy import special
 
+
 def ind_switch(Ainv, eps, i, j, k, l):
 	"""
 	This function implements equation 3.4, telling if a sign switch has occured
@@ -16,7 +17,7 @@ def ind_switch(Ainv, eps, i, j, k, l):
 	:return: 1 or 0
 	"""
 	n = Ainv.shape[0]
-	if any([index>=n for index in [i, j, k, l]]):
+	if any([index >= n for index in [i, j, k, l]]):
 		raise Exception("Matrix is only %dx%d, invalid choice of subscripts: %d, %d, %d, %d" % (n, n, i, j, k, l))
 	if 1+eps*Ainv[l, k] == 0:
 		raise Exception("Division by zero in sherman ratio")
