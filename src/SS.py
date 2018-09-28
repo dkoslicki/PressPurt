@@ -71,8 +71,12 @@ def is_stable(A):
 
 #entries_to_perturb = np.ones((4,4))
 #entries_to_perturb = np.array([[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
-entries_to_perturb = np.array([[1,1,0,0],[1,1,1,1],[0,1,1,1],[0,1,1,1]])  # TODO: programmatically make it perturb all non-zero values
-A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
+
+#entries_to_perturb = np.array([[1,1,0,0],[1,1,1,1],[0,1,1,1],[0,1,1,1]])  # TODO: programmatically make it perturb all non-zero values
+#A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
+
+entries_to_perturb = np.array([[1,1,0,0],[1,1,1,0],[0,1,1,1],[0,0,1,1]])
+A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]]))
 Ainv = sp.Matrix(A.inv())
 
 # get the variables we are going to perturb
