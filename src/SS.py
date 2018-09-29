@@ -56,7 +56,6 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 		for j in range(n):
 			if AplusBinvDivAinvEvalulated[i, j] < 0:
 				switch = 1
-				print(AplusBinvDivAinvEvalulated[i, j])
 				break
 		if switch == 1:
 			break
