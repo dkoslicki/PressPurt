@@ -54,8 +54,9 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 	switch = 0
 	for i in range(m):
 		for j in range(n):
-			if AplusBinvDivAinvEvalulated[i, j] <= 0:
+			if AplusBinvDivAinvEvalulated[i, j] < 0:
 				switch = 1
+				print(AplusBinvDivAinvEvalulated[i, j])
 				break
 		if switch == 1:
 			break
@@ -107,86 +108,88 @@ def get_entries_to_perturb(A):
 	return res
 
 
-#entries_to_perturb = np.ones((4,4))
-#entries_to_perturb = np.array([[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
-# IGP
-#entries_to_perturb = np.array([[1,1,0,0],[1,1,1,1],[0,1,1,1],[0,1,1,1]])  # TODO: programmatically make it perturb all non-zero values
-A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
-entries_to_perturb = get_entries_to_perturb(A)
+def SS(A, num_iterates=10000, interval_length=0.01):
+	"""
+	Computes equation 3.42: the volume of the number of perturbations that cause a sign switch in some part of the matrix
+	:param A:  input matrix, numpy array
+	:return: Scalar (percent of perturbations that caused some sign switch)
+	"""
+	if not is_stable(A):
+		raise Exception(
+			"The input matrix is not stable itself (one or more eigenvalues have non-negative real part). Cannot continue analysis.")
+	entries_to_perturb = get_entries_to_perturb(A)
+	Ainv = sp.Matrix(np.linalg.inv(A))
 
-# Tri-diagonal
-#entries_to_perturb = np.array([[1,1,0,0],[1,1,1,0],[0,1,1,1],[0,0,1,1]])
-#A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]]))
+	# get the variables we are going to perturb
+	pert_locations_i, pert_locations_j = np.where(entries_to_perturb)
+	symbol_string = ""
+	for i, j in zip(pert_locations_i, pert_locations_j):
+		symbol_string += "eps_%d_%d " % (i, j)
+	if len(pert_locations_i) == 1:
+		symbol_tup = [sp.symbols(symbol_string)]
+	else:
+		symbol_tup = list(sp.symbols(symbol_string))
 
-Ainv = sp.Matrix(A.inv())
-
-# get the variables we are going to perturb
-pert_locations_i, pert_locations_j = np.where(entries_to_perturb)
-symbol_string = ""
-for i, j in zip(pert_locations_i, pert_locations_j):
-	symbol_string += "eps_%d_%d " % (i, j)
-if len(pert_locations_i) == 1:
-	symbol_tup = [sp.symbols(symbol_string)]
-else:
-	symbol_tup = list(sp.symbols(symbol_string))
-
-# create the matrix with the symbolic perturbation values
-B_temp = sp.Matrix(np.zeros(A.shape))
-iter = 0
-for i, j in zip(pert_locations_i, pert_locations_j):
-	B_temp[i, j] = symbol_tup[iter]
-	iter += 1
-
-# form the symbolic matrix (A+B)^(-1)./A^(-1)
-B = sp.Matrix(B_temp)
-AplusB = A + B
-AplusBinv = AplusB.inv()
-#AplusBinv = AplusB.inv(method='LU')
-#AplusBinv = AplusB.inv(method='ADJ')
-
-# component-wise division
-AplusBinvDivAinv = sp.Matrix(np.zeros(A.shape))
-for i in range(A.shape[0]):
-	for j in range(A.shape[1]):
-		AplusBinvDivAinv[i, j] = AplusBinv[i, j] / Ainv[i, j]
-
-# lambdafy the symbolic quantity
-AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
-AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
-
-
-num_iterates = 10000
-interval_length = 0.01
-switch_count = 0
-is_stable_count = 0
-
-# initialize the dictionaries of values to pass
-eps_dicts = []
-for iterate in range(num_iterates):
-	eps_dicts.append(dict())
-
-# for each one of the symbols, sample from the appropriate distribution
-for symbol in symbol_tup:
-	symbol_name = symbol.name
-	i = eval(symbol_name.split('_')[1])
-	j = eval(symbol_name.split('_')[2])
-	interval = intervals(A[i, j], interval_length)
-	dist = st.uniform(interval[0], interval[1])
-	vals = dist.rvs(num_iterates)
+	# create the matrix with the symbolic perturbation values
+	B_temp = sp.Matrix(np.zeros(A.shape))
 	iter = 0
-	for eps_dict in eps_dicts:
-		eps_dict[symbol_name] = vals[iter]
+	for i, j in zip(pert_locations_i, pert_locations_j):
+		B_temp[i, j] = symbol_tup[iter]
 		iter += 1
 
-# check for sign switches and stability
-for eps_dict in eps_dicts:
-	if is_stable(AplusBEval(**eps_dict)):
-		is_stable_count += 1
-	if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
-		switch_count += 1
-print(switch_count / float(num_iterates))
-print(switch_count / float(is_stable_count))
+	# form the symbolic matrix (A+B)^(-1)./A^(-1)
+	B = sp.Matrix(B_temp)
+	AplusB = A + B
+	AplusBinv = AplusB.inv()
+	#AplusBinv = AplusB.inv(method='LU')
+	#AplusBinv = AplusB.inv(method='ADJ')
+
+	# component-wise division
+	AplusBinvDivAinv = sp.Matrix(np.zeros(A.shape))
+	for i in range(A.shape[0]):
+		for j in range(A.shape[1]):
+			AplusBinvDivAinv[i, j] = AplusBinv[i, j] / Ainv[i, j]
+
+	# lambdafy the symbolic quantity
+	AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
+	AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
+
+
+	#num_iterates = 10000
+	#interval_length = 0.01
+	switch_count = 0
+	is_stable_count = 0
+
+	# initialize the dictionaries of values to pass
+	eps_dicts = []
+	for iterate in range(num_iterates):
+		eps_dicts.append(dict())
+
+	# for each one of the symbols, sample from the appropriate distribution
+	for symbol in symbol_tup:
+		symbol_name = symbol.name
+		i = eval(symbol_name.split('_')[1])
+		j = eval(symbol_name.split('_')[2])
+		interval = intervals(A[i, j], interval_length)
+		dist = st.uniform(interval[0], interval[1])
+		vals = dist.rvs(num_iterates)
+		iter = 0
+		for eps_dict in eps_dicts:
+			eps_dict[symbol_name] = vals[iter]
+			iter += 1
+
+	# check for sign switches and stability
+	for eps_dict in eps_dicts:
+		if is_stable(AplusBEval(**eps_dict)):
+			is_stable_count += 1
+		if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
+			switch_count += 1
+	print(switch_count)
+	print(num_iterates)
+	print(is_stable_count)
+	return switch_count / float(num_iterates)  # this is how it was done in the paper/mathematica
+	#return switch_count / float(is_stable_count)  # I think this is the correct way to do it
 
 
 
@@ -202,15 +205,38 @@ assert np.allclose(intervals(4, 100), [-4, 96])
 assert np.allclose(intervals(-4, 1), [-0.5, 0.5])
 assert np.allclose(intervals(-4, 100), [-96, 4])
 
+# SS function tests
+# IGP
+#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+#ss = SS(A, num_iterates=5000, interval_length=0.01)
+#assert abs(ss - 0.37) < 0.1
 
+# Tri-diagonal
+#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+#ss = SS(A, num_iterates=5000, interval_length=0.01)
+#assert abs(ss - 0.0) < 0.01
+
+# Other
+#A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+#try:
+#	ss = SS(A, num_iterates=5000, interval_length=0.01)
+#except:
+#	pass  # it should throw an error, since this matrix is not stable to begin with
+
+# Other 2
+#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
+#ss = SS(A, num_iterates=5000, interval_length=0.01)
+
+A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+# TODO: this give 99% switch, whereas mathematica gives it only 50%, something weird is going on!!!!!
 
 
 ###############################################################
 # Numerical accuracy of AplusBinvDivAinvEval
-eps_vals = list(np.ones(len(symbol_tup)))
-eps_dict = dict(zip([i.name for i in symbol_tup], eps_vals))
-print(check_switch_matrix(eps_dict, AplusBinvDivAinvEval))
-print(AplusBinvDivAinvEval(**eps_dict))
+#eps_vals = list(np.ones(len(symbol_tup)))
+#eps_dict = dict(zip([i.name for i in symbol_tup], eps_vals))
+#print(check_switch_matrix(eps_dict, AplusBinvDivAinvEval))
+#print(AplusBinvDivAinvEval(**eps_dict))
 # python
 #[[ 0.10876355 -0.         -0.         -0.        ]
 # [ 0.37958414 -0.11109425  0.          0.        ]
