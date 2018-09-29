@@ -54,7 +54,7 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 	switch = 0
 	for i in range(m):
 		for j in range(n):
-			if AplusBinvDivAinvEvalulated[i, j] < 0:
+			if AplusBinvDivAinvEvalulated[i, j] <= 0:
 				switch = 1
 				break
 		if switch == 1:
@@ -62,21 +62,63 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 	return switch
 
 
+def check_switch_matrix(eps_dict, AplusBinvDivAinvEval):
+	"""
+	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
+	Returns binary matrix telling if a switch occurred in that entry
+	:param eps_dict: dictionary {eps_symbols: eps_values}
+	:return: binary numpy array
+	"""
+	AplusBinvDivAinvEvalulated = AplusBinvDivAinvEval(**eps_dict)
+	(m, n) = AplusBinvDivAinvEvalulated.shape
+	switch = np.zeros((m, n))
+	for i in range(m):
+		for j in range(n):
+			if AplusBinvDivAinvEvalulated[i, j] < 0:
+				switch[i, j] = 1
+	return switch
+
+
 def is_stable(A):
+	"""
+	Check if the input matrix is asymptotically stable
+	:param A: input matrix
+	:return: Bool (1 iff asymptotically stable)
+	"""
 	[s, _] = np.linalg.eig(A)
 	if all([np.real(i) < 0 for i in s]):
 		return 1
 	else:
 		return 0
 
+
+def get_entries_to_perturb(A):
+	"""
+	Returns a binary matrix indicating which entries to perturb
+	:param A: input matrix (numpy or sympy matrix)
+	:return: binary matrix of same dimensions as A
+	"""
+	m, n = A.shape
+	res = np.zeros((m, n))
+	for i in range(m):
+		for j in range(n):
+			if A[i, j] != 0:
+				res[i, j] = 1
+	return res
+
+
 #entries_to_perturb = np.ones((4,4))
 #entries_to_perturb = np.array([[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
+# IGP
 #entries_to_perturb = np.array([[1,1,0,0],[1,1,1,1],[0,1,1,1],[0,1,1,1]])  # TODO: programmatically make it perturb all non-zero values
-#A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
+A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]]))
+entries_to_perturb = get_entries_to_perturb(A)
 
-entries_to_perturb = np.array([[1,1,0,0],[1,1,1,0],[0,1,1,1],[0,0,1,1]])
-A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]]))
+# Tri-diagonal
+#entries_to_perturb = np.array([[1,1,0,0],[1,1,1,0],[0,1,1,1],[0,0,1,1]])
+#A = sp.Matrix(np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]]))
+
 Ainv = sp.Matrix(A.inv())
 
 # get the variables we are going to perturb
@@ -100,6 +142,8 @@ for i, j in zip(pert_locations_i, pert_locations_j):
 B = sp.Matrix(B_temp)
 AplusB = A + B
 AplusBinv = AplusB.inv()
+#AplusBinv = AplusB.inv(method='LU')
+#AplusBinv = AplusB.inv(method='ADJ')
 
 # component-wise division
 AplusBinvDivAinv = sp.Matrix(np.zeros(A.shape))
@@ -112,8 +156,8 @@ AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
 AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
 
 
-num_iterates = 20000
-interval_length = 0.015
+num_iterates = 10000
+interval_length = 0.01
 switch_count = 0
 is_stable_count = 0
 
@@ -157,3 +201,26 @@ assert np.allclose(intervals(4, 1), [-0.5, 0.5])
 assert np.allclose(intervals(4, 100), [-4, 96])
 assert np.allclose(intervals(-4, 1), [-0.5, 0.5])
 assert np.allclose(intervals(-4, 100), [-96, 4])
+
+
+
+
+###############################################################
+# Numerical accuracy of AplusBinvDivAinvEval
+eps_vals = list(np.ones(len(symbol_tup)))
+eps_dict = dict(zip([i.name for i in symbol_tup], eps_vals))
+print(check_switch_matrix(eps_dict, AplusBinvDivAinvEval))
+print(AplusBinvDivAinvEval(**eps_dict))
+# python
+#[[ 0.10876355 -0.         -0.         -0.        ]
+# [ 0.37958414 -0.11109425  0.          0.        ]
+# [ 0.97667782 -0.28584778 -0.21597541 -0.        ]
+# [ 0.6636542  -0.19423404 -9.52164049 -0.10449546]]
+# Mathematica
+#0.108764	0.	0.	0.
+#0.379584	-0.111094	-1.10792*10^-17	2.58702*10^-18
+#0.976678	-0.285848	-0.215975	0.
+#0.663654	-0.194234	-9.52164	-0.104495
+
+# TODO: there are differences here between mathematica and sympy, due to numerical issues
+# example: Mathematica returns -1.10792*10^-17, yet sympy gives a 0
