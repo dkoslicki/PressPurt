@@ -65,10 +65,10 @@ Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1]
 assert np.abs(MRS(Atri) - 3.52748) < .00001
 assert np.abs(MRS(Aigp) - 1.62801) < .00001
 assert np.abs(quant_sens(Aigp, 0, 0) - 1.08) < 0.01
-assert np.abs(quant_sens(Aigp, 0, 1) - .08) < 0.01
+assert np.abs(quant_sens(Aigp, 0, 1) - .8) < 0.01
 assert np.abs(quant_sens(Aigp, 2, 3) - 8.53) < 0.01
 assert np.abs(quant_sens(Atri, 0, 0) - 3.43) < 0.01
-assert np.abs(quant_sens(Atri, 1, 2) - 24.5) < 0.01
+assert np.abs(quant_sens(Atri, 1, 2) - 24.5) < 0.1
 
 
 

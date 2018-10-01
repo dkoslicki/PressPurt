@@ -85,4 +85,38 @@ plt.show()
 ######################
 # Compute MRS
 
-print(MRS.MRS(A))
+print('Quantitative sensitivity of A: %f' % MRS.MRS(A))
+
+######################
+# Recreate figure 5
+quant_sens_values = np.zeros((m, n))
+for i in range(m):
+	for j in range(n):
+		if A[i, j] != 0:  # only perturb non-zero entries
+			quant_sens_values[i, j] = MRS.quant_sens(A, i, j)
+		else:
+			quant_sens_values[i, j] = 0
+
+#####################
+# Generate figure 3
+fig, ax = plt.subplots()
+#im = ax.imshow(exp_num_switch_array, cmap=plt.get_cmap('seismic'))
+im = ax.imshow(quant_sens_values, cmap=plt.get_cmap('YlOrBr'))
+# We want to show all ticks...
+ax.set_xticks(np.arange(m))
+ax.set_yticks(np.arange(n))
+# ... and label them with the respective list entries
+ax.set_xticklabels(['%d' % (i+1) for i in range(n)])
+ax.set_yticklabels(['%d' % (j+1) for j in range(m)])
+ax.set_xlabel('l')
+ax.set_ylabel('k')
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+# Loop over data dimensions and create text annotations.
+for i in range(m):
+	for j in range(n):
+		text = ax.text(j, i, '%.2f' % quant_sens_values[i, j], ha="center", va="center", color="k")
+
+ax.set_title("Quantitative sensitivity")
+fig.tight_layout()
+plt.show()
