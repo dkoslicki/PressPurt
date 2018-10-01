@@ -5,21 +5,26 @@ import MRS
 import SS
 import NumSwitch
 import matplotlib.pyplot as plt
-#plt.ion()
 
 ######################
 # input matrix
 A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
 Ainv = np.linalg.inv(A)
-
 m, n = A.shape
+
+# All the parameters you might need
+max_bound = 10  # some of the matrices are unbounded stable towards one end, this is the limit the user imposes
+num_sample = 1000  # number of points to sample when looking for the region of asymptotic stability of the matrix
+num_points_plot = 500  # number of points to plot in the first figure
+num_iterates = 5000  # number of Monte-Carlo points to sample for the SS index
+
 ######################
 # Generate figure 2
 k = 3
 l = 2
 padding = .2
-interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000)
-x_range = np.linspace(interval[0] - padding, interval[1] + padding, 500)
+interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
 ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
 # for the fun of it, overlay the distribution too
 my_std = (interval[1] - interval[0])/2.
@@ -55,7 +60,7 @@ exp_num_switch_array = np.zeros((m, n))
 for i in range(m):
 	for j in range(n):
 		if A[i, j] != 0:  # only perturb non-zero entries
-			exp_num_switch_array[i, j] = NumSwitch.exp_num_switch(A, Ainv, i, j, num_sample=1000, dist=None, interval=None)
+			exp_num_switch_array[i, j] = NumSwitch.exp_num_switch(A, Ainv, i, j, num_sample=num_sample, dist=None, interval=None)
 		else:
 			exp_num_switch_array[i, j] = 0
 
@@ -131,7 +136,7 @@ plt.pause(0.01)
 #####################
 # Section 3.4, perturbing multiple entries
 interval_length = 0.01
-ss_val = SS.SS(A, num_iterates=5000, interval_length=interval_length)
+ss_val = SS.SS(A, num_iterates=num_iterates, interval_length=interval_length)
 print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
 
 
