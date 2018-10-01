@@ -120,3 +120,12 @@ for i in range(m):
 ax.set_title("Quantitative sensitivity")
 fig.tight_layout()
 plt.show()
+
+#####################
+# Section 3.4, perturbing multiple entries
+interval_length = 0.01
+ss_val = SS.SS(A, num_iterates=5000, interval_length=interval_length)
+print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
+
+
+
