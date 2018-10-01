@@ -49,8 +49,8 @@ if __name__ == '__main__':
 	m, n = A.shape
 
 	# check that it's a valid matrix
-	if np.any(Ainv==0):
-		raise Exception("All entries of the inverse matrix must be non-zero. Please try again.")
+	#if np.any(Ainv==0):
+	#	raise Exception("All entries of the inverse matrix must be non-zero. Please try again.")
 
 	if not SS.is_stable(A):
 		raise Exception("Sorry, the input matrix is not stable itself (all eigenvalues must have negative real part). Please try again.")

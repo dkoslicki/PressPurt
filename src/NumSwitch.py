@@ -18,15 +18,20 @@ def ind_switch(Ainv, eps, i, j, k, l):
 	if any([index >= n for index in [i, j, k, l]]):
 		raise Exception("Matrix is only %dx%d, invalid choice of subscripts: %d, %d, %d, %d" % (n, n, i, j, k, l))
 	if 1+eps*Ainv[l, k] == 0:
-		raise Exception("Division by zero in sherman ratio")
-	sherm_ratio = eps*Ainv[i, k]*Ainv[l, j]/(Ainv[i,j]*(1+eps*Ainv[l, k]))
-	if 1 - sherm_ratio < 0:
-		return 1
-	elif 1 - sherm_ratio > 0:
-		return 0
-	else:
-		raise Exception("Invalid sherman morrison ratio: %f" % sherm_ratio)
-
+		raise Exception("Division by zero in sherman ratio. This perturbation caused the matrix to be non-invertible.")
+	if Ainv[i, j] != 0:  # if it's non-zero use the pre-divided version
+		sherm_ratio = eps*Ainv[i, k]*Ainv[l, j]/(Ainv[i,j]*(1+eps*Ainv[l, k]))
+		if 1 - sherm_ratio < 0:
+			return 1
+		elif 1 - sherm_ratio > 0:
+			return 0
+		else:
+			raise Exception("Invalid sherman morrison ratio: %f" % sherm_ratio)
+	else:  # in the case where the inverse is zero, use the non-divided version
+		if eps*Ainv[i, k]*Ainv[l, j] != 0:  # count any change from 0 as a switch
+			return 1
+		else:  # else you still have a zero here, so no switch
+			return 0
 
 def NS(Ainv, eps, k, l):
 	"""
