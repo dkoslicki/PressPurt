@@ -81,3 +81,8 @@ for i in range(m):
 ax.set_title("Expected number of sign switches")
 fig.tight_layout()
 plt.show()
+
+######################
+# Compute MRS
+
+print(MRS.MRS(A))
