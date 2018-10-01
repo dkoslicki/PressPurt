@@ -199,39 +199,44 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 
 ###############################################################
 # Tests
-assert np.allclose(intervals(4, 1), [-0.5, 0.5])
-assert np.allclose(intervals(4, 100), [-4, 96])
-assert np.allclose(intervals(-4, 1), [-0.5, 0.5])
-assert np.allclose(intervals(-4, 100), [-96, 4])
+def tests():
+	"""
+	Run all the tests
+	:return: None
+	"""
+	assert np.allclose(intervals(4, 1), [-0.5, 0.5])
+	assert np.allclose(intervals(4, 100), [-4, 96])
+	assert np.allclose(intervals(-4, 1), [-0.5, 0.5])
+	assert np.allclose(intervals(-4, 100), [-96, 4])
 
-# SS function tests
-# IGP
-A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
-ss = SS(A, num_iterates=5000, interval_length=0.01)
-assert abs(ss - 0.37) < 0.1
-
-# Tri-diagonal
-A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
-ss = SS(A, num_iterates=5000, interval_length=0.01)
-assert abs(ss - 0.0) < 0.01
-
-# Other
-A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
-try:
+	# SS function tests
+	# IGP
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
 	ss = SS(A, num_iterates=5000, interval_length=0.01)
-except:
-	pass  # it should throw an error, since this matrix is not stable to begin with
+	assert abs(ss - 0.37) < 0.1
 
-# Other 2
-A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
-ss = SS(A, num_iterates=5000, interval_length=0.01)
-assert abs(ss - 0.34) < 0.1
+	# Tri-diagonal
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	ss = SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.0) < 0.01
 
-A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
-ss = SS(A, num_iterates=5000, interval_length=0.01)
-assert abs(ss - 0.99) < 0.01
-# TODO: this give 99% switch, whereas mathematica gives it only 50%, something weird is going on!!!!!
-# TODO: figured out this is an issue with Mathematica, see NaiveSS.py for corroboration that this is correct
+	# Other
+	A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	try:
+		ss = SS(A, num_iterates=5000, interval_length=0.01)
+	except:
+		pass  # it should throw an error, since this matrix is not stable to begin with
+
+	# Other 2
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
+	ss = SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.34) < 0.1
+
+	A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	ss = SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.99) < 0.01
+	# TODO: this give 99% switch, whereas mathematica gives it only 50%, something weird is going on!!!!!
+	# TODO: figured out this is an issue with Mathematica, see NaiveSS.py for corroboration that this is correct
 
 ###############################################################
 # Numerical accuracy of AplusBinvDivAinvEval

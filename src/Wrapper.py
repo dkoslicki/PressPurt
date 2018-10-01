@@ -5,6 +5,7 @@ import MRS
 import SS
 import NumSwitch
 import matplotlib.pyplot as plt
+#plt.ion()
 
 ######################
 # input matrix
@@ -41,7 +42,9 @@ ax2.tick_params('y', colors='tab:gray')
 ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
 
 fig.tight_layout()
-plt.show()
+plt.draw()
+plt.pause(0.01)
+#plt.show(block=False)
 #plt.figure()
 #plt.plot(x_range, ns_values)
 #plt.show()
@@ -79,7 +82,9 @@ for i in range(m):
 
 ax.set_title("Expected number of sign switches")
 fig.tight_layout()
-plt.show()
+plt.draw()
+plt.pause(0.01)
+#plt.show(block=False)
 
 ######################
 # Compute MRS
@@ -100,7 +105,8 @@ for i in range(m):
 # Generate figure 3
 fig, ax = plt.subplots()
 #im = ax.imshow(exp_num_switch_array, cmap=plt.get_cmap('seismic'))
-im = ax.imshow(quant_sens_values, cmap=plt.get_cmap('YlOrBr'))
+#im = ax.imshow(quant_sens_values, cmap=plt.get_cmap('YlOrBr'))
+im = ax.imshow(quant_sens_values, cmap=plt.get_cmap('Wistia'))
 # We want to show all ticks...
 ax.set_xticks(np.arange(m))
 ax.set_yticks(np.arange(n))
@@ -118,7 +124,9 @@ for i in range(m):
 
 ax.set_title("Quantitative sensitivity")
 fig.tight_layout()
-plt.show()
+plt.draw()
+plt.pause(0.01)
+#plt.show(block=False)
 
 #####################
 # Section 3.4, perturbing multiple entries
@@ -127,4 +135,4 @@ ss_val = SS.SS(A, num_iterates=5000, interval_length=interval_length)
 print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
 
 
-
+input("Press any key to quit")
