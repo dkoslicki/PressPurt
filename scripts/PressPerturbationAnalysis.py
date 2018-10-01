@@ -1,11 +1,25 @@
 import argparse
 import numpy as np
 import scipy.stats as st
-import MRS
-import SS
-import NumSwitch
-import matplotlib.pyplot as plt
 import os
+import sys
+import matplotlib.pyplot as plt
+# import stuff in the src folder
+try:
+	import MRS
+except ImportError:
+	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+	import MRS
+try:
+	import SS
+except ImportError:
+	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+	import SS
+try:
+	import NumSwitch
+except ImportError:
+	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+	import NumSwitch
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script all indices from the Koslicki & Novak (2018) paper", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -30,7 +44,7 @@ if __name__ == '__main__':
 	assert num_iterates > 100
 
 	# read in the input matrix
-	A = np.loadtxt(input_file, "rb", delimiter=",")
+	A = np.loadtxt(input_file, delimiter=",")
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
 	######################
