@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 # input matrix
 A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
 Ainv = np.linalg.inv(A)
+
+m, n = A.shape
 ######################
 # Generate figure 2
 k = 3
@@ -26,10 +28,10 @@ a, b = (interval[0] - my_mean) / my_std, (interval[1] - my_mean) / my_std
 dist = st.truncnorm(a, b, 0, my_std)
 dist_vals = [dist.pdf(eps) for eps in x_range]
 
+# plot both simultaneously on the same graph (two y-axis plot)
 fig, ax1 = plt.subplots()
 ax1.plot(x_range, ns_values, 'b-')
 ax1.set_xlabel('Epsilon value')
-# Make the y-axis label, ticks and tick labels match the line color.
 ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
 ax1.tick_params('y', colors='b')
 
@@ -44,3 +46,38 @@ plt.show()
 #plt.figure()
 #plt.plot(x_range, ns_values)
 #plt.show()
+
+#####################
+# Get the expected number of sign switches, in a table
+exp_num_switch_array = np.zeros((m, n))
+for i in range(m):
+	for j in range(n):
+		if A[i, j] != 0:  # only perturb non-zero entries
+			exp_num_switch_array[i, j] = NumSwitch.exp_num_switch(A, Ainv, i, j, num_sample=1000, dist=None, interval=None)
+		else:
+			exp_num_switch_array[i, j] = 0
+
+#####################
+# Generate figure 3
+fig, ax = plt.subplots()
+#im = ax.imshow(exp_num_switch_array, cmap=plt.get_cmap('seismic'))
+im = ax.imshow(exp_num_switch_array, cmap=plt.get_cmap('YlOrBr'))
+# We want to show all ticks...
+ax.set_xticks(np.arange(m))
+ax.set_yticks(np.arange(n))
+# ... and label them with the respective list entries
+ax.set_xticklabels(['%d' % (i+1) for i in range(n)])
+ax.set_yticklabels(['%d' % (j+1) for j in range(m)])
+ax.set_xlabel('l')
+ax.set_ylabel('k')
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(m):
+	for j in range(n):
+		text = ax.text(j, i, '%.2f%%' % (100*exp_num_switch_array[i, j]), ha="center", va="center", color="k")
+
+ax.set_title("Expected number of sign switches")
+fig.tight_layout()
+plt.show()
