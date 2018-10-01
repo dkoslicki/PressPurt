@@ -1,8 +1,6 @@
 # This script will implement equations 3.4, 3.5, and 3.6
 import numpy as np
-import scipy.integrate as integrate
 import scipy.stats as st
-from scipy import special
 
 
 def ind_switch(Ainv, eps, i, j, k, l):
