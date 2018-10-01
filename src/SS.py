@@ -184,9 +184,9 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 			is_stable_count += 1
 		if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
 			switch_count += 1
-	print(switch_count)
-	print(num_iterates)
-	print(is_stable_count)
+	#print(switch_count)
+	#print(num_iterates)
+	#print(is_stable_count)
 	return switch_count / float(num_iterates)  # this is how it was done in the paper/mathematica
 	#return switch_count / float(is_stable_count)  # I think this is the correct way to do it
 
@@ -206,29 +206,29 @@ assert np.allclose(intervals(-4, 100), [-96, 4])
 
 # SS function tests
 # IGP
-#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
-#ss = SS(A, num_iterates=5000, interval_length=0.01)
-#assert abs(ss - 0.37) < 0.1
+A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+ss = SS(A, num_iterates=5000, interval_length=0.01)
+assert abs(ss - 0.37) < 0.1
 
 # Tri-diagonal
-#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
-#ss = SS(A, num_iterates=5000, interval_length=0.01)
-#assert abs(ss - 0.0) < 0.01
+A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+ss = SS(A, num_iterates=5000, interval_length=0.01)
+assert abs(ss - 0.0) < 0.01
 
 # Other
-#A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
-#try:
-#	ss = SS(A, num_iterates=5000, interval_length=0.01)
-#except:
-#	pass  # it should throw an error, since this matrix is not stable to begin with
+A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+try:
+	ss = SS(A, num_iterates=5000, interval_length=0.01)
+except:
+	pass  # it should throw an error, since this matrix is not stable to begin with
 
 # Other 2
-#A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
-#ss = SS(A, num_iterates=5000, interval_length=0.01)
+A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
+ss = SS(A, num_iterates=5000, interval_length=0.01)
 
 A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 # TODO: this give 99% switch, whereas mathematica gives it only 50%, something weird is going on!!!!!
-
+# TODO: figured out this is an issue with Mathematica, see NaiveSS.py for corroboration that this is correct
 
 ###############################################################
 # Numerical accuracy of AplusBinvDivAinvEval
