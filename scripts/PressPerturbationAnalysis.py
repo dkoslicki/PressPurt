@@ -49,33 +49,45 @@ if __name__ == '__main__':
 	m, n = A.shape
 	######################
 	# Generate figure 2
-	k = 3
-	l = 2
+	# let's do a mxn grid of these figures
 	padding = .2
-	interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
-	x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
-	ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
-	# for the fun of it, overlay the distribution too
-	my_std = (interval[1] - interval[0]) / 2.
-	my_mean = 0
-	a, b = (interval[0] - my_mean) / my_std, (interval[1] - my_mean) / my_std
-	dist = st.truncnorm(a, b, 0, my_std)
-	dist_vals = [dist.pdf(eps) for eps in x_range]
+	big_fig, axarr = plt.subplots(m, n)
+	big_fig.suptitle("Number of sign switches versus perturbation value, \n overlaid with distribution over stable perturbation values")
+	for k in range(m):
+		for l in range(n):
+			if A[k, l] != 0:
+				#k = 3
+				#l = 2
+				interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+				x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
+				ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
+				# for the fun of it, overlay the distribution too
+				my_std = (interval[1] - interval[0]) / 2.
+				my_mean = 0
+				a, b = (interval[0] - my_mean) / my_std, (interval[1] - my_mean) / my_std
+				dist = st.truncnorm(a, b, 0, my_std)
+				dist_vals = [dist.pdf(eps) for eps in x_range]
 
-	# plot both simultaneously on the same graph (two y-axis plot)
-	fig, ax1 = plt.subplots()
-	ax1.plot(x_range, ns_values, 'b-')
-	ax1.set_xlabel('Epsilon value')
-	ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
-	ax1.tick_params('y', colors='b')
+				# plot both simultaneously on the same graph (two y-axis plot)
+				ax1 = axarr[k, l]
+				#fig, ax1 = plt.subplots()
+				ax1.plot(x_range, ns_values, 'b-')
+				#ax1.set_xlabel('Epsilon value')
+				#ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
+				ax1.tick_params('y', colors='b')
 
-	ax2 = ax1.twinx()
-	ax2.plot(x_range, dist_vals, 'tab:gray')
-	ax2.set_ylabel('Probability', color='tab:gray')
-	ax2.tick_params('y', colors='tab:gray')
-	ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
-
-	fig.tight_layout()
+				ax2 = ax1.twinx()
+				ax2.plot(x_range, dist_vals, 'tab:gray')
+				#ax2.set_ylabel('PDF value', color='tab:gray')
+				ax2.tick_params('y', colors='tab:gray')
+				ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
+			else:
+				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
+	plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
+	big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
+	big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical', color='b')
+	big_fig.text(.99, 0.5, 'Probability density', ha='center', va='center', rotation='vertical', color='tab:gray')
+	plt.subplots_adjust(top=.9)
 	plt.draw()
 	plt.pause(0.01)
 	# plt.show(block=False)
