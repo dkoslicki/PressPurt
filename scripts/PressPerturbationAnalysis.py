@@ -34,13 +34,13 @@ if __name__ == '__main__':
 	input_file = os.path.abspath(args.input_file)
 	if not os.path.exists(input_file):
 		raise Exception("It appears that the file %s does not exits." % input_file)
-	max_bound = args.max_bound
+	max_bound = int(args.max_bound)
 	assert max_bound > 0
-	num_sample = args.num_sample
+	num_sample = int(args.num_sample)
 	assert num_sample > 10
-	num_points_plot = args.num_points_plot
+	num_points_plot = int(args.num_points_plot)
 	assert num_points_plot > 10
-	num_iterates = args.num_iterates
+	num_iterates = int(args.num_iterates)
 	assert num_iterates > 100
 
 	# read in the input matrix
