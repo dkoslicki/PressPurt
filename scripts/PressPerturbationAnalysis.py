@@ -237,9 +237,12 @@ if __name__ == '__main__':
 	plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
 	# Loop over data dimensions and create text annotations.
-	for i in range(m):
-		for j in range(n):
-			text = ax.text(j, i, '%.2f%%' % (100 * exp_num_switch_array[i, j]), ha="center", va="center", color="k")
+	if m <= 10:
+		for i in range(m):
+			for j in range(n):
+				text = ax.text(j, i, '%.2f%%' % (100 * exp_num_switch_array[i, j]), ha="center", va="center", color="k")
+	else:
+		fig.colorbar(im)
 
 	ax.set_title("Expected number of mis-predictions when perturbing the (k,l) entry.")
 	fig.tight_layout()
@@ -285,10 +288,14 @@ if __name__ == '__main__':
 	ax.set_ylabel('k')
 	# Rotate the tick labels and set their alignment.
 	plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
 	# Loop over data dimensions and create text annotations.
-	for i in range(m):
-		for j in range(n):
-			text = ax.text(j, i, '%.2f' % quant_sens_values[i, j], ha="center", va="center", color="k")
+	if m <= 10:
+		for i in range(m):
+			for j in range(n):
+				text = ax.text(j, i, '%.2f' % quant_sens_values[i, j], ha="center", va="center", color="k")
+	else:
+		fig.colorbar(im)
 
 	ax.set_title("Quantitative sensitivity\n when perturbing the (k,l) entry by an arbitrarily large value.")
 	fig.tight_layout()
