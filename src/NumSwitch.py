@@ -36,6 +36,7 @@ def ind_switch(Ainv, eps, i, j, k, l):
 def NS(Ainv, eps, k, l):
 	"""
 	This function implements equation 3.5: gives the number of sign switches
+	when perturbing the k, l entry
 	:param Ainv: inverse input matrix, numpy array
 	:param eps: perturbation size (scalar)
 	:param k: index
@@ -51,6 +52,27 @@ def NS(Ainv, eps, k, l):
 			ns_sum += ind_switch(Ainv, eps, i, j, k, l)
 	return ns_sum
 
+
+def num_switched_by(Ainv, eps, i, j):
+	"""
+	When perturbing each of the k,l entries by eps, how many times does the (i,j)
+	entry switch signs?
+	TODO: I don't know about this one, since the eps should be different for
+	TODO: each of the (k, l) entries...
+	:param Ainv: inverse input matrix, numpy array
+	:param eps: perturbation size (scalar)
+	:param i: index
+	:param j: inex
+	:return: Natural number
+	"""
+	n = Ainv.shape[0]
+	if any([index >= n for index in [i, j]]):
+		raise Exception("Matrix is only %dx%d, invalid choice of subscripts: %d, %d." % (n, n, k, l))
+	ns_sum = 0
+	for k in range(n):
+		for l in range(n):
+			ns_sum += ind_switch(Ainv, eps, i, j, k, l)
+	return ns_sum
 
 def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 	"""

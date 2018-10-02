@@ -28,32 +28,69 @@ if __name__ == '__main__':
 	parser.add_argument('--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=1000)
 	parser.add_argument('--num_points_plot', type=int, help="number of points to plot in the first figure", default=500)
 	parser.add_argument('--num_iterates', help="number of Monte-Carlo points to sample for the SS index", default=5000)
+	parser.add_argument('--asymp_stability_file', type=str, help="location of where to save/load the intervals of asymptotic stability. File extension .npy must be used.")
+	parser.add_argument('--save_asymp_stability_file', action='store_true', help="Flag to include if you want to save the intervals of stability.")
+	parser.add_argument('-ss', '--run_global_sign_sensitivity', action='store_true', help="Flag to include the calculation of the global sign sensitivity.")
+	parser.add_argument('--ss_interval_length', type=float, help="Interval length over wich global sign sensitivity will be calculated.", default=0.01)
 
 	# read in the arguments
 	args = parser.parse_args()
 	input_file = os.path.abspath(args.input_file)
-	if not os.path.exists(input_file):
-		raise Exception("It appears that the file %s does not exits." % input_file)
 	max_bound = int(args.max_bound)
-	assert max_bound > 0
 	num_sample = int(args.num_sample)
-	assert num_sample > 10
 	num_points_plot = int(args.num_points_plot)
-	assert num_points_plot > 10
 	num_iterates = int(args.num_iterates)
-	assert num_iterates > 100
+	save_asymp_stability_file = args.save_asymp_stability_file
+	asymp_stability_file = os.path.abspath(args.asymp_stability_file)
+	run_global_sign_sensitivity = args.run_global_sign_sensitivity
+	interval_length = float(args.ss_interval_length)
+
+	# check for read-writability of files
+	if asymp_stability_file and not save_asymp_stability_file:
+		if not os.access(asymp_stability_file, os.R_OK):
+			raise Exception("The provided asymptotic stability file %s does not exist/is not readable." % asymp_stability_file)
+	if save_asymp_stability_file:
+		if not os.access(os.path.dirname(asymp_stability_file), os.W_OK):
+			raise Exception("The provided directory %s is not writable." % os.path.dirname(asymp_stability_file))
+	if not os.path.exists(input_file):
+		raise Exception("It appears that the input file %s does not exits." % input_file)
+
+	# check for sanity of input parameters
+	if not max_bound > 0:
+		raise Exception("max_bound must be larger than 0; provided value: %d." % max_bound)
+	if not num_sample > 10:
+		raise Exception("num_sample must be larger than 10; provided value: %d." % num_sample)
+	if not num_points_plot > 10:
+		raise Exception("num_points_plot must be larger than 10; provided value: %d." % num_points_plot)
+	if not num_iterates > 100:
+		raise Exception("num_iterates must be larger than 100; provided value: %d." % num_iterates)
+	if not interval_length > 0:
+		raise Exception("ss_interval_length must be larget than 0; provided value: %f" % interval_length)
 
 	# read in the input matrix
 	A = np.loadtxt(input_file, delimiter=",")
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
 
-	# check that it's a valid matrix
-	#if np.any(Ainv==0):
-	#	raise Exception("All entries of the inverse matrix must be non-zero. Please try again.")
-
+	# make sure the original matrix is itself asymptotically stable
 	if not SS.is_stable(A):
 		raise Exception("Sorry, the input matrix is not stable itself (all eigenvalues must have negative real part). Please try again.")
+
+	# compute/load the intervals of stability
+	if asymp_stability_file and not save_asymp_stability_file:
+		intervals = np.load(asymp_stability_file)
+	else:  # you need to actually compute it
+		intervals = np.zeros((m, n, 2))
+		for k in range(m):
+			for l in range(n):
+				if A[k, l] != 0:
+					intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+
+	# save these if that was asked for
+	if save_asymp_stability_file:
+		print("Saving asymptotic stability to: %s" % asymp_stability_file)
+		np.save(asymp_stability_file, intervals)
+
 	######################
 	# Generate figure 2
 	# let's do a mxn grid of these figures
@@ -65,7 +102,8 @@ if __name__ == '__main__':
 			if A[k, l] != 0:
 				#k = 3
 				#l = 2
-				interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+				#interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+				interval = intervals[k, l, :]
 				x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
 				ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
 				# for the fun of it, overlay the distribution too
@@ -184,8 +222,8 @@ if __name__ == '__main__':
 
 	#####################
 	# Section 3.4, perturbing multiple entries
-	interval_length = 0.01
-	ss_val = SS.SS(A, num_iterates=num_iterates, interval_length=interval_length)
-	print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
+	if run_global_sign_sensitivity:
+		ss_val = SS.SS(A, num_iterates=num_iterates, interval_length=interval_length)
+		print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
 
 	input("Press any key to quit")
