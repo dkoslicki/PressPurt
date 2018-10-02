@@ -202,7 +202,7 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	if A[k, l] == 0:
 		raise Exception("You can only perturb non-zero entries: A[%d, %d] is zero." % (k, l))
 	# get the region of stability
-	if not interval:
+	if interval is None:
 		interval = interval_of_stability(A, Ainv, k, l, num_sample=num_sample)
 	# NS is a step function, so find the respective values and intervals
 	(to_sample, step_size) = np.linspace(interval[0], interval[1], num_sample, retstep=True)

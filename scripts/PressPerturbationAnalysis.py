@@ -146,8 +146,7 @@ if __name__ == '__main__':
 	for i in range(m):
 		for j in range(n):
 			if A[i, j] != 0:  # only perturb non-zero entries
-				exp_num_switch_array[i, j] = NumSwitch.exp_num_switch(A, Ainv, i, j, num_sample=num_sample, dist=None,
-																	  interval=None)
+				exp_num_switch_array[i, j] = NumSwitch.exp_num_switch(A, Ainv, i, j, num_sample=num_sample, dist=None, interval=intervals[i, j, :])
 			else:
 				exp_num_switch_array[i, j] = 0
 
@@ -177,6 +176,10 @@ if __name__ == '__main__':
 	plt.draw()
 	plt.pause(0.01)
 	# plt.show(block=False)
+
+	num_non_zero = len(np.where(exp_num_switch_array)[0])
+	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
+	print("Average Expected number of sign switches: %f" % ave_expected_num_sign_switches)
 
 	######################
 	# Compute MRS
