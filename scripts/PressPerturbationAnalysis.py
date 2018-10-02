@@ -4,6 +4,7 @@ import scipy.stats as st
 import os
 import sys
 import matplotlib.pyplot as plt
+import timeit
 # import stuff in the src folder
 try:
 	import MRS
@@ -24,20 +25,26 @@ except ImportError:
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script all indices from the Koslicki & Novak (2018) paper", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
+	parser.add_argument('-o', '--output_folder', type=str, help="Output folder")
+	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.")
 	parser.add_argument('-a', '--all_numswitch_plots', action='store_true', help="Include this flag if you want all the num switch plots (it coul be large)")
 	parser.add_argument('-l', '--list_of_numswitch_to_plot', nargs='+', help="List of entries you want visualized with num switch. Eg. -l 1 1 1 2 to plot the (1,1) and (1,2) entries.")
 	parser.add_argument('--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=1000)
 	parser.add_argument('--num_points_plot', type=int, help="number of points to plot in the first figure", default=500)
 	parser.add_argument('--num_iterates', help="number of Monte-Carlo points to sample for the SS index", default=5000)
-	parser.add_argument('--asymp_stability_file', type=str, help="location of where to save/load the intervals of asymptotic stability. File extension .npy must be used.")
-	parser.add_argument('--save_asymp_stability_file', action='store_true', help="Flag to include if you want to save the intervals of stability.")
+	parser.add_argument('-asf', '--asymp_stability_file', type=str, help="location of where to save/load the intervals of asymptotic stability. File extension .npy must be used.")
+	parser.add_argument('-sasf', '--save_asymp_stability_file', action='store_true', help="Flag to include if you want to save the intervals of stability.")
 	parser.add_argument('-ss', '--run_global_sign_sensitivity', action='store_true', help="Flag to include the calculation of the global sign sensitivity.")
 	parser.add_argument('--ss_interval_length', type=float, help="Interval length over wich global sign sensitivity will be calculated.", default=0.01)
 
 	# read in the arguments
 	args = parser.parse_args()
 	input_file = os.path.abspath(args.input_file)
+	output_folder = args.output_folder
+	if output_folder:
+		output_folder = os.path.abspath(output_folder)
+	prefix = args.prefix
 	all_numswitch_plots = args.all_numswitch_plots
 	if args.list_of_numswitch_to_plot:
 		list_of_numswitch_to_plot = [int(i)-1 for i in list(args.list_of_numswitch_to_plot)]
@@ -48,7 +55,9 @@ if __name__ == '__main__':
 	num_points_plot = int(args.num_points_plot)
 	num_iterates = int(args.num_iterates)
 	save_asymp_stability_file = args.save_asymp_stability_file
-	asymp_stability_file = os.path.abspath(args.asymp_stability_file)
+	asymp_stability_file = args.asymp_stability_file
+	if asymp_stability_file:
+		asymp_stability_file = os.path.abspath(asymp_stability_file)
 	run_global_sign_sensitivity = args.run_global_sign_sensitivity
 	interval_length = float(args.ss_interval_length)
 
@@ -203,6 +212,9 @@ if __name__ == '__main__':
 			else:
 				exp_num_switch_array[i, j] = 0
 
+	if output_folder:
+		np.savetxt(os.path.join(output_folder, prefix + '_Expected_num_switch_array.csv'), exp_num_switch_array, delimiter=',')
+
 	#####################
 	# Generate figure 3
 	fig, ax = plt.subplots()
@@ -231,7 +243,8 @@ if __name__ == '__main__':
 
 	num_non_zero = len(np.where(exp_num_switch_array)[0])
 	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
-	print("Average expected number of mis-predictions (perturbing each edge individually): %f" % ave_expected_num_sign_switches)
+	print("Average expected percentage of mis-predictions (perturbing each edge individually): %f%% (i.e. %f entries)" % (100*ave_expected_num_sign_switches, ave_expected_num_sign_switches*m*n))
+	# TODO: check with Mark if I should be multiplying by n^2 or num_non_zero
 
 	######################
 	# Compute MRS
@@ -246,6 +259,10 @@ if __name__ == '__main__':
 				quant_sens_values[i, j] = MRS.quant_sens(A, i, j)
 			else:
 				quant_sens_values[i, j] = 0
+
+	if output_folder:
+		np.savetxt(os.path.join(output_folder, prefix + '_Quantitative_sensitivity_array.csv'), quant_sens_values, delimiter=',')
+
 
 	#####################
 	# Generate figure 3
