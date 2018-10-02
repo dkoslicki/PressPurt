@@ -30,7 +30,7 @@ if __name__ == '__main__':
 	parser.add_argument('-a', '--all_numswitch_plots', action='store_true', help="Include this flag if you want all the num switch plots (it coul be large)")
 	parser.add_argument('-l', '--list_of_numswitch_to_plot', nargs='+', help="List of entries you want visualized with num switch. Eg. -l 1 1 1 2 to plot the (1,1) and (1,2) entries.")
 	parser.add_argument('--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
-	parser.add_argument('--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=1000)
+	parser.add_argument('--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=100)
 	parser.add_argument('--num_points_plot', type=int, help="number of points to plot in the first figure", default=500)
 	parser.add_argument('--num_iterates', help="number of Monte-Carlo points to sample for the SS index", default=5000)
 	parser.add_argument('-asf', '--asymp_stability_file', type=str, help="location of where to save/load the intervals of asymptotic stability. File extension .npy must be used.")
@@ -167,7 +167,9 @@ if __name__ == '__main__':
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
 		big_fig.suptitle(
 			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
+		num_plotted = 0
 		for k,l in indices_to_plot:
+			num_plotted += 1
 			if A[k, l] != 0:
 				interval = intervals[k, l, :]
 				x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
@@ -194,6 +196,10 @@ if __name__ == '__main__':
 				ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
 			else:
 				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
+		axes_flat = axarr.flatten()
+		for i in range(grid_size**2-num_plotted, grid_size**2):
+			print(i)
+			axes_flat[i].axis('off')
 		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
 		big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
 		big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical',
