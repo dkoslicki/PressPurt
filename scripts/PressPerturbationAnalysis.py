@@ -24,6 +24,8 @@ except ImportError:
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script all indices from the Koslicki & Novak (2018) paper", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
+	parser.add_argument('-a', '--all_numswitch_plots', action='store_true', help="Include this flag if you want all the num switch plots (it coul be large)")
+	parser.add_argument('-l', '--list_of_numswitch_to_plot', nargs='+', help="List of entries you want visualized with num switch. Eg. -l 1 1 1 2 to plot the (1,1) and (1,2) entries.")
 	parser.add_argument('--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=1000)
 	parser.add_argument('--num_points_plot', type=int, help="number of points to plot in the first figure", default=500)
@@ -36,6 +38,11 @@ if __name__ == '__main__':
 	# read in the arguments
 	args = parser.parse_args()
 	input_file = os.path.abspath(args.input_file)
+	all_numswitch_plots = args.all_numswitch_plots
+	if args.list_of_numswitch_to_plot:
+		list_of_numswitch_to_plot = [int(i)-1 for i in list(args.list_of_numswitch_to_plot)]
+	else:
+		list_of_numswitch_to_plot = []
 	max_bound = int(args.max_bound)
 	num_sample = int(args.num_sample)
 	num_points_plot = int(args.num_points_plot)
@@ -66,11 +73,22 @@ if __name__ == '__main__':
 		raise Exception("num_iterates must be larger than 100; provided value: %d." % num_iterates)
 	if not interval_length > 0:
 		raise Exception("ss_interval_length must be larget than 0; provided value: %f" % interval_length)
+	if all_numswitch_plots and list_of_numswitch_to_plot:
+		raise Exception("The flags -a and -l are mutually exclusive.")
+	if len(list_of_numswitch_to_plot) % 2 != 0:
+		raise Exception("Only an even length list can be passed to -l.")
 
 	# read in the input matrix
 	A = np.loadtxt(input_file, delimiter=",")
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
+
+	# if appropriate, get the indices to plot
+	indices_to_plot = []
+	# quick way to take entries two at a time
+	it = iter(list_of_numswitch_to_plot)
+	for i, j in zip(*[it]*2):
+		indices_to_plot.append((i, j))
 
 	# make sure the original matrix is itself asymptotically stable
 	if not SS.is_stable(A):
@@ -94,15 +112,54 @@ if __name__ == '__main__':
 	######################
 	# Generate figure 2
 	# let's do a mxn grid of these figures
-	padding = .2
-	big_fig, axarr = plt.subplots(m, n)
-	big_fig.suptitle("Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
-	for k in range(m):
-		for l in range(n):
+	# TODO: should really make this into its own function
+	if all_numswitch_plots:
+		padding = .2
+		big_fig, axarr = plt.subplots(m, n)
+		big_fig.suptitle("Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
+		for k in range(m):
+			for l in range(n):
+				if A[k, l] != 0:
+					interval = intervals[k, l, :]
+					x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
+					ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
+					# for the fun of it, overlay the distribution too
+					my_std = (interval[1] - interval[0]) / 2.
+					my_mean = 0
+					a, b = (interval[0] - my_mean) / my_std, (interval[1] - my_mean) / my_std
+					dist = st.truncnorm(a, b, 0, my_std)
+					dist_vals = [dist.pdf(eps) for eps in x_range]
+
+					# plot both simultaneously on the same graph (two y-axis plot)
+					ax1 = axarr[k, l]
+					ax1.title.set_text('(%d,%d) entry' % (k+1, l+1))
+					ax1.plot(x_range, ns_values, 'b-')
+					#ax1.set_xlabel('Epsilon value')
+					#ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
+					ax1.tick_params('y', colors='b')
+
+					ax2 = ax1.twinx()
+					ax2.plot(x_range, dist_vals, 'tab:gray')
+					#ax2.set_ylabel('PDF value', color='tab:gray')
+					ax2.tick_params('y', colors='tab:gray')
+					ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
+				else:
+					axarr[k, l].axis('off')  # don't show the ones we are not perturbing
+		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
+		big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
+		big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical', color='b')
+		big_fig.text(.99, 0.5, 'Probability density', ha='center', va='center', rotation='vertical', color='tab:gray')
+		plt.subplots_adjust(top=.9)
+		plt.draw()
+		plt.pause(0.01)
+	elif indices_to_plot:  # you only want to plot individual entries
+		padding = .2
+		grid_size = int(np.ceil(np.sqrt(len(indices_to_plot))))
+		big_fig, axarr = plt.subplots(grid_size, grid_size)
+		big_fig.suptitle(
+			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
+		for k,l in indices_to_plot:
 			if A[k, l] != 0:
-				#k = 3
-				#l = 2
-				#interval = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
 				interval = intervals[k, l, :]
 				x_range = np.linspace(interval[0] - padding, interval[1] + padding, num_points_plot)
 				ns_values = [NumSwitch.NS(Ainv, eps, k, l) for eps in x_range]
@@ -115,31 +172,27 @@ if __name__ == '__main__':
 
 				# plot both simultaneously on the same graph (two y-axis plot)
 				ax1 = axarr[k, l]
-				#fig, ax1 = plt.subplots()
+				ax1.title.set_text('(%d,%d) entry' % (k + 1, l + 1))
 				ax1.plot(x_range, ns_values, 'b-')
-				#ax1.set_xlabel('Epsilon value')
-				#ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
+				# ax1.set_xlabel('Epsilon value')
+				# ax1.set_ylabel('NumSwitch(eps, %d, %d)' % (k + 1, l + 1), color='b')
 				ax1.tick_params('y', colors='b')
 
 				ax2 = ax1.twinx()
 				ax2.plot(x_range, dist_vals, 'tab:gray')
-				#ax2.set_ylabel('PDF value', color='tab:gray')
+				# ax2.set_ylabel('PDF value', color='tab:gray')
 				ax2.tick_params('y', colors='tab:gray')
 				ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
 			else:
 				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
-	plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
-	big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
-	big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical', color='b')
-	big_fig.text(.99, 0.5, 'Probability density', ha='center', va='center', rotation='vertical', color='tab:gray')
-	plt.subplots_adjust(top=.9)
-	plt.draw()
-	plt.pause(0.01)
-	# plt.show(block=False)
-	# plt.figure()
-	# plt.plot(x_range, ns_values)
-	# plt.show()
-
+		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
+		big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
+		big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical',
+					 color='b')
+		big_fig.text(.99, 0.5, 'Probability density', ha='center', va='center', rotation='vertical', color='tab:gray')
+		plt.subplots_adjust(top=.9)
+		plt.draw()
+		plt.pause(0.01)
 	#####################
 	# Get the expected number of sign switches, in a table
 	exp_num_switch_array = np.zeros((m, n))
@@ -175,7 +228,6 @@ if __name__ == '__main__':
 	fig.tight_layout()
 	plt.draw()
 	plt.pause(0.01)
-	# plt.show(block=False)
 
 	num_non_zero = len(np.where(exp_num_switch_array)[0])
 	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
@@ -183,7 +235,6 @@ if __name__ == '__main__':
 
 	######################
 	# Compute MRS
-
 	print('Average quantitative sensitivity of A when perturbing each each individually by an arbitrarily large amount : %f' % MRS.MRS(A))
 
 	######################
@@ -221,7 +272,6 @@ if __name__ == '__main__':
 	fig.tight_layout()
 	plt.draw()
 	plt.pause(0.01)
-	# plt.show(block=False)
 
 	#####################
 	# Section 3.4, perturbing multiple entries
