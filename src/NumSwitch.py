@@ -252,45 +252,50 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 #######################################################################
 # test cases
 # test matrix
-Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
-Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
-Atriinv = np.linalg.inv(Atri)
-Aigpinv = np.linalg.inv(Aigp)
+def tests():
+	"""
+	Run the tests
+	:return: None
+	"""
+	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	Atriinv = np.linalg.inv(Atri)
+	Aigpinv = np.linalg.inv(Aigp)
 
-# num switch tests
-assert NS(Aigpinv, -.2, 3, 2) == 9
-assert NS(Aigpinv, .2, 3, 2) == 1
-assert NS(Aigpinv, -.5, 1, 2) == 16
-assert NS(Aigpinv, .5, 1, 2) == 1
+	# num switch tests
+	assert NS(Aigpinv, -.2, 3, 2) == 9
+	assert NS(Aigpinv, .2, 3, 2) == 1
+	assert NS(Aigpinv, -.5, 1, 2) == 16
+	assert NS(Aigpinv, .5, 1, 2) == 1
 
-# interval of stability tests
-interval = interval_of_stability(Aigp, Aigpinv, 0, 0, num_sample=1000)
-assert np.abs(interval[0] - -0.08298659074229853) < .001
-assert np.abs(interval[1] - 0.10901820241962716) < .001
-interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
-assert np.abs(interval[0] - -0.08298659074229853) < .001
-assert np.abs(interval[1] - 0.10901820241962716) < .001
-interval = interval_of_stability(Aigp, Aigpinv, 1, 0, num_sample=1000)
-assert np.abs(interval[0] - -0.025934401526958355) < .02
-assert np.abs(interval[1] - 10) < .02
+	# interval of stability tests
+	interval = interval_of_stability(Aigp, Aigpinv, 0, 0, num_sample=1000)
+	assert np.abs(interval[0] - -0.08298659074229853) < .001
+	assert np.abs(interval[1] - 0.10901820241962716) < .001
+	interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
+	assert np.abs(interval[0] - -0.08298659074229853) < .001
+	assert np.abs(interval[1] - 0.10901820241962716) < .001
+	interval = interval_of_stability(Aigp, Aigpinv, 1, 0, num_sample=1000)
+	assert np.abs(interval[0] - -0.025934401526958355) < .02
+	assert np.abs(interval[1] - 10) < .02
 
-# This test case takes too long
-#interval = interval_of_stability_crawl(Aigp, Aigpinv, 1, 0, step_size=.0001)
-#assert np.abs(interval[0] - -0.025934401526958355) < .001
-#assert np.abs(interval[1] - 10) < .001
+	# This test case takes too long
+	#interval = interval_of_stability_crawl(Aigp, Aigpinv, 1, 0, step_size=.0001)
+	#assert np.abs(interval[0] - -0.025934401526958355) < .001
+	#assert np.abs(interval[1] - 10) < .001
 
-# expected num switch tests
-exp_value = exp_num_switch(Aigp, Aigpinv, 3, 2)
-assert np.abs(exp_value - 0.081) < 0.01
-exp_value = exp_num_switch(Aigp, Aigpinv, 1, 2)
-assert np.abs(exp_value - 0.048) < 0.01
-exp_value = exp_num_switch(Aigp, Aigpinv, 0, 0)
-assert np.abs(exp_value - 0.032) < 0.01
-exp_value = exp_num_switch(Aigp, Aigpinv, 1, 1)
-assert np.abs(exp_value - 0.12) < 0.01
-exp_value = exp_num_switch(Aigp, Aigpinv, 2, 2)
-assert np.abs(exp_value - 0.16) < 0.01
-exp_value = exp_num_switch(Aigp, Aigpinv, 3, 3)
-assert np.abs(exp_value - 0.17) < 0.01
-exp_value = exp_num_switch(Atri, Atriinv, 0, 0)
-assert np.abs(exp_value - 0) < 0.01
+	# expected num switch tests
+	exp_value = exp_num_switch(Aigp, Aigpinv, 3, 2)
+	assert np.abs(exp_value - 0.081) < 0.01
+	exp_value = exp_num_switch(Aigp, Aigpinv, 1, 2)
+	assert np.abs(exp_value - 0.048) < 0.01
+	exp_value = exp_num_switch(Aigp, Aigpinv, 0, 0)
+	assert np.abs(exp_value - 0.032) < 0.01
+	exp_value = exp_num_switch(Aigp, Aigpinv, 1, 1)
+	assert np.abs(exp_value - 0.12) < 0.01
+	exp_value = exp_num_switch(Aigp, Aigpinv, 2, 2)
+	assert np.abs(exp_value - 0.16) < 0.01
+	exp_value = exp_num_switch(Aigp, Aigpinv, 3, 3)
+	assert np.abs(exp_value - 0.17) < 0.01
+	exp_value = exp_num_switch(Atri, Atriinv, 0, 0)
+	assert np.abs(exp_value - 0) < 0.01
