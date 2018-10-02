@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 
 # create random asymptotically stable matrices
-n = 8
+n = 15
 eig = np.diag(-np.random.rand(n))
 v = sp.linalg.orth(2*(np.random.rand(n, n)-.5))
 A = np.transpose(v).dot(eig.dot(v))

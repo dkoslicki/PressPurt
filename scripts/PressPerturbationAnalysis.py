@@ -34,7 +34,7 @@ if __name__ == '__main__':
 	parser.add_argument('--num_points_plot', type=int, help="number of points to plot in the first figure", default=500)
 	parser.add_argument('--num_iterates', help="number of Monte-Carlo points to sample for the SS index", default=5000)
 	parser.add_argument('-asf', '--asymp_stability_file', type=str, help="location of where to save/load the intervals of asymptotic stability. File extension .npy must be used.")
-	parser.add_argument('-sasf', '--save_asymp_stability_file', action='store_true', help="Flag to include if you want to save the intervals of stability.")
+	parser.add_argument('-sasf', '--save_asymp_stability_file', action='store_true', help="Flag to include if you want to save the intervals of stability. This will clobber the file in -asf.")
 	parser.add_argument('-ss', '--run_global_sign_sensitivity', action='store_true', help="Flag to include the calculation of the global sign sensitivity.")
 	parser.add_argument('--ss_interval_length', type=float, help="Interval length over wich global sign sensitivity will be calculated.", default=0.01)
 
@@ -198,7 +198,6 @@ if __name__ == '__main__':
 				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
 		axes_flat = axarr.flatten()
 		for i in range(grid_size**2-num_plotted, grid_size**2):
-			print(i)
 			axes_flat[i].axis('off')
 		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
 		big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
