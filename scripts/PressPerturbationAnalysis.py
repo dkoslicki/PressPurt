@@ -96,7 +96,7 @@ if __name__ == '__main__':
 	# let's do a mxn grid of these figures
 	padding = .2
 	big_fig, axarr = plt.subplots(m, n)
-	big_fig.suptitle("Number of sign switches versus perturbation value, \n overlaid with distribution over stable perturbation values")
+	big_fig.suptitle("Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
 	for k in range(m):
 		for l in range(n):
 			if A[k, l] != 0:
@@ -171,7 +171,7 @@ if __name__ == '__main__':
 		for j in range(n):
 			text = ax.text(j, i, '%.2f%%' % (100 * exp_num_switch_array[i, j]), ha="center", va="center", color="k")
 
-	ax.set_title("Expected number of sign switches")
+	ax.set_title("Expected number of mis-predictions when perturbing the (k,l) entry.")
 	fig.tight_layout()
 	plt.draw()
 	plt.pause(0.01)
@@ -179,12 +179,12 @@ if __name__ == '__main__':
 
 	num_non_zero = len(np.where(exp_num_switch_array)[0])
 	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
-	print("Average Expected number of sign switches: %f" % ave_expected_num_sign_switches)
+	print("Average expected number of mis-predictions (perturbing each edge individually): %f" % ave_expected_num_sign_switches)
 
 	######################
 	# Compute MRS
 
-	print('Quantitative sensitivity of A: %f' % MRS.MRS(A))
+	print('Average quantitative sensitivity of A when perturbing each each individually by an arbitrarily large amount : %f' % MRS.MRS(A))
 
 	######################
 	# Recreate figure 5
@@ -217,7 +217,7 @@ if __name__ == '__main__':
 		for j in range(n):
 			text = ax.text(j, i, '%.2f' % quant_sens_values[i, j], ha="center", va="center", color="k")
 
-	ax.set_title("Quantitative sensitivity")
+	ax.set_title("Quantitative sensitivity\n when perturbing the (k,l) entry by an arbitrarily large value.")
 	fig.tight_layout()
 	plt.draw()
 	plt.pause(0.01)
@@ -227,6 +227,6 @@ if __name__ == '__main__':
 	# Section 3.4, perturbing multiple entries
 	if run_global_sign_sensitivity:
 		ss_val = SS.SS(A, num_iterates=num_iterates, interval_length=interval_length)
-		print('The percent of uniform perturbations over an interval of length %.2f is: %f' % (interval_length, ss_val))
+		print('The percent of multi-perturbation space (over an interval of length %.2f) that causes some qualitative mis-prediction is: %f' % (interval_length, ss_val))
 
 	input("Press any key to quit")
