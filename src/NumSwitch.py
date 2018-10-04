@@ -53,27 +53,6 @@ def NS(Ainv, eps, k, l):
 	return ns_sum
 
 
-def num_switched_by(Ainv, eps, i, j):
-	"""
-	When perturbing each of the k,l entries by eps, how many times does the (i,j)
-	entry switch signs?
-	TODO: I don't know about this one, since the eps should be different for
-	TODO: each of the (k, l) entries...
-	:param Ainv: inverse input matrix, numpy array
-	:param eps: perturbation size (scalar)
-	:param i: index
-	:param j: inex
-	:return: Natural number
-	"""
-	n = Ainv.shape[0]
-	if any([index >= n for index in [i, j]]):
-		raise Exception("Matrix is only %dx%d, invalid choice of subscripts: %d, %d." % (n, n, k, l))
-	ns_sum = 0
-	for k in range(n):
-		for l in range(n):
-			ns_sum += ind_switch(Ainv, eps, i, j, k, l)
-	return ns_sum
-
 def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 	"""
 	This function will return the interval of stability when perturbing just the (k,l) entry of A
@@ -127,66 +106,6 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 	return (lower_bound + step_size, upper_bound - step_size)
 
 
-def interval_of_stability_crawl(A, Ainv, k, l, max_bound=10, step_size=.0001):
-	"""
-	This function will return the interval of stability when perturbing just the (k,l) entry of A
-	Difference with this implementation is that it decides to crawl out from the origin, looking for instability
-	:param A: numpy array
-	:param Ainv: inverse of A
-	:param k: index
-	:param l: index
-	:param max_bound: some are always stable on one side, only go out this far), scalar > 0
-	:param step_size: step size for perturbation values
-	:return: (a:scalar, b:scalar) the largest interval where A[k,l]+eps is stable
-	"""
-	# TODO: this is too slow when it's stable unbounded on one end
-	# Input matrix needs to be stable
-	[s, _] = np.linalg.eig(A)
-	if not all([np.real(i) < 0 for i in s]):
-		raise Exception("The input matrix is not stable itself (one or more eigenvalues have non-negative real part). Cannot continue analysis.")
-
-	# Find an initial region of stability. Use contrapositive of theorem 3.1
-	if A[k, l] > 0 and Ainv[l, k] < 0:  # pos neg
-		initial_interval = (-A[k, l], -1/float(Ainv[l, k]))
-	if A[k, l] < 0 and Ainv[l, k] > 0:  # neg pos
-		initial_interval = (-1 / float(Ainv[l, k]), -A[k, l])
-	if A[k, l] < 0 and Ainv[l, k] < 0:  # neg neg
-		initial_interval = (-max_bound, min([-1 / float(Ainv[l, k]), -A[k, l]]))
-	if A[k, l] > 0 and Ainv[l, k] > 0:  # pos pos
-		initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
-	# now need to sample to determine the actual region of stability
-	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
-	# crawl to the right
-	zero_matrix = np.zeros(A.shape)
-	eps = step_size
-	all_neg_eigs = True
-	while all_neg_eigs is True:
-		zero_matrix[k, l] = eps
-		[s, _] = np.linalg.eig(A + zero_matrix)
-		max_eig_val = max([np.real(i) for i in s])
-		if max_eig_val >= 0 or eps >= initial_interval[1]:
-			eps -= step_size
-			all_neg_eigs = False
-		else:
-			eps += step_size
-	upper_bound = eps
-	# crawl to the right
-	zero_matrix = np.zeros(A.shape)
-	eps = -step_size
-	all_neg_eigs = True
-	while all_neg_eigs is True:
-		zero_matrix[k, l] = eps
-		[s, _] = np.linalg.eig(A + zero_matrix)
-		max_eig_val = max([np.real(i) for i in s])
-		if max_eig_val >= 0 or eps <= initial_interval[0]:
-			eps += step_size
-			all_neg_eigs = False
-		else:
-			eps -= step_size
-	lower_bound = eps
-	return (lower_bound + step_size, upper_bound - step_size)
-
-
 def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
@@ -236,6 +155,97 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 		exp_value += value*(dist.cdf(end) - dist.cdf(start))
 	return exp_value/float(m*n)
 
+
+def critical_epsilon(Ainv, k, l, i, j):
+	"""
+	This function finds which epsilon causes the sherman morrison ratio to
+	equal 0 (indicating a switch will occur after this value).
+	Takes advantage of the monotonicity of the SM ratio.
+	:param Ainv: Inverse input matrix
+	:param k: index (row being perturbed)
+	:param l: index (column being perturbed)
+	:param i: index (entry looking for a switch)
+	:param j: index (entry looking for a switch)
+	:return: scalar (epsilon value)
+	"""
+	denom = Ainv[i, j]*Ainv[l, k] - Ainv[i, k] * Ainv[l,j]
+	if denom == 0:
+		res = np.inf
+	else:
+		res = -Ainv[i, j] / float(denom)
+	return res
+
+
+def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
+	"""
+	This function will get the full description of the num_switch function
+	(using interval notation).
+	:param crit_epsilon_array: array of critical epsilon (tensor indexed by (k, l, i, j))
+	:param stab_int_array: array of intervals of stability (tensor index by (k, l, start, end))
+	:param k: index (row to perturb)
+	:param l: index (column to perturb)
+	:return: list with entries (num_switch_value, (start, end))
+	"""
+	crit_eps_in_range = []
+	n = crit_epsilon_array.shape[0]  # number of rows/columns
+	stab_start = stab_int_array[k, l, 0]  # stability interval start
+	stab_end = stab_int_array[k, l, 1]  # stability interval end
+	# get the epsilons in the range
+	for i in range(n):
+		for j in range(n):
+			crit_eps = crit_epsilon_array[k, l, i, j]
+			if crit_eps < stab_end and crit_eps > stab_start:
+				crit_eps_in_range.append(crit_eps)
+	# get the epsilon values in the stability range
+	# both lists start from zero outward
+	# pad with stability endpoints in order to get the endpoints right
+	pos_crit_eps_in_range = np.append(np.sort([i for i in crit_eps_in_range if i > 0]), stab_end)
+	neg_crit_eps_in_range = np.append(np.sort([i for i in crit_eps_in_range if i < 0])[::-1], stab_start) #less to more negative
+	num_switch_func = []
+	# do the positives first
+	is_first = True
+	has_zero = 0 in crit_eps_in_range
+	zero_count = np.sum(crit_eps_in_range == 0)
+	if pos_crit_eps_in_range.size:  # if the list is not empty
+		current = pos_crit_eps_in_range[0]  # need to start somewhere
+		counter = zero_count + 1 # if zero is in the list, any perturbation will cause a switch
+		# start at 1 otherwise (since there's at least one critical epsilon so one switch
+		for index in range(1, len(pos_crit_eps_in_range)):
+			next = pos_crit_eps_in_range[index]  # get the next guy in the list
+			if next == current:  # if it's the same, just increment the counter
+				counter += 1
+			else:
+				if is_first and has_zero:  # if zero is in the list, need to start the interval at zero
+					num_switch_func.append((counter, (0, next)))
+					is_first = False
+				elif is_first:
+					pass  # otherwise, no switch has occurred from zero to this point
+				else:
+					# otherwise, add this interval in to the return list
+					num_switch_func.append((counter, (current, next)))
+				current = next
+				counter += 1  # you crossed another crit eps, so increment
+	# Then do negatives (same as above, just a different list)
+	is_first = True
+	if neg_crit_eps_in_range.size:
+		current = neg_crit_eps_in_range[0]
+		counter = zero_count + 1
+		for index in range(1, len(neg_crit_eps_in_range)):
+			next = neg_crit_eps_in_range[index]
+			if next == current:
+				counter += 1
+			else:
+				if is_first and has_zero:
+					num_switch_func.append((counter, (0, next)))
+					is_first = False
+				else:
+					num_switch_func.append((counter, (current, next)))
+				current = next
+				counter += 1
+	return num_switch_func
+
+
+
 # This has been checked against Mathematica
 # a, b = (-.5 - 0) / .75, (1 - 0) / .75
 #dist = st.truncnorm(a, b, 0, .75)
@@ -272,9 +282,9 @@ def tests():
 	interval = interval_of_stability(Aigp, Aigpinv, 0, 0, num_sample=1000)
 	assert np.abs(interval[0] - -0.08298659074229853) < .001
 	assert np.abs(interval[1] - 0.10901820241962716) < .001
-	interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
-	assert np.abs(interval[0] - -0.08298659074229853) < .001
-	assert np.abs(interval[1] - 0.10901820241962716) < .001
+	#interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
+	#assert np.abs(interval[0] - -0.08298659074229853) < .001
+	#assert np.abs(interval[1] - 0.10901820241962716) < .001
 	interval = interval_of_stability(Aigp, Aigpinv, 1, 0, num_sample=1000)
 	assert np.abs(interval[0] - -0.025934401526958355) < .02
 	assert np.abs(interval[1] - 10) < .02
