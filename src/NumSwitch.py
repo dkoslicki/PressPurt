@@ -70,7 +70,8 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 		raise Exception("The input matrix is not stable itself (one or more eigenvalues have non-negative real part). Cannot continue analysis.")
 
 	if A[k, l] == 0:
-		raise Exception("Can only perturb non-zero entries: A[%d, %d] == 0." % (k, l))
+		raise Warning("You are attempting to perturb a zero entry: A[%d, %d] == 0." % (k, l))
+
 	# Find an initial region of stability. Use contrapositive of theorem 3.1
 	if A[k, l] > 0 and Ainv[l, k] < 0:  # pos neg
 		initial_interval = (-A[k, l], -1/float(Ainv[l, k]))
