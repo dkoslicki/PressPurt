@@ -34,6 +34,7 @@ def ind_switch(Ainv, eps, i, j, k, l):
 		else:  # else you still have a zero here, so no switch
 			return 0
 
+
 def NS(Ainv, eps, k, l):
 	"""
 	This function implements equation 3.5: gives the number of sign switches
@@ -125,6 +126,7 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	:param Ainv: The inverse of A (pre-computed), numpy array
 	:param k: index
 	:param l: index
+	:param num_sample: Number of samples to take to determine the interval of stability and expected value
 	:param dist: A probability density function: function of a single argument
 	:param interval: the interval of stability (optional, can be pre-computed with interval_of_stability())
 	:return:
@@ -255,6 +257,33 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 	return num_switch_func
 
 
+def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist=None):
+	"""
+	Compute the expectation using the num_switch function
+	:param n: dimension of the matrix
+	:param k: index (pert row)
+	:param l: index (pert column)
+	:param num_switch_funcs: The shape of the num_switch_function from num_switch_from_crit_eps
+	:param stab_intervals: all the intervals of stability
+	:param dist: probability distribution to use
+	:return: float (expected value)
+	"""
+	# get the appropriate function
+	num_switch_func = num_switch_funcs[k, l]
+	# get the interval of stability
+	interval = stab_intervals[k, l]
+
+	# get the right distribution function
+	if not dist:
+		my_std = (interval[1] - interval[0])/2.
+		my_mean = 0
+		a, b = (interval[0] - my_mean) / my_std, (interval[1] - my_mean) / my_std
+		dist = st.truncnorm(a, b, 0, my_std)
+	# Now do the integration
+	exp_value = 0
+	for (value, (start, end)) in num_switch_func:
+		exp_value += value*(dist.cdf(end) - dist.cdf(start))
+	return exp_value/float(n*n)
 
 # This has been checked against Mathematica
 # a, b = (-.5 - 0) / .75, (1 - 0) / .75
@@ -379,7 +408,6 @@ def test_num_switch_from_crit_eps():
 				assert np.abs(known_end - test_end) < 0.02
 			iter += 1
 
-
 	# Tri-diagonal case
 	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 	Ainv = np.linalg.inv(A)
@@ -439,6 +467,56 @@ def test_num_switch_from_crit_eps():
 				assert np.abs(known_start - test_start) < 0.02
 				assert np.abs(known_end - test_end) < 0.02
 			iter += 1
+
+
+def test_exp_num_switch_from_crit_eps():
+
+	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	Atriinv = np.linalg.inv(Atri)
+	Aigpinv = np.linalg.inv(Aigp)
+
+	# IGP case
+	A = Aigp
+	Ainv = Aigpinv
+	n = Aigp.shape[0]
+	crit_epsilon_array = np.zeros((n, n, n, n))
+	for k in range(n):
+		for l in range(n):
+			for i in range(n):
+				for j in range(n):
+					crit_epsilon_array[k, l, i, j] = critical_epsilon(Ainv, k, l, i, j)
+
+	stab_int_array = np.zeros((n, n, 2))
+	for k in range(n):
+		for l in range(n):
+			if A[k, l] != 0:
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				stab_int_array[k, l, 0] = interval[0]
+				stab_int_array[k, l, 1] = interval[1]
+
+	num_switch_funcs = dict()
+	for k in range(n):
+		for l in range(n):
+			if True:  # A[k, l] != 0:
+				num_switch_func = num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l)
+				num_switch_funcs[k, l] = num_switch_func
+
+	exp_value = exp_num_switch_from_crit_eps(n, 3, 2, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.081) < 0.01
+	exp_value = exp_num_switch_from_crit_eps(n, 1, 2, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.048) < 0.01
+	exp_value = exp_num_switch_from_crit_eps(n, 0, 0, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.032) < 0.01
+	exp_value = exp_num_switch_from_crit_eps(n, 1, 1, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.12) < 0.01
+	exp_value = exp_num_switch_from_crit_eps(n, 2, 2, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.16) < 0.01
+	exp_value = exp_num_switch_from_crit_eps(n, 3, 3, num_switch_funcs, stab_int_array)
+	assert np.abs(exp_value - 0.17) < 0.01
+
+
 def run_all_tests():
 	test_num_switch_from_crit_eps()
 	fast_tests()
+	test_exp_num_switch_from_crit_eps()

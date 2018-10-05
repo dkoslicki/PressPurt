@@ -93,14 +93,14 @@ if __name__ == '__main__':
 	for k in range(n):
 		for l in range(n):
 			res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, intervals, k, l)
-			num_switch_funcs[k,l] = res
+			num_switch_funcs[k, l] = res
 
 	# Save it
 	print("Saving shape of num switch functions to: %s" % num_switch_file)
 	fid = open(num_switch_file, 'w')
 	for k in range(n):
 		for l in range(n):
-			key = (k,l)
+			key = (k, l)
 			dict_val = num_switch_funcs[key]
 			# TODO: switch based on zero entries
 	#for key, dict_val in num_switch_funcs.items():
