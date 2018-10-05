@@ -1,10 +1,9 @@
 import argparse
 import numpy as np
-import scipy.stats as st
 import os
 import sys
-import matplotlib.pyplot as plt
-import timeit
+import pickle
+
 # import stuff in the src folder
 try:
 	import MRS
@@ -28,7 +27,7 @@ if __name__ == '__main__':
 	parser.add_argument('output_folder', type=str, help="Output folder. A number of files will be created in the form 'output_folder/<prefix>_*.npy'")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-m', '--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
-	parser.add_argument('-n', '--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=1000)
+	parser.add_argument('-n', '--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=2000)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
 
 	# read in the arguments
@@ -46,10 +45,10 @@ if __name__ == '__main__':
 
 	if prefix:
 		asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
-		num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.npy")
+		num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
-		num_switch_file = os.path.join(output_folder, "num_switch_funcs.npy")
+		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 
 	# check for sanity of input parameters
 	if not max_bound > 0:
@@ -92,27 +91,32 @@ if __name__ == '__main__':
 	num_switch_funcs = dict()
 	for k in range(n):
 		for l in range(n):
-			res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, intervals, k, l)
-			num_switch_funcs[k, l] = res
+			if A[k, l] != 0:
+				res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, intervals, k, l)
+				num_switch_funcs[k, l] = res
+			elif pert_zero:
+				res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, intervals, k, l)
+				num_switch_funcs[k, l] = res
 
 	# Save it
 	print("Saving shape of num switch functions to: %s" % num_switch_file)
-	fid = open(num_switch_file, 'w')
-	for k in range(n):
-		for l in range(n):
-			key = (k, l)
-			dict_val = num_switch_funcs[key]
-			# TODO: switch based on zero entries
-	#for key, dict_val in num_switch_funcs.items():
-		#print(key)
-		#print(dict_val)
-			fid.write("%d\t%d\t" % (key[0], key[1]))
-			for i in range(len(dict_val) - 1):
-				val, (start, stop) = dict_val[i]
-				fid.write("%f\t%f\t%f\t" % (val, start, stop))
-			if dict_val:
-				val, (start, stop) = dict_val[-1]
-				fid.write("%d\t%f\t%f\n" % (val, start, stop))
-			else:
-				fid.write("\n")
+	fid = open(num_switch_file, 'wb')
+	pickle.dump(num_switch_funcs, fid)
 	fid.close()
+
+	# This is a text format
+	#for k in range(n):
+	#	for l in range(n):
+	#		key = (k, l)
+	#		dict_val = num_switch_funcs[key]
+	#		# TODO: switch based on zero entries
+	#		fid.write("%d\t%d\t" % (key[0], key[1]))
+	#		for i in range(len(dict_val) - 1):
+	#			val, (start, stop) = dict_val[i]
+	#			fid.write("%f\t%f\t%f\t" % (val, start, stop))
+	#		if dict_val:
+	#			val, (start, stop) = dict_val[-1]
+	#			fid.write("%d\t%f\t%f\n" % (val, start, stop))
+	#		else:
+	#			fid.write("\n")
+	#fid.close()

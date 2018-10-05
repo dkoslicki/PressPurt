@@ -296,8 +296,6 @@ def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist
 
 
 
-
-
 #######################################################################
 # test cases
 # test matrix
