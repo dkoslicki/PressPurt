@@ -1,6 +1,7 @@
 # This script will implement equations 3.4, 3.5, and 3.6
 import numpy as np
 import scipy.stats as st
+import warnings
 
 
 def ind_switch(Ainv, eps, i, j, k, l):
@@ -70,17 +71,20 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 		raise Exception("The input matrix is not stable itself (one or more eigenvalues have non-negative real part). Cannot continue analysis.")
 
 	if A[k, l] == 0:
-		raise Warning("You are attempting to perturb a zero entry: A[%d, %d] == 0." % (k, l))
+		warnings.warn("You are attempting to perturb a zero entry: A[%d, %d] == 0." % (k, l))
 
 	# Find an initial region of stability. Use contrapositive of theorem 3.1
 	if A[k, l] > 0 and Ainv[l, k] < 0:  # pos neg
 		initial_interval = (-A[k, l], -1/float(Ainv[l, k]))
-	if A[k, l] < 0 and Ainv[l, k] > 0:  # neg pos
+	elif A[k, l] < 0 and Ainv[l, k] > 0:  # neg pos
 		initial_interval = (-1 / float(Ainv[l, k]), -A[k, l])
-	if A[k, l] < 0 and Ainv[l, k] < 0:  # neg neg
+	elif A[k, l] < 0 and Ainv[l, k] < 0:  # neg neg
 		initial_interval = (-max_bound, min([-1 / float(Ainv[l, k]), -A[k, l]]))
-	if A[k, l] > 0 and Ainv[l, k] > 0:  # pos pos
+	elif A[k, l] > 0 and Ainv[l, k] > 0:  # pos pos
 		initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
+	else:
+		initial_interval = (-max_bound, max_bound)
+		num_sample *= 2*max_bound  # if you fall in this case, better crank up the number of samples
 	# now need to sample to determine the actual region of stability
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
 	(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
@@ -104,7 +108,14 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 		if eig_values[zero_loc - i] >= 0:
 			lower_bound = to_sample[zero_loc - i + 1]
 			break
-	return (lower_bound + step_size, upper_bound - step_size)
+	# adjust them, only if it doesn't screw up the order of the interval (for very small in magnitude
+	# lower and upper bounds)
+	if upper_bound > step_size:
+		upper_bound -= step_size
+	if np.abs(lower_bound) > step_size:
+		lower_bound += step_size
+	#return (lower_bound + step_size, upper_bound - step_size)
+	return (lower_bound, upper_bound)
 
 
 def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
@@ -219,8 +230,6 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 				if is_first and has_zero:  # if zero is in the list, need to start the interval at zero
 					num_switch_func.append((counter, (0, next)))
 					is_first = False
-				elif is_first:
-					pass  # otherwise, no switch has occurred from zero to this point
 				else:
 					# otherwise, add this interval in to the return list
 					num_switch_func.append((counter, (current, next)))
@@ -240,7 +249,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 					num_switch_func.append((counter, (0, next)))
 					is_first = False
 				else:
-					num_switch_func.append((counter, (current, next)))
+					num_switch_func.append((counter, (next, current)))
 				current = next
 				counter += 1
 	return num_switch_func
@@ -310,3 +319,62 @@ def tests():
 	assert np.abs(exp_value - 0.17) < 0.01
 	exp_value = exp_num_switch(Atri, Atriinv, 0, 0)
 	assert np.abs(exp_value - 0) < 0.01
+
+
+def test_num_switch_from_crit_eps():
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	Ainv = np.linalg.inv(A)
+	n = A.shape[0]
+	crit_epsilon_array = np.zeros((n, n, n, n))
+	for k in range(n):
+		for l in range(n):
+			for i in range(n):
+				for j in range(n):
+					crit_epsilon_array[k, l, i, j] = critical_epsilon(Ainv, k, l, i, j)
+
+	stab_int_array = np.zeros((n, n, 2))
+	for k in range(n):
+		for l in range(n):
+			if True:  # A[k, l] != 0:
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				stab_int_array[k, l, 0] = interval[0]
+				stab_int_array[k, l, 1] = interval[1]
+
+	# generated using TestingNewSwitchIntervalTestCases.nb
+	known_answers =[[(1, (0.00801341, 0.109018))],
+					[(1, (-9.999, -0.03))],
+					[(1, (0.0694652, 1.99872))],
+					[],
+					[(1, (0.0040656, 10.))],
+					[(2, (-9.999, -0.312)), (1, (-0.312, -0.013))],
+					[(1, (0.0298758, 0.720876)), (2, (0.720876, 0.985876)), (4, (0.985876, 1.))],
+					[(1, (-7.11695, -2.93395))],
+					[],
+					[(1, (0.272959, 0.919474))],
+					[(3, (-9.999, -0.984)), (1, (-0.984, -0.692))],
+					[(1, (0.720384, 0.967384)), (3, (0.967384, 0.985384)), (5, (0.985384, 1.))],
+					[(1, (0.000361142, 0.0103611)), (2, (0.0103611, 0.0123611)), (3, (0.0123611, 0.014284))],
+					[(4, (-0.044, -0.043)), (2, (-0.043, -0.031)), (1, (-0.031, -0.001))],
+					[(1, (0.00357428, 0.272574)), (2, (0.272574, 0.63448))],
+					[(3, (-9.999, -0.434)), (1, (-0.434, -0.312))]]
+	iter = 0
+	for k in range(n):
+		for l in range(n):
+			known_answer = known_answers[iter]
+			res = num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l)
+			# get rid of the super small intervals that mathematica misses
+			new_res = []
+			for index in range(len(res)):
+				val, (start, stop) = res[index]
+				if stop - start > 0.000001:
+					new_res.append((val, (start, stop)))
+			res = new_res
+			res = sorted(res, key=lambda x: x[1][0])
+			#print("k=%d, l=%d" % (k, l))
+			for index in range(len(known_answer)):
+				known_val, (known_start, known_end) = known_answer[index]
+				test_val, (test_start, test_end) = res[index]
+				assert known_val == test_val
+				assert np.abs(known_start - test_start) < 0.02
+				assert np.abs(known_end - test_end) < 0.02
+			iter += 1
