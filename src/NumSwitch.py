@@ -272,7 +272,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 #######################################################################
 # test cases
 # test matrix
-def tests():
+def fast_tests():
 	"""
 	Run the tests
 	:return: None
@@ -378,3 +378,67 @@ def test_num_switch_from_crit_eps():
 				assert np.abs(known_start - test_start) < 0.02
 				assert np.abs(known_end - test_end) < 0.02
 			iter += 1
+
+
+	# Tri-diagonal case
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	Ainv = np.linalg.inv(A)
+	n = A.shape[0]
+	crit_epsilon_array = np.zeros((n, n, n, n))
+	for k in range(n):
+		for l in range(n):
+			for i in range(n):
+				for j in range(n):
+					crit_epsilon_array[k, l, i, j] = critical_epsilon(Ainv, k, l, i, j)
+
+	stab_int_array = np.zeros((n, n, 2))
+	for k in range(n):
+		for l in range(n):
+			if True:  # A[k, l] != 0:
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				stab_int_array[k, l, 0] = interval[0]
+				stab_int_array[k, l, 1] = interval[1]
+
+	# generated using TestingNewSwitchIntervalTestCases.nb
+	# note that some of these are not empty because I'm letting it perturb a zero entry
+	known_answers = [[],
+					[],
+					[(2, (2.37059, 2.52559)), (3, (2.52559, 4.32057))],
+					[(1, (0.356, 9.978)), (2, (9.978, 10.))],
+					[],
+					[],
+					[],
+					[(2, (0.150145, 0.301145)), (3, (0.301145, 4.37015)), (4, (4.37015, 4.52924))],
+					[(2, (0.0243159, 0.0253159)), (3, (0.0253159, 0.0432057))],
+					[],
+					[],
+					[],
+					[(1, (-0.00973428, 0.000265719)), (1, (0.0102657, 0.0123244))],
+					[(2, (0.00242148, 0.00342148)), (3, (0.00342148, 0.0452924))],
+					[],
+					[]]
+	iter = 0
+	for k in range(n):
+		for l in range(n):
+			#print("k=%d, l=%d" % (k, l))
+			known_answer = known_answers[iter]
+			res = num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l)
+			# get rid of the super small intervals that mathematica misses
+			new_res = []
+			for index in range(len(res)):
+				val, (start, stop) = res[index]
+				if stop - start > 0.000001:
+					new_res.append((val, (start, stop)))
+			res = new_res
+			res = sorted(res, key=lambda x: x[1][0])
+			# print("k=%d, l=%d" % (k, l))
+			for index in range(len(known_answer)):
+				known_val, (known_start, known_end) = known_answer[index]
+				test_val, (test_start, test_end) = res[index]
+				assert known_val == test_val
+				assert np.abs(known_start - test_start) < 0.02
+				assert np.abs(known_end - test_end) < 0.02
+			iter += 1
+def run_all_tests():
+	test_num_switch_from_crit_eps()
+	fast_tests()

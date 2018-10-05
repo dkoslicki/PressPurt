@@ -13,8 +13,8 @@ Ainv = np.linalg.inv(A)
 # Test the num switch stuff
 import NumSwitch
 reload(NumSwitch)
-A = NumSwitch.Aigp
-Ainv = NumSwitch.Aigpinv
+A = NumSwitch.Atri
+Ainv = NumSwitch.Atriinv
 n = Aigp.shape[0]
 crit_epsilon_array = np.zeros((n, n, n, n))
 for k in range(n):
@@ -32,7 +32,7 @@ for k in range(n):
 			stab_int_array[k, l, 1] = interval[1]
 
 reload(NumSwitch)
-res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, 3, 0)
+res = NumSwitch.num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, 0, 0)
 print(sorted(res, key=lambda x: x[1][0]))
 
 
