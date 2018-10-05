@@ -97,12 +97,22 @@ if __name__ == '__main__':
 
 	# Save it
 	print("Saving shape of num switch functions to: %s" % num_switch_file)
-	fid = open(num_switch_funcs, 'w')
-	for key, dict_val in num_switch_funcs:
-		fid.write("%d\t%d\t" % (key[0], key[1]))
-		for i in range(len(dict_val) - 1):
-			val, (start, stop) = dict_val[i]
-			fid.write("%f\t%f\t%f\t" % (val, start, stop))
-		val, (start, stop) = dict_val[-1]
-		fid.write("%f\t%f\t%f\n" % (val, start, stop))
+	fid = open(num_switch_file, 'w')
+	for k in range(n):
+		for l in range(n):
+			key = (k,l)
+			dict_val = num_switch_funcs[key]
+			# TODO: switch based on zero entries
+	#for key, dict_val in num_switch_funcs.items():
+		#print(key)
+		#print(dict_val)
+			fid.write("%d\t%d\t" % (key[0], key[1]))
+			for i in range(len(dict_val) - 1):
+				val, (start, stop) = dict_val[i]
+				fid.write("%f\t%f\t%f\t" % (val, start, stop))
+			if dict_val:
+				val, (start, stop) = dict_val[-1]
+				fid.write("%d\t%f\t%f\n" % (val, start, stop))
+			else:
+				fid.write("\n")
 	fid.close()
