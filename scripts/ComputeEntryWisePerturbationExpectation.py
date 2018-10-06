@@ -8,6 +8,8 @@ import pickle
 import timeit
 import scipy.stats as st
 from scipy.stats import rv_continuous
+from multiprocessing import Pool  # Much faster without dummy (threading)
+import multiprocessing
 
 # import stuff in the src folder
 try:
@@ -26,6 +28,7 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
+# TODO: note, these must be present if you attempt to import the pickling of the distributions and a custom one was chosen
 class trunc_lognorm():
 	"""
 	Truncated log normal
@@ -67,7 +70,6 @@ if __name__ == '__main__':
 	parser.add_argument('-a', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the mean.", default=0)
 	parser.add_argument('-b', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the variance. Using a negative value indicates you want the standard deviation to be the length of the interval divided by the absolute value of the input parameter.", default=-2)
 
-	# TODO: add custom distribution options
 	# read in the arguments
 	args = parser.parse_args()
 	input_folder = args.input_folder
@@ -139,16 +141,52 @@ if __name__ == '__main__':
 
 	# Do the expectation calculation
 	exp_num_switch_array = np.zeros((n, n))
-	for k in range(n):
-		for l in range(n):
-			#t0 = timeit.default_timer()
+	if n < 10:  # in serial
+		for k in range(n):
+			for l in range(n):
+				try:
+					val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
+					exp_num_switch_array[k, l] = val
+				except KeyError:
+					pass
+	else:  # do it in parallel
+		# try the same thing, but parallelized
+		def helper(k, l):
+			"""
+			helper function to make it easier to parallelize
+			:param k: index
+			:param l: index
+			:return: none or float
+			"""
 			try:
 				val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
-				exp_num_switch_array[k, l] = val
 			except KeyError:
-				pass
-			#t1 = timeit.default_timer()
-			#print(t1 - t0)
+				val = None
+			return (val, k, l)
+
+		def helper_star(arg):
+			"""
+			unwrap the tuple
+			:param arg: tuple of (k,l) indices
+			:return: none or float
+			"""
+			return helper(*arg)
+
+		# get all the arguments to compute
+		to_compute_args = []
+		for k in range(n):
+			for l in range(n):
+				to_compute_args.append((k, l))
+
+		# start the pool and do the computations
+		pool = Pool(processes=multiprocessing.cpu_count())
+		res = pool.map(helper_star, to_compute_args)
+
+		# collect the results
+		for val, k, l in res:
+			if val is not None:
+				exp_num_switch_array[k, l] = val
+
 
 	# export the results
 	np.savetxt(exp_num_switch_file, exp_num_switch_array, delimiter=',')
