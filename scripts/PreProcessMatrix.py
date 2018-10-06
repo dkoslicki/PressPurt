@@ -27,7 +27,6 @@ if __name__ == '__main__':
 	parser.add_argument('output_folder', type=str, help="Output folder. A number of files will be created in the form 'output_folder/<prefix>_*.npy'")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-m', '--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
-	parser.add_argument('-n', '--num_sample', type=int, help="number of points to sample when looking for the region of asymptotic stability of the matrix", default=2000)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
 
 	# read in the arguments
@@ -38,7 +37,6 @@ if __name__ == '__main__':
 		output_folder = os.path.abspath(output_folder)
 	prefix = args.prefix
 	max_bound = int(args.max_bound)
-	num_sample = int(args.num_sample)
 	pert_zero = args.zero_perturb
 	if not os.access(output_folder, os.W_OK):
 		raise Exception("The provided directory %s is not writable." % output_folder)
@@ -53,8 +51,6 @@ if __name__ == '__main__':
 	# check for sanity of input parameters
 	if not max_bound > 0:
 		raise Exception("max_bound must be larger than 0; provided value: %d." % max_bound)
-	if not num_sample > 10:
-		raise Exception("num_sample must be larger than 10; provided value: %d." % num_sample)
 
 	# read in the input matrix
 	A = np.loadtxt(input_file, delimiter=",")
@@ -71,9 +67,9 @@ if __name__ == '__main__':
 	for k in range(m):
 		for l in range(n):
 			if A[k, l] != 0:
-				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 			elif pert_zero:
-				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 
 	# save these
 	print("Saving asymptotic stability to: %s" % asymp_stab_file)

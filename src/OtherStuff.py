@@ -61,3 +61,54 @@ test=[[(1, (0.00801341, 0.109018))],
 	[(4, (-0.044, -0.043)), (2, (-0.043, -0.031)), (1, (-0.031, -0.001))],
 	[(1, (0.00357428, 0.272574)), (2, (0.272574, 0.63448))],
 	[(3, (-9.999, -0.434)), (1, (-0.434, -0.312))]]
+
+
+
+
+# Let's try a binary search for the interval of stability
+
+def largest_root(A, k, l, eps):
+	zero_matrix = np.zeros(A.shape)
+	zero_matrix[k, l] = eps
+	[s, _] = np.linalg.eig(A + zero_matrix)
+	return max([np.real(i) for i in s])
+
+A = NumSwitch.Aigp
+Ainv = NumSwitch.Aigpinv
+k = 0
+l = 0
+max_bound = 10
+# Find an initial region of stability. Use contrapositive of theorem 3.1
+if A[k, l] > 0 and Ainv[l, k] < 0:  # pos neg
+	initial_interval = (-A[k, l], -1/float(Ainv[l, k]))
+elif A[k, l] < 0 and Ainv[l, k] > 0:  # neg pos
+	initial_interval = (-1 / float(Ainv[l, k]), -A[k, l])
+elif A[k, l] < 0 and Ainv[l, k] < 0:  # neg neg
+	initial_interval = (-max_bound, min([-1 / float(Ainv[l, k]), -A[k, l]]))
+elif A[k, l] > 0 and Ainv[l, k] > 0:  # pos pos
+	initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
+else:
+	initial_interval = (-max_bound, max_bound)
+
+# start on the positive side
+(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
+#return to_sample
+zero_matrix = np.zeros(A.shape)  # matrix we will be perturbing by
+eig_values = []
+for pert_val in to_sample:
+	zero_matrix[k, l] = pert_val  # update the perturb value
+	[s, _] = np.linalg.eig(A + zero_matrix)
+	eig_values.append(max([np.real(i) for i in s]))  # look at the largest eigenvalue
+#return eig_values
+# now, return the largest interval where all the eigenvalues have negative real part
+zero_loc = int(np.argmin(np.abs(to_sample)))
+upper_bound = initial_interval[1]
+for i in range(len(to_sample) - zero_loc):
+	if eig_values[zero_loc + i] >= 0:
+		upper_bound = to_sample[zero_loc + i - 1]
+		break
+lower_bound = initial_interval[0]
+for i in range(zero_loc):
+	if eig_values[zero_loc - i] >= 0:
+		lower_bound = to_sample[zero_loc - i + 1]
+		break

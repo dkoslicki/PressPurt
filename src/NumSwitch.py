@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.stats as st
 import warnings
+from scipy.optimize import bisect
 
 
 def ind_switch(Ainv, eps, i, j, k, l):
@@ -55,7 +56,14 @@ def NS(Ainv, eps, k, l):
 	return ns_sum
 
 
-def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
+def largest_root(A, k, l, eps):
+	zero_matrix = np.zeros(A.shape)
+	zero_matrix[k, l] = eps
+	[s, _] = np.linalg.eig(A + zero_matrix)
+	return max([np.real(i) for i in s])
+
+
+def interval_of_stability(A, Ainv, k, l, max_bound=10):
 	"""
 	This function will return the interval of stability when perturbing just the (k,l) entry of A
 	:param A: numpy array
@@ -85,38 +93,46 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=1000):
 		initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
 	else:
 		initial_interval = (-max_bound, max_bound)
-		num_sample *= 2*max_bound  # if you fall in this case, better crank up the number of samples
+		#num_sample *= 2*max_bound  # if you fall in this case, better crank up the number of samples
 	# now need to sample to determine the actual region of stability
+
+	# bisection method, depreciated since bisect is so much faster.
+	if largest_root(A, k, l, initial_interval[1]) < 0:
+		upper_bound = initial_interval[1]
+	else:
+		upper_bound = bisect(lambda x: largest_root(A, k, l, x), 0, initial_interval[1])
+	if largest_root(A, k, l, initial_interval[0]) < 0:
+		lower_bound = initial_interval[0]
+	else:
+		lower_bound = bisect(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
+	return (lower_bound + .00001, upper_bound - .00001)
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
-	(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
-	#return to_sample
-	zero_matrix = np.zeros(A.shape)  # matrix we will be perturbing by
-	eig_values = []
-	for pert_val in to_sample:
-		zero_matrix[k, l] = pert_val  # update the perturb value
-		[s, _] = np.linalg.eig(A + zero_matrix)
-		eig_values.append(max([np.real(i) for i in s]))  # look at the largest eigenvalue
-	#return eig_values
+	#(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
+	#zero_matrix = np.zeros(A.shape)  # matrix we will be perturbing by
+	#eig_values = []
+	#for pert_val in to_sample:
+	#	zero_matrix[k, l] = pert_val  # update the perturb value
+	#	[s, _] = np.linalg.eig(A + zero_matrix)
+	#	eig_values.append(max([np.real(i) for i in s]))  # look at the largest eigenvalue
 	# now, return the largest interval where all the eigenvalues have negative real part
-	zero_loc = int(np.argmin(np.abs(to_sample)))
-	upper_bound = initial_interval[1]
-	for i in range(len(to_sample) - zero_loc):
-		if eig_values[zero_loc + i] >= 0:
-			upper_bound = to_sample[zero_loc + i - 1]
-			break
-	lower_bound = initial_interval[0]
-	for i in range(zero_loc):
-		if eig_values[zero_loc - i] >= 0:
-			lower_bound = to_sample[zero_loc - i + 1]
-			break
+	#zero_loc = int(np.argmin(np.abs(to_sample)))
+	#upper_bound = initial_interval[1]
+	#for i in range(len(to_sample) - zero_loc):
+	#	if eig_values[zero_loc + i] >= 0:
+	#		upper_bound = to_sample[zero_loc + i - 1]
+	#		break
+	#lower_bound = initial_interval[0]
+	#for i in range(zero_loc):
+	#	if eig_values[zero_loc - i] >= 0:
+	#		lower_bound = to_sample[zero_loc - i + 1]
+	#		break
 	# adjust them, only if it doesn't screw up the order of the interval (for very small in magnitude
 	# lower and upper bounds)
-	if upper_bound > step_size:
-		upper_bound -= step_size
-	if np.abs(lower_bound) > step_size:
-		lower_bound += step_size
-	#return (lower_bound + step_size, upper_bound - step_size)
-	return (lower_bound, upper_bound)
+	#if upper_bound > step_size:
+	#	upper_bound -= step_size
+	#if np.abs(lower_bound) > step_size:
+	#	lower_bound += step_size
+	#return (lower_bound, upper_bound)
 
 
 def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
@@ -136,7 +152,7 @@ def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 		raise Exception("You can only perturb non-zero entries: A[%d, %d] is zero." % (k, l))
 	# get the region of stability
 	if interval is None:
-		interval = interval_of_stability(A, Ainv, k, l, num_sample=num_sample)
+		interval = interval_of_stability(A, Ainv, k, l)
 	# NS is a step function, so find the respective values and intervals
 	(to_sample, step_size) = np.linspace(interval[0], interval[1], num_sample, retstep=True)
 	ns_values = [NS(Ainv, eps, k, l) for eps in to_sample]
@@ -294,7 +310,11 @@ def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist
 #fig.show()
 # dist.pdf(0)
 
-
+# stick these constants in for easy access later down the road/testing
+Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+Atriinv = np.linalg.inv(Atri)
+Aigpinv = np.linalg.inv(Aigp)
 
 #######################################################################
 # test cases
@@ -316,13 +336,13 @@ def fast_tests():
 	assert NS(Aigpinv, .5, 1, 2) == 1
 
 	# interval of stability tests
-	interval = interval_of_stability(Aigp, Aigpinv, 0, 0, num_sample=1000)
+	interval = interval_of_stability(Aigp, Aigpinv, 0, 0)
 	assert np.abs(interval[0] - -0.08298659074229853) < .001
 	assert np.abs(interval[1] - 0.10901820241962716) < .001
 	#interval = interval_of_stability_crawl(Aigp, Aigpinv, 0, 0, step_size=.0001)
 	#assert np.abs(interval[0] - -0.08298659074229853) < .001
 	#assert np.abs(interval[1] - 0.10901820241962716) < .001
-	interval = interval_of_stability(Aigp, Aigpinv, 1, 0, num_sample=1000)
+	interval = interval_of_stability(Aigp, Aigpinv, 1, 0)
 	assert np.abs(interval[0] - -0.025934401526958355) < .02
 	assert np.abs(interval[1] - 10) < .02
 
@@ -363,7 +383,7 @@ def test_num_switch_from_crit_eps():
 	for k in range(n):
 		for l in range(n):
 			if True:  # A[k, l] != 0:
-				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10)
 				stab_int_array[k, l, 0] = interval[0]
 				stab_int_array[k, l, 1] = interval[1]
 
@@ -421,7 +441,7 @@ def test_num_switch_from_crit_eps():
 	for k in range(n):
 		for l in range(n):
 			if True:  # A[k, l] != 0:
-				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10)
 				stab_int_array[k, l, 0] = interval[0]
 				stab_int_array[k, l, 1] = interval[1]
 
@@ -439,7 +459,8 @@ def test_num_switch_from_crit_eps():
 					[],
 					[],
 					[],
-					[(1, (-0.00973428, 0.000265719)), (1, (0.0102657, 0.0123244))],
+					#[(1, (-0.00973428, 0.000265719)), (1, (0.0102657, 0.0123244))],  # step size was too large in mathematica
+					[(4, (-0.0107243, -0.0103543)), (3, (-0.0103543, -0.0100143)), (2, (-0.0100143, -0.00997428)), (1, (-0.00997428, -0.000354281)), (1, (0.0100057, 0.0123244))],
 					[(2, (0.00242148, 0.00342148)), (3, (0.00342148, 0.0452924))],
 					[],
 					[]]
@@ -461,6 +482,8 @@ def test_num_switch_from_crit_eps():
 			for index in range(len(known_answer)):
 				known_val, (known_start, known_end) = known_answer[index]
 				test_val, (test_start, test_end) = res[index]
+				#print('known: %f, test: %f' % (known_val, test_val))
+				#print(res)
 				assert known_val == test_val
 				assert np.abs(known_start - test_start) < 0.02
 				assert np.abs(known_end - test_end) < 0.02
@@ -489,7 +512,7 @@ def test_exp_num_switch_from_crit_eps():
 	for k in range(n):
 		for l in range(n):
 			if A[k, l] != 0:
-				interval = interval_of_stability(A, Ainv, k, l, max_bound=10, num_sample=2000)
+				interval = interval_of_stability(A, Ainv, k, l, max_bound=10)
 				stab_int_array[k, l, 0] = interval[0]
 				stab_int_array[k, l, 1] = interval[1]
 
