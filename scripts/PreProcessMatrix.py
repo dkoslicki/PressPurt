@@ -3,6 +3,10 @@ import numpy as np
 import os
 import sys
 import pickle
+import timeit
+from multiprocessing import Pool  # Much faster without dummy (threading)
+import multiprocessing
+import itertools
 
 # import stuff in the src folder
 try:
@@ -63,20 +67,36 @@ if __name__ == '__main__':
 
 	# compute the intervals of stability
 	intervals = np.zeros((m, n, 2))
-	# TODO: parallelize this
+	def helper(k,l):
+		val = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
+		return (val, k, l)
+	def helper_star(arg):
+		return helper(*arg)
+	t0 = timeit.default_timer()
+	to_compute_args = []
 	for k in range(m):
 		for l in range(n):
 			if A[k, l] != 0:
-				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
+				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
+				to_compute_args.append((k,l))
 			elif pert_zero:
-				intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
+				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
+				to_compute_args.append((k, l))
+	# start the pool and do the computations
+	pool = Pool(processes=multiprocessing.cpu_count())
+	res = pool.map(helper_star, to_compute_args)
+	# collect the results
+	for val, k, l in res:
+		intervals[k, l, :] = val
+	t1 = timeit.default_timer()
+	print("int stab time: %f" % (t1 - t0))
 
 	# save these
 	print("Saving asymptotic stability to: %s" % asymp_stab_file)
 	np.save(asymp_stab_file, intervals)
 
 	# Compute the num switch functions
-	# TODO: parallelize this
+	# Looks like up to matrices of size 50, the parallelization doesn't help. NumSwitch.critical_epsilon is CPU non-intensive
 	crit_epsilon_array = np.zeros((n, n, n, n))
 	for k in range(n):
 		for l in range(n):
@@ -85,6 +105,7 @@ if __name__ == '__main__':
 					crit_epsilon_array[k, l, i, j] = NumSwitch.critical_epsilon(Ainv, k, l, i, j)
 
 	num_switch_funcs = dict()
+	# Looks like up to matrices of size 50, the parallelization doesn't help. Here again, the computation is CPU non-intensive
 	for k in range(n):
 		for l in range(n):
 			if A[k, l] != 0:

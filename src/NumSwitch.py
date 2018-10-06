@@ -2,7 +2,7 @@
 import numpy as np
 import scipy.stats as st
 import warnings
-from scipy.optimize import bisect
+from scipy.optimize import bisect, brentq
 
 
 def ind_switch(Ainv, eps, i, j, k, l):
@@ -100,11 +100,11 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 	if largest_root(A, k, l, initial_interval[1]) < 0:
 		upper_bound = initial_interval[1]
 	else:
-		upper_bound = bisect(lambda x: largest_root(A, k, l, x), 0, initial_interval[1])
+		upper_bound = brentq(lambda x: largest_root(A, k, l, x), 0, initial_interval[1])
 	if largest_root(A, k, l, initial_interval[0]) < 0:
 		lower_bound = initial_interval[0]
 	else:
-		lower_bound = bisect(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
+		lower_bound = brentq(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
 	return (lower_bound + .00001, upper_bound - .00001)
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
 	#(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
