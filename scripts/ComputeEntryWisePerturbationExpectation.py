@@ -62,7 +62,7 @@ class custom_beta():
 known_distributions = ['truncnorm', 'uniform', 'trunc_lognorm', 'beta']
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description="This script all indices from the Koslicki & Novak (2018) paper", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
 	parser.add_argument('-n', type=int, help="Dimension of matrix. Eg 4x4 matrix means you use -n 4", required=True)
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
