@@ -72,13 +72,13 @@ if __name__ == '__main__':
 		return (val, k, l)
 	def helper_star(arg):
 		return helper(*arg)
-	t0 = timeit.default_timer()
+
 	to_compute_args = []
 	for k in range(m):
 		for l in range(n):
 			if A[k, l] != 0:
 				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
-				to_compute_args.append((k,l))
+				to_compute_args.append((k, l))
 			elif pert_zero:
 				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 				to_compute_args.append((k, l))
@@ -88,8 +88,6 @@ if __name__ == '__main__':
 	# collect the results
 	for val, k, l in res:
 		intervals[k, l, :] = val
-	t1 = timeit.default_timer()
-	print("int stab time: %f" % (t1 - t0))
 
 	# save these
 	print("Saving asymptotic stability to: %s" % asymp_stab_file)
