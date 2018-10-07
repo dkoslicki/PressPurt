@@ -123,8 +123,8 @@ if __name__ == '__main__':
 	# Generate figure 2
 	# let's do a mxn grid of these figures
 	# TODO: should really make this into its own function
+	padding = .1
 	if all_numswitch_plots:
-		padding = .02
 		big_fig, axarr = plt.subplots(m, n)
 		big_fig.suptitle("Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
 		for k in range(m):
@@ -144,7 +144,7 @@ if __name__ == '__main__':
 					ax2 = ax1.twinx()
 					ax2.plot(x_range, dist_vals, 'tab:gray')
 					ax2.tick_params('y', colors='tab:gray')
-					ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
+					ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
 				else:
 					axarr[k, l].axis('off')  # don't show the ones we are not perturbing
 		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
@@ -155,7 +155,6 @@ if __name__ == '__main__':
 		plt.draw()
 		plt.pause(0.01)
 	elif indices_to_plot:  # you only want to plot individual entries
-		padding = .02
 		grid_size = int(np.ceil(np.sqrt(len(indices_to_plot))))
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
 		big_fig.suptitle(
@@ -178,7 +177,7 @@ if __name__ == '__main__':
 				ax2 = ax1.twinx()
 				ax2.plot(x_range, dist_vals, 'tab:gray')
 				ax2.tick_params('y', colors='tab:gray')
-				ax2.fill(x_range, dist_vals, 'tab:gray', alpha=0.5)
+				ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
 			else:
 				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
 		axes_flat = axarr.flatten()
