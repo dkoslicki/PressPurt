@@ -4,6 +4,7 @@ import numpy as np
 import sympy as sp
 import scipy.stats as st
 from NumSwitch import interval_of_stability
+import timeit
 
 
 def intervals(aij, x=0.01):
@@ -117,6 +118,7 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 	if not is_stable(A):
 		raise Exception(
 			"The input matrix is not stable itself (one or more eigenvalues have non-negative real part). Cannot continue analysis.")
+	t0 = timeit.default_timer()
 	entries_to_perturb = get_entries_to_perturb(A)
 	Ainv = sp.Matrix(np.linalg.inv(A))
 
@@ -136,24 +138,31 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 	for i, j in zip(pert_locations_i, pert_locations_j):
 		B_temp[i, j] = symbol_tup[iter]
 		iter += 1
-
+	t1 = timeit.default_timer()
+	print("preprocess time: %f" %(t1 - t0))
+	t0 = timeit.default_timer()
 	# form the symbolic matrix (A+B)^(-1)./A^(-1)
 	B = sp.Matrix(B_temp)
 	AplusB = A + B
-	AplusBinv = AplusB.inv()
-	#AplusBinv = AplusB.inv(method='LU')
-	#AplusBinv = AplusB.inv(method='ADJ')
-
+	#AplusBinv = AplusB.inv()
+	#AplusBinv = AplusB.inv(method='LU', try_block_diag=True)
+	AplusBinv = AplusB.inv(method='ADJ', try_block_diag=True)
+	t1 = timeit.default_timer()
+	print("AplusBinv time: %f" %(t1 - t0))
+	t0 = timeit.default_timer()
 	# component-wise division
 	AplusBinvDivAinv = sp.Matrix(np.zeros(A.shape))
 	for i in range(A.shape[0]):
 		for j in range(A.shape[1]):
-			AplusBinvDivAinv[i, j] = AplusBinv[i, j] / Ainv[i, j]
-
+			AplusBinvDivAinv[i, j] = AplusBinv[i, j] / float(Ainv[i, j])
+	t1 = timeit.default_timer()
+	print("AplusBinvDivAinv time: %f" % (t1 - t0))
+	t0 = timeit.default_timer()
 	# lambdafy the symbolic quantity
 	AplusBinvDivAinvEval = sp.lambdify(symbol_tup, AplusBinvDivAinv, "numpy")
 	AplusBEval = sp.lambdify(symbol_tup, AplusB, "numpy")
-
+	t1 = timeit.default_timer()
+	print("lambdify time: %f" % (t1 - t0))
 
 	#num_iterates = 10000
 	#interval_length = 0.01
@@ -164,7 +173,7 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 	eps_dicts = []
 	for iterate in range(num_iterates):
 		eps_dicts.append(dict())
-
+	t0 = timeit.default_timer()
 	# for each one of the symbols, sample from the appropriate distribution
 	for symbol in symbol_tup:
 		symbol_name = symbol.name
@@ -177,13 +186,18 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 		for eps_dict in eps_dicts:
 			eps_dict[symbol_name] = vals[iter]
 			iter += 1
-
+	t1 = timeit.default_timer()
+	print("Sample time: %f" % (t1 - t0))
 	# check for sign switches and stability
+	t0 = timeit.default_timer()
 	for eps_dict in eps_dicts:
-		if is_stable(AplusBEval(**eps_dict)):
+		stab_indicator = is_stable(AplusBEval(**eps_dict))
+		if stab_indicator:
 			is_stable_count += 1
-		if exists_switch(eps_dict, AplusBinvDivAinvEval) and is_stable(AplusBEval(**eps_dict)):
+		if exists_switch(eps_dict, AplusBinvDivAinvEval) and stab_indicator:
 			switch_count += 1
+	t1 = timeit.default_timer()
+	print("Actual eval time: %f" % (t1 - t0))
 	#print(switch_count)
 	#print(num_iterates)
 	#print(is_stable_count)
