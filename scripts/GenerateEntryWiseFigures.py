@@ -123,7 +123,7 @@ if __name__ == '__main__':
 	# Generate figure 2
 	# let's do a mxn grid of these figures
 	# TODO: should really make this into its own function
-	padding = .1
+	#padding = .1
 	if all_numswitch_plots:
 		big_fig, axarr = plt.subplots(m, n)
 		big_fig.suptitle("Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
@@ -131,6 +131,7 @@ if __name__ == '__main__':
 			for l in range(n):
 				if (k, l) in dists:
 					interval = intervals[k, l, :]
+					padding = (interval[1] - interval[0])/float(100)
 					x_range = np.linspace(interval[0] - padding, interval[1] + padding, 250)
 					dist = dists[k, l]
 					dist_vals = [dist.pdf(eps) for eps in x_range]
@@ -164,6 +165,7 @@ if __name__ == '__main__':
 			num_plotted += 1
 			if (k, l) in dists:
 				interval = intervals[k, l, :]
+				padding = (interval[1] - interval[0]) / float(100)
 				x_range = np.linspace(interval[0] - padding, interval[1] + padding, 250)
 				dist = dists[k, l]
 				dist_vals = [dist.pdf(eps) for eps in x_range]

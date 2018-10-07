@@ -123,9 +123,11 @@ if __name__ == '__main__':
 				elif distribution_type == 'trunc_lognorm':
 					a = interval[0]
 					b = interval[1]
-					loc = 0
+					#loc = 0
 					s = input_a
-					scale = input_b
+					#scale = input_b
+					loc = interval[0]
+					scale = interval[1] - interval[0]
 					dists[k, l] = trunc_lognorm(a, b, s, loc, scale)
 				elif distribution_type == 'beta':
 					loc = interval[0]
