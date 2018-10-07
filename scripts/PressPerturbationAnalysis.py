@@ -111,7 +111,7 @@ if __name__ == '__main__':
 		for k in range(m):
 			for l in range(n):
 				if A[k, l] != 0:
-					intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound, num_sample=num_sample)
+					intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 
 	# save these if that was asked for
 	if save_asymp_stability_file:
