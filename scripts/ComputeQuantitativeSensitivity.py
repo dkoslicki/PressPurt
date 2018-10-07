@@ -28,7 +28,7 @@ except ImportError:
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script Generates the quantitative sensitivity: perturbing each single entry off to infinity.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
-	parser.add_argument('output_folder', type=str, help="Output folder. A number of files will be created in the form 'output_folder/<prefix>_*.npy'")
+	parser.add_argument('output_folder', type=str, help="Output folder. A file <prefix>_quantitative_sensitivity.csv' will be put here.")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 
 	# read in the arguments
@@ -44,8 +44,10 @@ if __name__ == '__main__':
 
 	if prefix:
 		quant_sens_file = os.path.join(output_folder, prefix + "_quantitative_sensitivity.csv")
+		MRS_file = os.path.join(output_folder, prefix + "_MRS.csv")
 	else:
 		quant_sens_file = os.path.join(output_folder, "quantitative_sensitivity.csv")
+		MRS_file = os.path.join(output_folder, "MRS.csv")
 
 	# read in the input matrix
 	A = np.loadtxt(input_file, delimiter=",")
@@ -66,3 +68,5 @@ if __name__ == '__main__':
 				quant_sens_values[i, j] = 0
 
 	np.savetxt(quant_sens_file, quant_sens_values, delimiter=',')
+	mrs = MRS.MRS(A)
+	np.savetxt(MRS_file, [mrs], delimiter=',')
