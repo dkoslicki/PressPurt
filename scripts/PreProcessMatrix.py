@@ -30,7 +30,7 @@ if __name__ == '__main__':
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('output_folder', type=str, help="Output folder. A number of files will be created in the form 'output_folder/<prefix>_*.npy'")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
-	parser.add_argument('-m', '--max_bound', type=int, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
+	parser.add_argument('-m', '--max_bound', type=float, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
 
 	# read in the arguments
@@ -40,7 +40,7 @@ if __name__ == '__main__':
 	if output_folder:
 		output_folder = os.path.abspath(output_folder)
 	prefix = args.prefix
-	max_bound = int(args.max_bound)
+	max_bound = float(args.max_bound)
 	pert_zero = args.zero_perturb
 	if not os.access(output_folder, os.W_OK):
 		raise Exception("The provided directory %s is not writable." % output_folder)
