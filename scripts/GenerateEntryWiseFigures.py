@@ -163,7 +163,7 @@ if __name__ == '__main__':
 		num_plotted = 0
 		for k,l in indices_to_plot:
 			num_plotted += 1
-			if A[k, l] != 0:
+			if (k, l) in dists:
 				interval = intervals[k, l, :]
 				x_range = np.linspace(interval[0] - padding, interval[1] + padding, 250)
 				dist = dists[k, l]
