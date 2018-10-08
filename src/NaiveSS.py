@@ -95,36 +95,87 @@ def exists_switch(Ainv, Apinv):
 
 #A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
 
-A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+#A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 
-Ainv = np.linalg.inv(A)
-entries_to_pertub = get_entries_to_perturb(A)
-m, n = A.shape
+def naive_SS(A, num_iterates, interval_length):
+	"""
+	Computes the sign sensitivity (expected number of perturbations that lead to a sign switch in the inverse Jacobian) when perturbing multiple entries via Monte Carlo Sampling.
+	:param A: input matrix
+	:param num_iterates: number of Monte Carlo samples to make
+	:param interval_length: length of interval to draw samples from
+	:return: float
+	"""
+	Ainv = np.linalg.inv(A)
+	m, n = A.shape
 
-num_iterates = 10000
-interval_length = 0.01
-
-pert_array = np.zeros((m, n, num_iterates))
-for i in range(m):
-	for j in range(n):
-		interval = intervals(A[i, j], interval_length)
-		dist = st.uniform(interval[0], interval[1])
-		vals = dist.rvs(num_iterates)
-		pert_array[i, j, :] = vals
-
-stable_counter = 0
-switch_counter = 0
-for it in range(num_iterates):
-	Ap = np.array(A)
+	# get the pertubation intervals
+	intervals_array = np.zeros((m,n,2))
 	for i in range(m):
 		for j in range(n):
-			Ap[i, j] += pert_array[i, j, it]
-	Apinv = np.linalg.inv(Ap)
-	is_switch = exists_switch(Ainv, Apinv)
-	if is_stable(Ap):
-		stable_counter += 1
-		if is_switch:
-			switch_counter += 1
-print(switch_counter/float(stable_counter))
+			intervals_array[i, j, :] = intervals(A[i, j], interval_length)
+
+	# Array of perturbation values
+	pert_array = np.zeros((m, n, num_iterates))
+	for i in range(m):
+		for j in range(n):
+			interval = intervals_array[i, j, :]
+			dist = st.uniform(interval[0], interval[1])
+			vals = dist.rvs(num_iterates)
+			pert_array[i, j, :] = vals
+
+	stable_counter = 0
+	switch_counter = 0
+	for it in range(num_iterates):
+		Ap = np.array(A)
+		for i in range(m):
+			for j in range(n):
+				Ap[i, j] += pert_array[i, j, it]
+		Apinv = np.linalg.inv(Ap)
+		is_switch = exists_switch(Ainv, Apinv)
+		if is_stable(Ap):
+			stable_counter += 1
+			if is_switch:
+				switch_counter += 1
+	return switch_counter/float(stable_counter)
+
+def tests():
+	"""
+		Run all the tests
+		:return: None
+		"""
+	assert np.allclose(intervals(4, 1), [-0.5, 0.5])
+	assert np.allclose(intervals(4, 100), [-4, 96])
+	assert np.allclose(intervals(-4, 1), [-0.5, 0.5])
+	assert np.allclose(intervals(-4, 100), [-96, 4])
+
+	# SS function tests
+	# IGP
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	ss = naive_SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.37) < 0.1
+
+	# Tri-diagonal
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	ss = naive_SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.0) < 0.01
+
+	# Other
+	A = np.array([[-0.337, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
+	try:
+		ss = naive_SS(A, num_iterates=5000, interval_length=0.01)
+	except:
+		pass  # it should throw an error, since this matrix is not stable to begin with
+
+	# Other 2
+	A = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .005, 0.1, -0.015]])
+	ss = naive_SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.34) < 0.1
+
+	A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
+	ss = naive_SS(A, num_iterates=5000, interval_length=0.01)
+	assert abs(ss - 0.99) < 0.01
+# TODO: this give 99% switch, whereas mathematica gives it only 50%, something weird is going on!!!!!
+# TODO: figured out this is an issue with Mathematica, see NaiveSS.py for corroboration that this is correct
+
 
 
