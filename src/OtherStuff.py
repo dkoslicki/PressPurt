@@ -6,8 +6,8 @@ n = 20
 eig = np.diag(-np.random.rand(n))
 v = sp.linalg.orth(2*(np.random.rand(n, n)-.5))
 A = np.transpose(v).dot(eig.dot(v))
-#np.savetxt('/home/dkoslicki/Desktop/PressPurtCoreAlg/ExampleJacobians/big_test.csv', A, delimiter=',')
-np.savetxt('/home/dkoslicki/Dropbox/Repositories/PressPurtCoreAlg/ExampleJacobians/big_test.csv', A, delimiter=',')
+np.savetxt('/home/dkoslicki/Desktop/PressPurtCoreAlg/ExampleJacobians/big_test.csv', A, delimiter=',')
+#np.savetxt('/home/dkoslicki/Dropbox/Repositories/PressPurtCoreAlg/ExampleJacobians/big_test.csv', A, delimiter=',')
 Ainv = np.linalg.inv(A)
 
 

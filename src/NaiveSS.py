@@ -1,7 +1,10 @@
 # For sanity purposes, let's implement the super naive version to determine sign stability
 import numpy as np
 import scipy.stats as st
-
+#from multiprocessing import Pool  # Much faster without dummy (threading)
+import multiprocessing
+from pathos.multiprocessing import ProcessingPool as Pool
+import scipy
 
 def intervals(aij, x=0.01):
 	"""
@@ -123,20 +126,53 @@ def naive_SS(A, num_iterates, interval_length):
 			vals = dist.rvs(num_iterates)
 			pert_array[i, j, :] = vals
 
+	# helper function defining the work to do for one iterate
+	def helper(it):
+		stable_q = False
+		switch_q = False
+		Ap = A + pert_array[:, :, it]  # form the perturbation
+		if is_stable(Ap):
+			stable_q = True
+			#Apinv = np.linalg.inv(Ap)
+			Apinv = scipy.linalg.inv(Ap, overwrite_a=True, check_finite=False)
+			is_switch = exists_switch(Ainv, Apinv)
+			if is_switch:
+				switch_q = True
+		return stable_q, switch_q
+
+	# do the work
+	pool = Pool(processes=multiprocessing.cpu_count())
+	res = pool.map(helper, range(num_iterates))
+
+	# collect the results
 	stable_counter = 0
 	switch_counter = 0
-	for it in range(num_iterates):
-		Ap = np.array(A)
-		for i in range(m):
-			for j in range(n):
-				Ap[i, j] += pert_array[i, j, it]
-		Apinv = np.linalg.inv(Ap)
-		is_switch = exists_switch(Ainv, Apinv)
-		if is_stable(Ap):
+	for stable_q, switch_q in res:
+		if stable_q:
 			stable_counter += 1
-			if is_switch:
+			if switch_q:
 				switch_counter += 1
-	return switch_counter/float(stable_counter)
+	# TODO: note, it might be nice to return stable_counter too, as this will indicate
+	# how close the matrix is to being unstable (stable_counter small means many perturbations lead to instability)
+	if stable_counter == 0:
+		raise Exception("No perturbations lead to a stable matrix. Decrease the interval_length (-l) and/or increase the number of iterates. (-n)")
+	return switch_counter / float(stable_counter)
+
+	# old, serial way
+	#stable_counter = 0
+	#switch_counter = 0
+	#for it in range(num_iterates):
+	#	Ap = np.array(A)
+	#	for i in range(m):
+	#		for j in range(n):
+	#			Ap[i, j] += pert_array[i, j, it]
+	#	Apinv = np.linalg.inv(Ap)
+	#	is_switch = exists_switch(Ainv, Apinv)
+	#	if is_stable(Ap):
+	#		stable_counter += 1
+	#		if is_switch:
+	#			switch_counter += 1
+	#return switch_counter/float(stable_counter)
 
 def tests():
 	"""
