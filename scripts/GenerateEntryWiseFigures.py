@@ -159,10 +159,12 @@ if __name__ == '__main__':
 	elif indices_to_plot:  # you only want to plot individual entries
 		grid_size = int(np.ceil(np.sqrt(len(indices_to_plot))))
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
+		axarr_flat = axarr.flatten()
 		big_fig.suptitle(
 			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
 		num_plotted = 0
-		for k,l in indices_to_plot:
+		for k, l in indices_to_plot:
+			ax1 = axarr_flat[num_plotted]
 			num_plotted += 1
 			if (k, l) in dists:
 				interval = intervals[k, l, :]
@@ -172,7 +174,7 @@ if __name__ == '__main__':
 				dist_vals = [dist.pdf(eps) for eps in x_range]
 				(nsx, nsy) = NumSwitch.num_switch_to_step(num_switch_funcs, intervals, k, l)
 				# plot both simultaneously on the same graph (two y-axis plot)
-				ax1 = axarr[k, l]
+				#ax1 = axarr[k, l]
 				ax1.title.set_text('(%d,%d) entry' % (k + 1, l + 1))
 				ax1.step(nsx, nsy, 'b-')
 				ax1.tick_params('y', colors='b')
@@ -182,7 +184,7 @@ if __name__ == '__main__':
 				ax2.tick_params('y', colors='tab:gray')
 				ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
 			else:
-				axarr[k, l].axis('off')  # don't show the ones we are not perturbing
+				axarr_flat[num_plotted].axis('off')  # don't show the ones we are not perturbing
 		axes_flat = axarr.flatten()
 		for i in range(num_plotted, grid_size**2):
 			axes_flat[i].axis('off')
