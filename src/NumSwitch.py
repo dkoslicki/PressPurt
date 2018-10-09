@@ -4,6 +4,17 @@ import scipy.stats as st
 import warnings
 from scipy.optimize import bisect, brentq
 
+def is_stable(A):
+	"""
+	Check if the input matrix is asymptotically stable
+	:param A: input matrix
+	:return: Bool (1 iff asymptotically stable)
+	"""
+	[s, _] = np.linalg.eig(A)
+	if all([np.real(i) < 0 for i in s]):
+		return 1
+	else:
+		return 0
 
 def ind_switch(Ainv, eps, i, j, k, l):
 	"""

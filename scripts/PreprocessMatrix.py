@@ -10,16 +10,6 @@ import itertools
 
 # import stuff in the src folder
 try:
-	import MRS
-except ImportError:
-	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
-	import MRS
-try:
-	import SS
-except ImportError:
-	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
-	import SS
-try:
 	import NumSwitch
 except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
@@ -62,7 +52,7 @@ if __name__ == '__main__':
 	m, n = A.shape
 
 	# make sure the original matrix is itself asymptotically stable
-	if not SS.is_stable(A):
+	if not NumSwitch.is_stable(A):
 		raise Exception("Sorry, the input matrix is not stable itself (all eigenvalues must have negative real part). Please try again.")
 
 	# compute the intervals of stability
