@@ -104,6 +104,12 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 		initial_interval = (max([-1 / float(Ainv[l, k]), -A[k, l]]), max_bound)
 	else:
 		initial_interval = (-max_bound, max_bound)
+	initial_interval = list(initial_interval)
+	if initial_interval[1] > max_bound:
+		initial_interval[1] = max_bound
+	if initial_interval[0] < -max_bound:
+		initial_interval[0] = -max_bound
+	initial_interval = tuple(initial_interval)
 		#num_sample *= 2*max_bound  # if you fall in this case, better crank up the number of samples
 	# now need to sample to determine the actual region of stability
 
