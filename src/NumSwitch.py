@@ -275,7 +275,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 				counter += 1
 			else:
 				if is_first and has_zero:
-					num_switch_func.append((counter, (0, next)))
+					num_switch_func.append((counter, (next, 0)))
 					is_first = False
 				else:
 					num_switch_func.append((counter, (next, current)))
@@ -323,26 +323,36 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 	:return: (x,y) suitable for input to plt.step(x,y)
 	"""
 	num_switch_func = num_switch_funcs[k, l]
-	num_switch_func_sorted = sorted(num_switch_func, key=lambda x: x[1][0])  # sort based off of increasing x-value
-	val, (first_int_start, first_int_end) = num_switch_func_sorted[0]
-	val, (last_int_start, last_int_end) = num_switch_func_sorted[-1]
 	start, stop = intervals[k, l]
-	num_switch_func_sorted.insert(0, (-1, (start, 0)))
-	num_switch_func_sorted.append((-1, (stop, 0)))
-	#return num_switch_func_sorted
-	for i in range(len(num_switch_func_sorted)):
-		val, (int_start, int_stop) = num_switch_func_sorted[i]
-		if int_start > 0:
-			zero_start = num_switch_func_sorted[i - 1][1][1]
-			zero_stop = num_switch_func_sorted[i][1][0]
-			break
-	if first_int_start > start:
-		zero_start = start
-	if last_int_end < stop:
-		zero_stop = stop
-	full_switch_func = sorted(num_switch_func + [(0, (zero_start, zero_stop))], key=lambda x: x[1][0])
-	x = [i[1][0] for i in full_switch_func] + [full_switch_func[-1][1][1]]
-	y = [full_switch_func[0][0]] + [i[0] for i in full_switch_func]
+	if not num_switch_func:
+		x = [start, stop]
+		y = [0, 0]
+	else:
+		num_switch_func_sorted = sorted(num_switch_func, key=lambda x: x[1][0])  # sort based off of increasing x-value
+		val, (first_int_start, first_int_end) = num_switch_func_sorted[0]
+		val, (last_int_start, last_int_end) = num_switch_func_sorted[-1]
+		num_switch_func_sorted.insert(0, (-1, (start, 0)))
+		num_switch_func_sorted.append((-1, (stop, 0)))
+		#return num_switch_func_sorted
+		for i in range(len(num_switch_func_sorted)):
+			val, (int_start, int_stop) = num_switch_func_sorted[i]
+			if int_start > 0:
+				zero_start = num_switch_func_sorted[i - 1][1][1]
+				zero_stop = num_switch_func_sorted[i][1][0]
+				break
+		if first_int_start > start:
+			zero_start = start
+		if last_int_end < stop:
+			zero_stop = stop
+		full_switch_func = sorted(num_switch_func + [(0, (zero_start, zero_stop))], key=lambda x: x[1][0])
+		# get rid of zero length intervals
+		full_switch_func_clean = []
+		for val, (int_start, int_stop) in full_switch_func:
+			if int_stop - int_start != 0:
+				full_switch_func_clean.append((val,(int_start, int_stop)))
+		full_switch_func = full_switch_func_clean
+		x = [i[1][0] for i in full_switch_func] + [full_switch_func[-1][1][1]]
+		y = [full_switch_func[0][0]] + [i[0] for i in full_switch_func]
 	return (x, y)
 
 # This has been checked against Mathematica
