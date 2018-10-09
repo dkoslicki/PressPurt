@@ -64,7 +64,6 @@ known_distributions = ['truncnorm', 'uniform', 'trunc_lognorm', 'beta']
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
-	parser.add_argument('-n', type=int, help="Dimension of matrix. Eg 4x4 matrix means you use -n 4", required=True)
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-d', '--distribution_type', type=str, help="Kind of distribution to use. Valid choices are: %s." % (', '.join(known_distributions)), default='truncnorm')
 	parser.add_argument('-a', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the mean.", default=0)
@@ -75,7 +74,6 @@ if __name__ == '__main__':
 	input_folder = args.input_folder
 	output_folder = os.path.abspath(input_folder)
 	prefix = args.prefix
-	n = int(args.n)
 	distribution_type = args.distribution_type
 	input_a = float(args.a)
 	input_b = float(args.b)
@@ -88,12 +86,15 @@ if __name__ == '__main__':
 		num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
 		exp_num_switch_file = os.path.join(output_folder, prefix + "_expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, prefix + "_distributions.pkl")
+		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 		exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, "distributions.pkl")
+		matrix_size_file = os.path.join(output_folder, "size.npy")
 
+	n = int(np.load(matrix_size_file))
 	if distribution_type not in known_distributions:
 		raise Exception("You can only choose between the following distributions: %s. You provided '%s'." % (", ".join(known_distributions), distribution_type))
 	# read in the files

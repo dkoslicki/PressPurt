@@ -38,9 +38,11 @@ if __name__ == '__main__':
 	if prefix:
 		asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
+		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
+		matrix_size_file = os.path.join(output_folder, "size.npy")
 
 	# check for sanity of input parameters
 	if not max_bound > 0:
@@ -50,6 +52,7 @@ if __name__ == '__main__':
 	A = np.loadtxt(input_file, delimiter=",")
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
+	np.save(matrix_size_file, n)
 
 	# make sure the original matrix is itself asymptotically stable
 	if not NumSwitch.is_stable(A):

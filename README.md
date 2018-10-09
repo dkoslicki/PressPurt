@@ -17,8 +17,8 @@ The basic steps are:
 In the `scripts` directory:
 ```bash
 python PreprocessMatrix.py ../ExampleJacobians/IGP.csv ../ExampleJacobians
-python ComputeEntryWisePerturbationExpectation.py ../ExampleJacobians -n 4
-python GenerateEntryWiseFigures.py ../ExampleJacobians -n 4 -a
+python ComputeEntryWisePerturbationExpectation.py ../ExampleJacobians
+python GenerateEntryWiseFigures.py ../ExampleJacobians -a
 ```
 
 For quantitative stability:
