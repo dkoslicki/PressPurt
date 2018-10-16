@@ -115,7 +115,7 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 		#num_sample *= 2*max_bound  # if you fall in this case, better crank up the number of samples
 	# now need to sample to determine the actual region of stability
 
-	# bisection method, depreciated since bisect is so much faster.
+	# brentq root finding, basically binary search
 	if largest_root(A, k, l, initial_interval[1]) < 0:
 		upper_bound = initial_interval[1]
 	else:
@@ -125,6 +125,7 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 	else:
 		lower_bound = brentq(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
 	return (lower_bound + .00001, upper_bound - .00001)
+	# bisection method, depreciated since bisect is so much faster.
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
 	#(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
 	#zero_matrix = np.zeros(A.shape)  # matrix we will be perturbing by
