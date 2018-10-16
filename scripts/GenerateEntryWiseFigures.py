@@ -5,6 +5,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import pickle
+import matplotlib.gridspec as gridspec
 
 # import stuff in the src folder
 try:
@@ -54,6 +55,7 @@ class custom_beta():
 	def pdf(self, x):
 		return st.beta.pdf(x, self.a, self.b, loc=self.loc, scale=self.scale)
 
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
@@ -81,16 +83,20 @@ if __name__ == '__main__':
 		exp_num_switch_file = os.path.join(output_folder, prefix + "_expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, prefix + "_distributions.pkl")
 		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
+		row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
+		column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 		exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, "distributions.pkl")
 		matrix_size_file = os.path.join(output_folder, "size.npy")
+		row_names_file = os.path.join(output_folder, "row_names.txt")
+		column_names_file = os.path.join(output_folder, "column_names.txt")
 
 	n = int(np.load(matrix_size_file))
 	m = n
-	required_files = [asymp_stab_file, num_switch_file, exp_num_switch_file, distribution_file]
+	required_files = [asymp_stab_file, num_switch_file, exp_num_switch_file, distribution_file, row_names_file, column_names_file, matrix_size_file]
 	for file in required_files:
 		if not os.access(file, os.R_OK):
 			raise Exception("Missing files. Please first run PreProcessMatrix.py and ComputeEntryWisePerturbationExpectation.py. Files should include: asymptotic_stablity.npy, num_switch_funcs.pkl, expected_num_switch.csv, and distributions.pkl")
@@ -99,6 +105,19 @@ if __name__ == '__main__':
 		raise Exception("The flags -a and -l are mutually exclusive.")
 	if len(list_of_numswitch_to_plot) % 2 != 0:
 		raise Exception("Only an even length list can be passed to -l.")
+
+	# load the row/column names
+	row_names = []
+	column_names = []
+	with open(row_names_file, 'r') as fid:
+		for line in fid.readlines():
+			line_strip = line.strip()
+			row_names.append(line_strip)
+
+	with open(column_names_file, 'r') as fid:
+		for line in fid.readlines():
+			line_strip = line.strip()
+			column_names.append(line_strip)
 
 	# if appropriate, get the indices to plot
 	indices_to_plot = []
@@ -139,7 +158,8 @@ if __name__ == '__main__':
 					(nsx, nsy) = NumSwitch.num_switch_to_step(num_switch_funcs, intervals, k, l)
 					# plot both simultaneously on the same graph (two y-axis plot)
 					ax1 = axarr[k, l]
-					ax1.title.set_text('(%d,%d) entry' % (k+1, l+1))
+					#ax1.title.set_text('(%d,%d) entry' % (k+1, l+1))
+					ax1.title.set_text('(%s, %s) entry' % (column_names[k], row_names[l]))
 					ax1.step(nsx, nsy, 'b-')
 					ax1.tick_params('y', colors='b')
 
@@ -159,6 +179,8 @@ if __name__ == '__main__':
 	elif indices_to_plot:  # you only want to plot individual entries
 		grid_size = int(np.ceil(np.sqrt(len(indices_to_plot))))
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
+		gs1 = gridspec.GridSpec(grid_size, grid_size)
+		gs1.update(wspace=0.025, hspace=0.05)
 		axarr_flat = axarr.flatten()
 		big_fig.suptitle(
 			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
@@ -175,7 +197,8 @@ if __name__ == '__main__':
 				(nsx, nsy) = NumSwitch.num_switch_to_step(num_switch_funcs, intervals, k, l)
 				# plot both simultaneously on the same graph (two y-axis plot)
 				#ax1 = axarr[k, l]
-				ax1.title.set_text('(%d,%d) entry' % (k + 1, l + 1))
+				#ax1.title.set_text('(%d,%d) entry' % (k + 1, l + 1))
+				ax1.title.set_text('(%s, %s) entry' % (column_names[k], row_names[l]))
 				ax1.step(nsx, nsy, 'b-')
 				ax1.tick_params('y', colors='b')
 
@@ -188,7 +211,7 @@ if __name__ == '__main__':
 		axes_flat = axarr.flatten()
 		for i in range(num_plotted, grid_size**2):
 			axes_flat[i].axis('off')
-		plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
+		#plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
 		big_fig.text(0.5, 0.01, 'Epsilon value', ha='center', va='center')
 		big_fig.text(0.03, 0.5, 'Number of incorrect predictions', ha='center', va='center', rotation='vertical',
 					 color='b')
@@ -210,8 +233,10 @@ if __name__ == '__main__':
 	ax.set_xticks(np.arange(m))
 	ax.set_yticks(np.arange(n))
 	# ... and label them with the respective list entries
-	ax.set_xticklabels(['%d' % (i + 1) for i in range(n)])
-	ax.set_yticklabels(['%d' % (j + 1) for j in range(m)])
+	#ax.set_xticklabels(['%d' % (i + 1) for i in range(n)])
+	#ax.set_yticklabels(['%d' % (j + 1) for j in range(m)])
+	ax.set_xticklabels(column_names)
+	ax.set_yticklabels(row_names)
 	ax.set_xlabel('l')
 	ax.set_ylabel('k')
 	# Rotate the tick labels and set their alignment.

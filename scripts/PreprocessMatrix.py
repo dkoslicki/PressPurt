@@ -39,17 +39,31 @@ if __name__ == '__main__':
 		asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
 		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
+		row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
+		column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 		matrix_size_file = os.path.join(output_folder, "size.npy")
+		row_names_file = os.path.join(output_folder, "row_names.txt")
+		column_names_file = os.path.join(output_folder, "column_names.txt")
 
 	# check for sanity of input parameters
 	if not max_bound > 0:
 		raise Exception("max_bound must be larger than 0; provided value: %d." % max_bound)
 
 	# read in the input matrix
-	A = np.loadtxt(input_file, delimiter=",")
+	#A = np.loadtxt(input_file, delimiter=",")
+	A, row_names, column_names = NumSwitch.import_matrix(input_file)
+	# save the row and column names
+	with open(row_names_file, 'w') as fid:
+		for item in row_names:
+			fid.write("%s\n" % item)
+
+	with open(column_names_file, 'w') as fid:
+		for item in column_names:
+			fid.write("%s\n" % item)
+
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
 	np.save(matrix_size_file, n)
