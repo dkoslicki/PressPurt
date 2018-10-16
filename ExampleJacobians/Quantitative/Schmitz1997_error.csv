@@ -1,1 +1,7 @@
-Schmitz1997_errors,Nitrogen,Hieracium,Solidago,Phleum,Fragaria,MelanoplusNitrogen,0,0.24,0.056,0.0169,0.325,0Hieracium,0.068,1.61,0,0,0.0001,0.06Solidago,0.023,0,0.042,0,0,0.2Phleum,0.042,0.003,0.0017,0.17,0.0002,0.14Fragaria,0.034,0.0018,0.0033,0.001,0.071,0.02Melanoplus,0,0.0002,0.0029,0.0001,0.00001,0.002
+Schmitz1997_errors,Nitrogen,Hieracium,Solidago,Phleum,Fragaria,Melanoplus
+Nitrogen,0,0.24,0.056,0.0169,0.325,0
+Hieracium,0.068,1.61,0,0,0.0001,0.06
+Solidago,0.023,0,0.042,0,0,0.2
+Phleum,0.042,0.003,0.0017,0.17,0.0002,0.14
+Fragaria,0.034,0.0018,0.0033,0.001,0.071,0.02
+Melanoplus,0,0.0002,0.0029,0.0001,0.00001,0.002
