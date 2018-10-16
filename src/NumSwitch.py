@@ -3,6 +3,8 @@ import numpy as np
 import scipy.stats as st
 import warnings
 from scipy.optimize import bisect, brentq
+import os
+import pandas as pd
 
 def is_stable(A):
 	"""
@@ -360,6 +362,28 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 		x = [i[1][0] for i in full_switch_func] + [full_switch_func[-1][1][1]]
 		y = [full_switch_func[0][0]] + [i[0] for i in full_switch_func]
 	return (x, y)
+
+
+def import_matrix(file_path):
+	"""
+	Import a matrix, look for row/column labels, use pandas if they are, otherwise, use numpy
+	:param file_path: input matrix file path
+	:return: (matrix:numpy.array, row_labels:Array[string], column_labels:Array[string]
+	"""
+	if not os.path.exists(file_path):
+		raise Exception("The file %s does not appear to exist.")
+	try:
+		A = np.loadtxt(file_path, delimiter=',')
+		row_names = ['%d' % i for i in range(A.shape[0])]
+		column_names = ['%d' % i for i in range(A.shape[1])]
+		return (A, row_names, column_names)
+	except ValueError:
+		df = pd.read_csv(file_path, header=0, index_col=0)
+		A = df.values
+		column_names = ['%s' % i for i in df.columns.values]
+		row_names = ['%s' % i for i in df.index.values]
+		return (A, row_names, column_names)
+
 
 # This has been checked against Mathematica
 # a, b = (-.5 - 0) / .75, (1 - 0) / .75
