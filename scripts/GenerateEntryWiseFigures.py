@@ -182,7 +182,10 @@ if __name__ == '__main__':
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
 		gs1 = gridspec.GridSpec(grid_size, grid_size)
 		gs1.update(wspace=0.025, hspace=0.05)
-		axarr_flat = axarr.flatten()
+		try:
+			axarr_flat = axarr.flatten()
+		except AttributeError:
+			axarr_flat = [axarr]
 		big_fig.suptitle(
 			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
 		num_plotted = 0
@@ -209,7 +212,10 @@ if __name__ == '__main__':
 				ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
 			else:
 				axarr_flat[num_plotted].axis('off')  # don't show the ones we are not perturbing
-		axes_flat = axarr.flatten()
+		try:
+			axes_flat = axarr.flatten()
+		except AttributeError:
+			axes_flat = [axarr]
 		for i in range(num_plotted, grid_size**2):
 			axes_flat[i].axis('off')
 		#plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
