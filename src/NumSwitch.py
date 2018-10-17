@@ -5,6 +5,7 @@ import warnings
 from scipy.optimize import bisect, brentq
 import os
 import pandas as pd
+import numpy
 
 def is_stable(A):
 	"""
@@ -373,17 +374,29 @@ def import_matrix(file_path):
 	"""
 	if not os.path.exists(file_path):
 		raise Exception("The file %s does not appear to exist.")
-	try:
+	try:  # csv plain
 		A = np.loadtxt(file_path, delimiter=',')
 		row_names = ['%d' % i for i in range(A.shape[0])]
 		column_names = ['%d' % i for i in range(A.shape[1])]
 		return (A, row_names, column_names)
 	except ValueError:
-		df = pd.read_csv(file_path, header=0, index_col=0)
-		A = df.values
-		column_names = ['%s' % i for i in df.columns.values]
-		row_names = ['%s' % i for i in df.index.values]
-		return (A, row_names, column_names)
+		try:  # tsv plain
+			A = np.loadtxt(file_path, delimiter='\t')
+			row_names = ['%d' % i for i in range(A.shape[0])]
+			column_names = ['%d' % i for i in range(A.shape[1])]
+			return (A, row_names, column_names)
+		except ValueError:
+			try:  # csv with labels
+				df = pd.read_csv(file_path, header=0, index_col=0)
+				if df.empty:  # might instead be tsv
+					df = pd.read_csv(file_path, header=0, index_col=0, sep='\t')
+				A = df.values
+				column_names = ['%s' % i for i in df.columns.values]
+				row_names = ['%s' % i for i in df.index.values]
+				return (A, row_names, column_names)
+			except:
+				raise Exception("Could not read in the file %s. Maybe not tsv or csv or otherwise mangled?" % file_path)
+
 
 
 # This has been checked against Mathematica
