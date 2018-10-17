@@ -6,6 +6,7 @@ import sys
 import matplotlib.pyplot as plt
 import pickle
 import matplotlib.gridspec as gridspec
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -222,7 +223,9 @@ if __name__ == '__main__':
 
 	#####################
 	# Get the expected number of sign switches, in a table
-	exp_num_switch_array = np.loadtxt(exp_num_switch_file, delimiter=',')
+	#exp_num_switch_array = np.loadtxt(exp_num_switch_file, delimiter=',')
+	df = pd.read_csv(exp_num_switch_file, header=0, index_col=0)
+	exp_num_switch_array = df.values
 
 	#####################
 	# Generate figure 3

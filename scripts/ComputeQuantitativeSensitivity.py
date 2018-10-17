@@ -2,11 +2,7 @@ import argparse
 import numpy as np
 import os
 import sys
-import pickle
-import timeit
-from multiprocessing import Pool  # Much faster without dummy (threading)
-import multiprocessing
-import itertools
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -68,6 +64,10 @@ if __name__ == '__main__':
 			else:
 				quant_sens_values[i, j] = 0
 
-	np.savetxt(quant_sens_file, quant_sens_values, delimiter=',')
+	#np.savetxt(quant_sens_file, quant_sens_values, delimiter=',')
+	df = pd.DataFrame(quant_sens_values)
+	df.index = row_names
+	df.columns = column_names
+	df.to_csv(quant_sens_file)
 	mrs = MRS.MRS(A)
 	np.savetxt(MRS_file, [mrs], delimiter=',')

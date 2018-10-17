@@ -10,6 +10,7 @@ import scipy.stats as st
 from scipy.stats import rv_continuous
 from multiprocessing import Pool  # Much faster without dummy (threading)
 import multiprocessing
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -87,19 +88,44 @@ if __name__ == '__main__':
 		exp_num_switch_file = os.path.join(output_folder, prefix + "_expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, prefix + "_distributions.pkl")
 		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
+		row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
+		column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 		exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
 		distribution_file = os.path.join(output_folder, "distributions.pkl")
 		matrix_size_file = os.path.join(output_folder, "size.npy")
+		row_names_file = os.path.join(output_folder, "row_names.txt")
+		column_names_file = os.path.join(output_folder, "column_names.txt")
+
+	# check if files exist
+	required_files = [asymp_stab_file, num_switch_file, row_names_file,
+					  column_names_file, matrix_size_file]
+	for file in required_files:
+		if not os.access(file, os.R_OK):
+			raise Exception(
+				"Missing files. Please first run PreProcessMatrix.py and ComputeEntryWisePerturbationExpectation.py. Files should include: asymptotic_stablity.npy, num_switch_funcs.pkl, expected_num_switch.csv, and distributions.pkl")
 
 	n = int(np.load(matrix_size_file))
 	if distribution_type not in known_distributions:
 		raise Exception("You can only choose between the following distributions: %s. You provided '%s'." % (", ".join(known_distributions), distribution_type))
+
 	# read in the files
 	asymp_stab = np.load(asymp_stab_file)
 	num_switch_funcs = pickle.load(open(num_switch_file, 'rb'))
+
+	row_names = []
+	column_names = []
+	with open(row_names_file, 'r') as fid:
+		for line in fid.readlines():
+			line_strip = line.strip()
+			row_names.append(line_strip)
+
+	with open(column_names_file, 'r') as fid:
+		for line in fid.readlines():
+			line_strip = line.strip()
+			column_names.append(line_strip)
 
 	# create all the distributions
 	dists = dict()
@@ -192,4 +218,8 @@ if __name__ == '__main__':
 
 
 	# export the results
-	np.savetxt(exp_num_switch_file, exp_num_switch_array, delimiter=',')
+	#np.savetxt(exp_num_switch_file, exp_num_switch_array, delimiter=',')
+	df = pd.DataFrame(exp_num_switch_array)
+	df.index = row_names
+	df.columns = column_names
+	df.to_csv(exp_num_switch_file)
