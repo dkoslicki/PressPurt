@@ -50,7 +50,8 @@ if __name__ == '__main__':
 		MRS_file = os.path.join(output_folder, "MRS.csv")
 
 	# read in the input matrix
-	A = np.loadtxt(input_file, delimiter=",")
+	#A = np.loadtxt(input_file, delimiter=",")
+	A, row_names, column_names = NumSwitch.import_matrix(input_file)
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
 
