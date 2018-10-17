@@ -1,14 +1,7 @@
 import argparse
-import numpy as np
 import os
 import sys
 import numpy as np
-import scipy.stats as st
-import pickle
-import timeit
-from multiprocessing import Pool  # Much faster without dummy (threading)
-import multiprocessing
-import itertools
 
 # import stuff in the src folder
 try:
@@ -16,7 +9,11 @@ try:
 except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NaiveSS
-
+try:
+	import NumSwitch
+except ImportError:
+	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+	import NumSwitch
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="This script pre-processes a matrix by figuring out what the intervals of asymptotic stability are, as well as finding which perturbation values lead to a sign switch.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -35,6 +32,7 @@ if __name__ == '__main__':
 		raise Exception("interval_length must be larger than 0; provided value: %d." % interval_length)
 
 	# read in the input matrix
-	A = np.loadtxt(input_file, delimiter=",")
+	#A = np.loadtxt(input_file, delimiter=",")
+	A, row_names, column_names = NumSwitch.import_matrix(input_file)
 	expectation = NaiveSS.naive_SS(A, num_iterates=num_iterates, interval_length=interval_length)
 	print(expectation)
