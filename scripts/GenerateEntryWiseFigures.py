@@ -256,7 +256,10 @@ if __name__ == '__main__':
 	plt.pause(0.01)
 
 	num_non_zero = len(np.where(exp_num_switch_array)[0])
-	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
+	if num_non_zero != 0:
+		ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
+	else:
+		ave_expected_num_sign_switches = 0
 	print("Average expected percentage of mis-predictions (perturbing each edge individually): %f%% (i.e. %f entries)" % (100*ave_expected_num_sign_switches, ave_expected_num_sign_switches*m*n))
 	# TODO: check with Mark if I should be multiplying by n^2 or num_non_zero
 	input("press any key to quit")
