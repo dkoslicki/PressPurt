@@ -121,11 +121,15 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 		upper_bound = initial_interval[1]
 	else:
 		upper_bound = brentq(lambda x: largest_root(A, k, l, x), 0, initial_interval[1])
-	if largest_root(A, k, l, initial_interval[0]) < 0:
+	if largest_root(A, k, l, initial_interval[0]) < 0:  # it's monotonic
 		lower_bound = initial_interval[0]
 	else:
 		lower_bound = brentq(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
-	return (lower_bound + .00001, upper_bound - .00001)
+	small_num = .00000001
+	if (lower_bound + small_num) > (upper_bound - small_num):
+		return (lower_bound, upper_bound)
+	else:
+		return (lower_bound + small_num, upper_bound - small_num)
 	# bisection method, depreciated since bisect is so much faster.
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
 	#(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)

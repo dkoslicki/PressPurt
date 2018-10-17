@@ -191,7 +191,6 @@ if __name__ == '__main__':
 		num_plotted = 0
 		for k, l in indices_to_plot:
 			ax1 = axarr_flat[num_plotted]
-			num_plotted += 1
 			if (k, l) in dists:
 				interval = intervals[k, l, :]
 				padding = (interval[1] - interval[0]) / float(100)
@@ -210,6 +209,7 @@ if __name__ == '__main__':
 				ax2.plot(x_range, dist_vals, 'tab:gray')
 				ax2.tick_params('y', colors='tab:gray')
 				ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
+				num_plotted += 1
 			else:
 				axarr_flat[num_plotted].axis('off')  # don't show the ones we are not perturbing
 		try:
