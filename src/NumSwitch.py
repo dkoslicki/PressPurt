@@ -358,6 +358,18 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 			zero_start = start
 		if last_int_end < stop:
 			zero_stop = stop
+		try:  # in case they weren't defined, num_switch doesn't cross zero
+			zero_start
+			zero_stop
+		except NameError:
+			zero_start = 0
+			zero_stop = np.inf
+			for temp_val, (temp_start, temp_end) in num_switch_func:
+				if np.abs(temp_start) < zero_stop:
+					zero_stop = temp_start
+				if np.abs(temp_end) < zero_stop:
+					zero_stop = temp_end
+
 		full_switch_func = sorted(num_switch_func + [(0, (zero_start, zero_stop))], key=lambda x: x[1][0])
 		# get rid of zero length intervals
 		full_switch_func_clean = []
