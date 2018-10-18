@@ -17,15 +17,16 @@ def MRS(A):
 	# now for the main computation
 	outer_sum = 0  # numerator is 1
 	for k, l in zip(M_i, M_j):
-		outer_sum_const = 1 / np.abs(Ainv[l, k])
-		inner_sum1 = 0
-		for i in range(n):
-			inner_sum1_const = np.abs(Ainv[i, k])
-			inner_sum2 = 0
-			for j in range(n):
-				inner_sum2 += np.abs(Ainv[l, j])
-			inner_sum1 += inner_sum1_const * inner_sum2
-		outer_sum += outer_sum_const * inner_sum1
+		if Ainv[l, k] != 0:
+			outer_sum_const = 1 / np.abs(Ainv[l, k])
+			inner_sum1 = 0
+			for i in range(n):
+				inner_sum1_const = np.abs(Ainv[i, k])
+				inner_sum2 = 0
+				for j in range(n):
+					inner_sum2 += np.abs(Ainv[l, j])
+				inner_sum1 += inner_sum1_const * inner_sum2
+			outer_sum += outer_sum_const * inner_sum1
 
 	MRS = 1/(M * Ainv_T) * outer_sum
 	return MRS
@@ -46,15 +47,16 @@ def quant_sens(A, k ,l):
 	assert n != 0  # this should be nonzero, otherwise things below are undefined
 	# now for the main computation
 	outer_sum = 0  # numerator is 1
-	outer_sum_const = 1 / np.abs(Ainv[l, k])
-	inner_sum1 = 0
-	for i in range(n):
-		inner_sum1_const = np.abs(Ainv[i, k])
-		inner_sum2 = 0
-		for j in range(n):
-			inner_sum2 += np.abs(Ainv[l, j])
-		inner_sum1 += inner_sum1_const * inner_sum2
-	outer_sum += outer_sum_const * inner_sum1
+	if Ainv[l, k] != 0:  # if the entry is zero, can't do anything with it
+		outer_sum_const = 1 / np.abs(Ainv[l, k])
+		inner_sum1 = 0
+		for i in range(n):
+			inner_sum1_const = np.abs(Ainv[i, k])
+			inner_sum2 = 0
+			for j in range(n):
+				inner_sum2 += np.abs(Ainv[l, j])
+			inner_sum1 += inner_sum1_const * inner_sum2
+		outer_sum += outer_sum_const * inner_sum1
 
 	return outer_sum / float(Ainv_T)
 
