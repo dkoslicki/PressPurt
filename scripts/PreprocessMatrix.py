@@ -22,9 +22,11 @@ if __name__ == '__main__':
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-m', '--max_bound', type=float, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
+	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
 
 	# read in the arguments
 	args = parser.parse_args()
+	num_threads = int(args.threads)
 	input_file = os.path.abspath(args.input_file)
 	output_folder = args.output_folder
 	if output_folder:
@@ -90,7 +92,7 @@ if __name__ == '__main__':
 				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 				to_compute_args.append((k, l))
 	# start the pool and do the computations
-	pool = Pool(processes=multiprocessing.cpu_count())
+	pool = Pool(processes=num_threads)
 	res = pool.map(helper_star, to_compute_args)
 	# collect the results
 	for val, k, l in res:

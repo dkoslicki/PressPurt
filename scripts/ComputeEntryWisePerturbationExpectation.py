@@ -69,15 +69,17 @@ if __name__ == '__main__':
 	parser.add_argument('-d', '--distribution_type', type=str, help="Kind of distribution to use. Valid choices are: %s." % (', '.join(known_distributions)), default='truncnorm')
 	parser.add_argument('-a', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the mean.", default=0)
 	parser.add_argument('-b', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the variance. Using a negative value indicates you want the standard deviation to be the length of the interval divided by the absolute value of the input parameter.", default=-2)
+	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
 
 	# read in the arguments
 	args = parser.parse_args()
 	input_folder = args.input_folder
 	output_folder = os.path.abspath(input_folder)
-	prefix = args.prefix
+	pythonprefix = args.prefix
 	distribution_type = args.distribution_type
 	input_a = float(args.a)
 	input_b = float(args.b)
+	num_threads = int(args.threads)
 
 	if not os.access(output_folder, os.R_OK):
 		raise Exception("The provided directory %s is not readable." % output_folder)
@@ -208,7 +210,7 @@ if __name__ == '__main__':
 				to_compute_args.append((k, l))
 
 		# start the pool and do the computations
-		pool = Pool(processes=multiprocessing.cpu_count())
+		pool = Pool(processes=num_threads)
 		res = pool.map(helper_star, to_compute_args)
 
 		# collect the results
