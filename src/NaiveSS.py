@@ -100,12 +100,14 @@ def exists_switch(Ainv, Apinv):
 
 #A = np.array([[-0.237, -1, 0, 0], [0.1, 0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 
-def naive_SS(A, num_iterates, interval_length):
+
+def naive_SS(A, num_iterates, interval_length, num_threads):
 	"""
 	Computes the sign sensitivity (expected number of perturbations that lead to a sign switch in the inverse Jacobian) when perturbing multiple entries via Monte Carlo Sampling.
 	:param A: input matrix
 	:param num_iterates: number of Monte Carlo samples to make
 	:param interval_length: length of interval to draw samples from
+	:param num_threads: number of threads to use in the multithreading
 	:return: float
 	"""
 	Ainv = np.linalg.inv(A)
@@ -141,7 +143,7 @@ def naive_SS(A, num_iterates, interval_length):
 		return stable_q, switch_q
 
 	# do the work
-	pool = Pool(processes=multiprocessing.cpu_count())
+	pool = Pool(processes=num_threads)
 	res = pool.map(helper, range(num_iterates))
 
 	# collect the results

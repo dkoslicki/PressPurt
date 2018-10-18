@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import numpy as np
+import multiprocessing
 
 # import stuff in the src folder
 try:
@@ -20,9 +21,11 @@ if __name__ == '__main__':
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('-n', '--num_iterates', type=int, help="Number of iterates in the Monte Carlo sampling to perform.", default=10000)
 	parser.add_argument('-l', '--interval_length', type=float, help="Interval length over which to make the perturbations.", default=0.01)
+	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
 
 	# read in the arguments
 	args = parser.parse_args()
+	num_threads = int(args.threads)
 	input_file = os.path.abspath(args.input_file)
 	num_iterates = int(args.num_iterates)
 	interval_length = float(args.interval_length)
@@ -34,5 +37,5 @@ if __name__ == '__main__':
 	# read in the input matrix
 	#A = np.loadtxt(input_file, delimiter=",")
 	A, row_names, column_names = NumSwitch.import_matrix(input_file)
-	expectation = NaiveSS.naive_SS(A, num_iterates=num_iterates, interval_length=interval_length)
+	expectation = NaiveSS.naive_SS(A, num_iterates=num_iterates, interval_length=interval_length, num_threads=num_threads)
 	print(expectation)
