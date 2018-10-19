@@ -8,7 +8,7 @@ I suggest doing this in a [virtual environment](https://docs.python.org/3/librar
  python3 -m venv <name>
  source <name>/bin/activate
 ```
-where ``<venv>`` is the name of the folder you want to put the virtual environment in.
+where ``<name>`` is the name of the folder you want to put the virtual environment in.
 
 To install this repository, clone it and then install with pip
 ```bash
