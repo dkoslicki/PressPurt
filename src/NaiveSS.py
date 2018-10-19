@@ -9,6 +9,7 @@ import scipy
 def intervals(aij, x=0.01):
 	"""
 	This function defines an interval of size int_size around aij without changing the sign of aij
+
 	:param aij: the (i,j) entry of a matrix (scalar)
 	:param int_size: the size of the desired interval
 	:return: an (ordered) list defining the endpoints of the interval
@@ -44,6 +45,7 @@ def intervals(aij, x=0.01):
 def is_stable(A):
 	"""
 	Check if the input matrix is asymptotically stable
+
 	:param A: input matrix
 	:return: Bool (1 iff asymptotically stable)
 	"""
@@ -57,6 +59,7 @@ def is_stable(A):
 def get_entries_to_perturb(A):
 	"""
 	Returns a binary matrix indicating which entries to perturb
+
 	:param A: input matrix (numpy or sympy matrix)
 	:return: binary matrix of same dimensions as A
 	"""
@@ -73,6 +76,7 @@ def exists_switch(Ainv, Apinv):
 	"""
 	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
 	Returns 1 if a switch has occurred, 0 otherwise
+
 	:param eps_dict: dictionary {eps_symbols: eps_values}
 	:return: 0 or 1
 	"""
