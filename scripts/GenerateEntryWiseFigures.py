@@ -57,13 +57,16 @@ class custom_beta():
 		return st.beta.pdf(x, self.a, self.b, loc=self.loc, scale=self.scale)
 
 
-if __name__ == '__main__':
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-a', '--all_numswitch_plots', action='store_true', help="Include this flag if you want all the num switch plots (it could be large)")
 	parser.add_argument('-l', '--list_of_numswitch_to_plot', nargs='+', help="List of entries you want visualized with num switch. Eg. -l 1 1 1 2 to plot the (1,1) and (1,2) entries.")
+	return parser
 
+if __name__ == '__main__':
+	parser = get_parser()
 	# read in the arguments
 	args = parser.parse_args()
 	input_folder = args.input_folder

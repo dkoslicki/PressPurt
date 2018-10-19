@@ -22,10 +22,16 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
-if __name__ == '__main__':
+
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script Generates the quantitative sensitivity figure.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder containing the output of ComputeQuantitativeSensitivity.py")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
+	return parser
+
+
+if __name__ == '__main__':
+	parser = get_parser()
 
 	# read in the arguments
 	args = parser.parse_args()

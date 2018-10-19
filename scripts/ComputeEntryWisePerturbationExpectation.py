@@ -62,7 +62,8 @@ class custom_beta():
 
 known_distributions = ['truncnorm', 'uniform', 'trunc_lognorm', 'beta']
 
-if __name__ == '__main__':
+
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
@@ -70,7 +71,11 @@ if __name__ == '__main__':
 	parser.add_argument('-a', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the mean.", default=0)
 	parser.add_argument('-b', type=float, help="First parameter to the distribution you choose. For truncnorm, this is the variance. Using a negative value indicates you want the standard deviation to be the length of the interval divided by the absolute value of the input parameter.", default=-2)
 	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
+	return parser
 
+
+if __name__ == '__main__':
+	parser = get_parser()
 	# read in the arguments
 	args = parser.parse_args()
 	input_folder = args.input_folder

@@ -16,12 +16,18 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
-if __name__ == '__main__':
+
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script pre-processes a matrix by figuring out what the intervals of asymptotic stability are, as well as finding which perturbation values lead to a sign switch.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('-n', '--num_iterates', type=int, help="Number of iterates in the Monte Carlo sampling to perform.", default=10000)
 	parser.add_argument('-l', '--interval_length', type=float, help="Interval length over which to make the perturbations.", default=0.01)
 	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
+	return parser
+
+
+if __name__ == '__main__':
+	parser = get_parser()
 
 	# read in the arguments
 	args = parser.parse_args()
