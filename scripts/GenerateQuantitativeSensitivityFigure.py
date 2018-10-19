@@ -2,12 +2,8 @@ import argparse
 import numpy as np
 import os
 import sys
-import pickle
-import timeit
-from multiprocessing import Pool  # Much faster without dummy (threading)
-import multiprocessing
-import itertools
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -26,10 +22,16 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
-if __name__ == '__main__':
+
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script Generates the quantitative sensitivity figure.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder containing the output of ComputeQuantitativeSensitivity.py")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
+	return parser
+
+
+if __name__ == '__main__':
+	parser = get_parser()
 
 	# read in the arguments
 	args = parser.parse_args()
@@ -46,7 +48,9 @@ if __name__ == '__main__':
 		quant_sens_file = os.path.join(input_folder, "quantitative_sensitivity.csv")
 		MRS_file = os.path.join(input_folder, "MRS.csv")
 
-	quant_sens_values = np.loadtxt(quant_sens_file, delimiter=',')
+	#quant_sens_values = np.loadtxt(quant_sens_file, delimiter=',')
+	df = pd.read_csv(quant_sens_file, header=0, index_col=0)
+	quant_sens_values = df.values
 	m, n = quant_sens_values.shape
 
 	# print out a statistic

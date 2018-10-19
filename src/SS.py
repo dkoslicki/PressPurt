@@ -10,6 +10,7 @@ import timeit
 def intervals(aij, x=0.01):
 	"""
 	This function defines an interval of size int_size around aij without changing the sign of aij
+
 	:param aij: the (i,j) entry of a matrix (scalar)
 	:param int_size: the size of the desired interval
 	:return: an (ordered) list defining the endpoints of the interval
@@ -47,6 +48,7 @@ def exists_switch(eps_dict, AplusBinvDivAinvEval):
 	"""
 	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
 	Returns 1 if a switch has occurred, 0 otherwise
+
 	:param eps_dict: dictionary {eps_symbols: eps_values}
 	:return: 0 or 1
 	"""
@@ -67,6 +69,7 @@ def check_switch_matrix(eps_dict, AplusBinvDivAinvEval):
 	"""
 	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
 	Returns binary matrix telling if a switch occurred in that entry
+
 	:param eps_dict: dictionary {eps_symbols: eps_values}
 	:return: binary numpy array
 	"""
@@ -83,6 +86,7 @@ def check_switch_matrix(eps_dict, AplusBinvDivAinvEval):
 def is_stable(A):
 	"""
 	Check if the input matrix is asymptotically stable
+
 	:param A: input matrix
 	:return: Bool (1 iff asymptotically stable)
 	"""
@@ -96,6 +100,7 @@ def is_stable(A):
 def get_entries_to_perturb(A):
 	"""
 	Returns a binary matrix indicating which entries to perturb
+
 	:param A: input matrix (numpy or sympy matrix)
 	:return: binary matrix of same dimensions as A
 	"""
@@ -112,6 +117,7 @@ def get_entries_to_perturb(A):
 def SS(A, num_iterates=10000, interval_length=0.01):
 	"""
 	Computes equation 3.42: the volume of the number of perturbations that cause a sign switch in some part of the matrix
+
 	:param A:  input matrix, numpy array
 	:return: Scalar (percent of perturbations that caused some sign switch)
 	"""
@@ -216,6 +222,7 @@ def SS(A, num_iterates=10000, interval_length=0.01):
 def tests():
 	"""
 	Run all the tests
+
 	:return: None
 	"""
 	assert np.allclose(intervals(4, 1), [-0.5, 0.5])

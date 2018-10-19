@@ -15,16 +15,21 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
-if __name__ == '__main__':
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script pre-processes a matrix by figuring out what the intervals of asymptotic stability are, as well as finding which perturbation values lead to a sign switch.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('output_folder', type=str, help="Output folder. A number of files will be created in the form 'output_folder/<prefix>_*.npy'")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-m', '--max_bound', type=float, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
+	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
+	return parser
 
+if __name__ == '__main__':
+	parser = get_parser()
 	# read in the arguments
 	args = parser.parse_args()
+	num_threads = int(args.threads)
 	input_file = os.path.abspath(args.input_file)
 	output_folder = args.output_folder
 	if output_folder:
@@ -90,7 +95,7 @@ if __name__ == '__main__':
 				#intervals[k, l, :] = NumSwitch.interval_of_stability(A, Ainv, k, l, max_bound=max_bound)
 				to_compute_args.append((k, l))
 	# start the pool and do the computations
-	pool = Pool(processes=multiprocessing.cpu_count())
+	pool = Pool(processes=num_threads)
 	res = pool.map(helper_star, to_compute_args)
 	# collect the results
 	for val, k, l in res:

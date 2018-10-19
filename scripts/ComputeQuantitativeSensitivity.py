@@ -2,11 +2,7 @@ import argparse
 import numpy as np
 import os
 import sys
-import pickle
-import timeit
-from multiprocessing import Pool  # Much faster without dummy (threading)
-import multiprocessing
-import itertools
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -25,11 +21,17 @@ except ImportError:
 	sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 	import NumSwitch
 
-if __name__ == '__main__':
+
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script Generates the quantitative sensitivity: perturbing each single entry off to infinity.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('output_folder', type=str, help="Output folder. A file <prefix>_quantitative_sensitivity.csv' will be put here.")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
+	return parser
+
+
+if __name__ == '__main__':
+	parser = get_parser()
 
 	# read in the arguments
 	args = parser.parse_args()
@@ -50,7 +52,8 @@ if __name__ == '__main__':
 		MRS_file = os.path.join(output_folder, "MRS.csv")
 
 	# read in the input matrix
-	A = np.loadtxt(input_file, delimiter=",")
+	#A = np.loadtxt(input_file, delimiter=",")
+	A, row_names, column_names = NumSwitch.import_matrix(input_file)
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
 
@@ -67,6 +70,10 @@ if __name__ == '__main__':
 			else:
 				quant_sens_values[i, j] = 0
 
-	np.savetxt(quant_sens_file, quant_sens_values, delimiter=',')
+	#np.savetxt(quant_sens_file, quant_sens_values, delimiter=',')
+	df = pd.DataFrame(quant_sens_values)
+	df.index = row_names
+	df.columns = column_names
+	df.to_csv(quant_sens_file)
 	mrs = MRS.MRS(A)
 	np.savetxt(MRS_file, [mrs], delimiter=',')

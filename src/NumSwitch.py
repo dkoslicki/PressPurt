@@ -5,10 +5,12 @@ import warnings
 from scipy.optimize import bisect, brentq
 import os
 import pandas as pd
+import numpy
 
 def is_stable(A):
 	"""
 	Check if the input matrix is asymptotically stable
+
 	:param A: input matrix
 	:return: Bool (1 iff asymptotically stable)
 	"""
@@ -21,6 +23,7 @@ def is_stable(A):
 def ind_switch(Ainv, eps, i, j, k, l):
 	"""
 	This function implements equation 3.4, telling if a sign switch has occured
+
 	:param Ainv: input matrix, inverted, numpy array
 	:param eps: perturbation size (scalar)
 	:param i: index
@@ -53,6 +56,7 @@ def NS(Ainv, eps, k, l):
 	"""
 	This function implements equation 3.5: gives the number of sign switches
 	when perturbing the k, l entry
+
 	:param Ainv: inverse input matrix, numpy array
 	:param eps: perturbation size (scalar)
 	:param k: index
@@ -70,6 +74,15 @@ def NS(Ainv, eps, k, l):
 
 
 def largest_root(A, k, l, eps):
+	"""
+	Returns the largest real part of the eigenvalues of A when perturbing the (k,l) entry by eps.
+
+	:param A: numpy matrix
+	:param k: int (row)
+	:param l: int (column)
+	:param eps: float (perturbation value)
+	:return:
+	"""
 	zero_matrix = np.zeros(A.shape)
 	zero_matrix[k, l] = eps
 	[s, _] = np.linalg.eig(A + zero_matrix)
@@ -79,6 +92,7 @@ def largest_root(A, k, l, eps):
 def interval_of_stability(A, Ainv, k, l, max_bound=10):
 	"""
 	This function will return the interval of stability when perturbing just the (k,l) entry of A
+
 	:param A: numpy array
 	:param Ainv: inverse of A
 	:param k: index
@@ -120,11 +134,15 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 		upper_bound = initial_interval[1]
 	else:
 		upper_bound = brentq(lambda x: largest_root(A, k, l, x), 0, initial_interval[1])
-	if largest_root(A, k, l, initial_interval[0]) < 0:
+	if largest_root(A, k, l, initial_interval[0]) < 0:  # it's monotonic
 		lower_bound = initial_interval[0]
 	else:
 		lower_bound = brentq(lambda x: largest_root(A, k, l, x), initial_interval[0], 0)
-	return (lower_bound + .00001, upper_bound - .00001)
+	small_num = .00000001
+	if (lower_bound + small_num) > (upper_bound - small_num):
+		return (lower_bound, upper_bound)
+	else:
+		return (lower_bound + small_num, upper_bound - small_num)
 	# bisection method, depreciated since bisect is so much faster.
 	# we'll basically do a grid search and look for the real parts of the eigenvalues begin negative
 	#(to_sample, step_size) = np.linspace(initial_interval[0], initial_interval[1], num_sample, retstep=True)
@@ -158,6 +176,7 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
+
 	:param A: The original input matrix (numpy array)
 	:param Ainv: The inverse of A (pre-computed), numpy array
 	:param k: index
@@ -211,6 +230,7 @@ def critical_epsilon(Ainv, k, l, i, j):
 	This function finds which epsilon causes the sherman morrison ratio to
 	equal 0 (indicating a switch will occur after this value).
 	Takes advantage of the monotonicity of the SM ratio.
+
 	:param Ainv: Inverse input matrix
 	:param k: index (row being perturbed)
 	:param l: index (column being perturbed)
@@ -230,6 +250,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 	"""
 	This function will get the full description of the num_switch function
 	(using interval notation).
+
 	:param crit_epsilon_array: array of critical epsilon (tensor indexed by (k, l, i, j))
 	:param stab_int_array: array of intervals of stability (tensor index by (k, l, start, end))
 	:param k: index (row to perturb)
@@ -296,6 +317,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist=None):
 	"""
 	Compute the expectation using the num_switch function
+
 	:param n: dimension of the matrix
 	:param k: index (pert row)
 	:param l: index (pert column)
@@ -325,6 +347,7 @@ def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist
 def num_switch_to_step(num_switch_funcs, intervals, k, l):
 	"""
 	Helper function to get input arguments for matplotlib step function plot
+
 	:param num_switch_funcs: the full num switch functions in interval notation
 	:param intervals: asympt stab intervals
 	:param k: row you're looking at
@@ -353,6 +376,18 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 			zero_start = start
 		if last_int_end < stop:
 			zero_stop = stop
+		try:  # in case they weren't defined, num_switch doesn't cross zero
+			zero_start
+			zero_stop
+		except NameError:
+			zero_start = 0
+			zero_stop = np.inf
+			for temp_val, (temp_start, temp_end) in num_switch_func:
+				if np.abs(temp_start) < zero_stop:
+					zero_stop = temp_start
+				if np.abs(temp_end) < zero_stop:
+					zero_stop = temp_end
+
 		full_switch_func = sorted(num_switch_func + [(0, (zero_start, zero_stop))], key=lambda x: x[1][0])
 		# get rid of zero length intervals
 		full_switch_func_clean = []
@@ -368,22 +403,35 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 def import_matrix(file_path):
 	"""
 	Import a matrix, look for row/column labels, use pandas if they are, otherwise, use numpy
+
 	:param file_path: input matrix file path
 	:return: (matrix:numpy.array, row_labels:Array[string], column_labels:Array[string]
 	"""
 	if not os.path.exists(file_path):
 		raise Exception("The file %s does not appear to exist.")
-	try:
+	try:  # csv plain
 		A = np.loadtxt(file_path, delimiter=',')
 		row_names = ['%d' % i for i in range(A.shape[0])]
 		column_names = ['%d' % i for i in range(A.shape[1])]
 		return (A, row_names, column_names)
 	except ValueError:
-		df = pd.read_csv(file_path, header=0, index_col=0)
-		A = df.values
-		column_names = ['%s' % i for i in df.columns.values]
-		row_names = ['%s' % i for i in df.index.values]
-		return (A, row_names, column_names)
+		try:  # tsv plain
+			A = np.loadtxt(file_path, delimiter='\t')
+			row_names = ['%d' % i for i in range(A.shape[0])]
+			column_names = ['%d' % i for i in range(A.shape[1])]
+			return (A, row_names, column_names)
+		except ValueError:
+			try:  # csv with labels
+				df = pd.read_csv(file_path, header=0, index_col=0)
+				if df.empty:  # might instead be tsv
+					df = pd.read_csv(file_path, header=0, index_col=0, sep='\t')
+				A = df.values
+				column_names = ['%s' % i for i in df.columns.values]
+				row_names = ['%s' % i for i in df.index.values]
+				return (A, row_names, column_names)
+			except:
+				raise Exception("Could not read in the file %s. Maybe not tsv or csv or otherwise mangled?" % file_path)
+
 
 
 # This has been checked against Mathematica
@@ -405,10 +453,6 @@ Aigpinv = np.linalg.inv(Aigp)
 # test cases
 # test matrix
 def fast_tests():
-	"""
-	Run the tests
-	:return: None
-	"""
 	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 	Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
 	Atriinv = np.linalg.inv(Atri)
@@ -623,6 +667,11 @@ def test_exp_num_switch_from_crit_eps():
 
 
 def run_all_tests():
+	"""
+	Runs all the tests.
+
+	:return: None
+	"""
 	test_num_switch_from_crit_eps()
 	fast_tests()
 	test_exp_num_switch_from_crit_eps()

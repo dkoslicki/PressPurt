@@ -6,6 +6,7 @@ import sys
 import matplotlib.pyplot as plt
 import pickle
 import matplotlib.gridspec as gridspec
+import pandas as pd
 
 # import stuff in the src folder
 try:
@@ -56,13 +57,16 @@ class custom_beta():
 		return st.beta.pdf(x, self.a, self.b, loc=self.loc, scale=self.scale)
 
 
-if __name__ == '__main__':
+def get_parser():
 	parser = argparse.ArgumentParser(description="This script computes the expected number of sign switches from perturbing each entry individually", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_folder', type=str, help="Input folder. The location of the files created by PreProcessMatrix.py. eg 'output_folder/<prefix>_asymptotic_stability.npy'. This is also where the expected num swith array will be saved.")
 	parser.add_argument('-p', '--prefix', help="Prefix of output files, if you so choose.", default=None)
 	parser.add_argument('-a', '--all_numswitch_plots', action='store_true', help="Include this flag if you want all the num switch plots (it could be large)")
 	parser.add_argument('-l', '--list_of_numswitch_to_plot', nargs='+', help="List of entries you want visualized with num switch. Eg. -l 1 1 1 2 to plot the (1,1) and (1,2) entries.")
+	return parser
 
+if __name__ == '__main__':
+	parser = get_parser()
 	# read in the arguments
 	args = parser.parse_args()
 	input_folder = args.input_folder
@@ -181,13 +185,15 @@ if __name__ == '__main__':
 		big_fig, axarr = plt.subplots(grid_size, grid_size)
 		gs1 = gridspec.GridSpec(grid_size, grid_size)
 		gs1.update(wspace=0.025, hspace=0.05)
-		axarr_flat = axarr.flatten()
+		try:
+			axarr_flat = axarr.flatten()
+		except AttributeError:
+			axarr_flat = [axarr]
 		big_fig.suptitle(
 			"Number of mis-predictions versus perturbation value, \n overlaid with distribution over stable perturbation values")
 		num_plotted = 0
 		for k, l in indices_to_plot:
 			ax1 = axarr_flat[num_plotted]
-			num_plotted += 1
 			if (k, l) in dists:
 				interval = intervals[k, l, :]
 				padding = (interval[1] - interval[0]) / float(100)
@@ -206,9 +212,13 @@ if __name__ == '__main__':
 				ax2.plot(x_range, dist_vals, 'tab:gray')
 				ax2.tick_params('y', colors='tab:gray')
 				ax2.fill_between(x_range, dist_vals, color='tab:gray', alpha=0.5)
+				num_plotted += 1
 			else:
 				axarr_flat[num_plotted].axis('off')  # don't show the ones we are not perturbing
-		axes_flat = axarr.flatten()
+		try:
+			axes_flat = axarr.flatten()
+		except AttributeError:
+			axes_flat = [axarr]
 		for i in range(num_plotted, grid_size**2):
 			axes_flat[i].axis('off')
 		#plt.tight_layout(pad=0.1, w_pad=.1, h_pad=.9)
@@ -222,7 +232,9 @@ if __name__ == '__main__':
 
 	#####################
 	# Get the expected number of sign switches, in a table
-	exp_num_switch_array = np.loadtxt(exp_num_switch_file, delimiter=',')
+	#exp_num_switch_array = np.loadtxt(exp_num_switch_file, delimiter=',')
+	df = pd.read_csv(exp_num_switch_file, header=0, index_col=0)
+	exp_num_switch_array = df.values
 
 	#####################
 	# Generate figure 3
@@ -256,7 +268,10 @@ if __name__ == '__main__':
 	plt.pause(0.01)
 
 	num_non_zero = len(np.where(exp_num_switch_array)[0])
-	ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
+	if num_non_zero != 0:
+		ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
+	else:
+		ave_expected_num_sign_switches = 0
 	print("Average expected percentage of mis-predictions (perturbing each edge individually): %f%% (i.e. %f entries)" % (100*ave_expected_num_sign_switches, ave_expected_num_sign_switches*m*n))
 	# TODO: check with Mark if I should be multiplying by n^2 or num_non_zero
 	input("press any key to quit")
