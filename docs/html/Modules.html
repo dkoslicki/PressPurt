@@ -375,34 +375,70 @@ Takes advantage of the monotonicity of the SM ratio.</p>
 <dt id="NaiveSS.exists_switch">
 <code class="descclassname">NaiveSS.</code><code class="descname">exists_switch</code><span class="sig-paren">(</span><em>Ainv</em>, <em>Apinv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#exists_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.exists_switch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
-Returns 1 if a switch has occurred, 0 otherwise
-:param eps_dict: dictionary {eps_symbols: eps_values}
-:return: 0 or 1</p>
+Returns 1 if a switch has occurred, 0 otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps_dict</strong> – dictionary {eps_symbols: eps_values}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">0 or 1</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="NaiveSS.get_entries_to_perturb">
 <code class="descclassname">NaiveSS.</code><code class="descname">get_entries_to_perturb</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#get_entries_to_perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.get_entries_to_perturb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a binary matrix indicating which entries to perturb
-:param A: input matrix (numpy or sympy matrix)
-:return: binary matrix of same dimensions as A</p>
+<dd><p>Returns a binary matrix indicating which entries to perturb</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix (numpy or sympy matrix)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">binary matrix of same dimensions as A</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="NaiveSS.intervals">
 <code class="descclassname">NaiveSS.</code><code class="descname">intervals</code><span class="sig-paren">(</span><em>aij</em>, <em>x=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#intervals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.intervals" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function defines an interval of size int_size around aij without changing the sign of aij
-:param aij: the (i,j) entry of a matrix (scalar)
-:param int_size: the size of the desired interval
-:return: an (ordered) list defining the endpoints of the interval</p>
+<dd><p>This function defines an interval of size int_size around aij without changing the sign of aij</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>aij</strong> – the (i,j) entry of a matrix (scalar)</li>
+<li><strong>int_size</strong> – the size of the desired interval</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">an (ordered) list defining the endpoints of the interval</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="NaiveSS.is_stable">
 <code class="descclassname">NaiveSS.</code><code class="descname">is_stable</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#is_stable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.is_stable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the input matrix is asymptotically stable
-:param A: input matrix
-:return: Bool (1 iff asymptotically stable)</p>
+<dd><p>Check if the input matrix is asymptotically stable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool (1 iff asymptotically stable)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">

@@ -50,6 +50,7 @@
 <div class="viewcode-block" id="intervals"><a class="viewcode-back" href="../Modules.html#NaiveSS.intervals">[docs]</a><span class="k">def</span> <span class="nf">intervals</span><span class="p">(</span><span class="n">aij</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	This function defines an interval of size int_size around aij without changing the sign of aij</span>
+
 <span class="sd">	:param aij: the (i,j) entry of a matrix (scalar)</span>
 <span class="sd">	:param int_size: the size of the desired interval</span>
 <span class="sd">	:return: an (ordered) list defining the endpoints of the interval</span>
@@ -85,6 +86,7 @@
 <div class="viewcode-block" id="is_stable"><a class="viewcode-back" href="../Modules.html#NaiveSS.is_stable">[docs]</a><span class="k">def</span> <span class="nf">is_stable</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Check if the input matrix is asymptotically stable</span>
+
 <span class="sd">	:param A: input matrix</span>
 <span class="sd">	:return: Bool (1 iff asymptotically stable)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -98,6 +100,7 @@
 <div class="viewcode-block" id="get_entries_to_perturb"><a class="viewcode-back" href="../Modules.html#NaiveSS.get_entries_to_perturb">[docs]</a><span class="k">def</span> <span class="nf">get_entries_to_perturb</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns a binary matrix indicating which entries to perturb</span>
+
 <span class="sd">	:param A: input matrix (numpy or sympy matrix)</span>
 <span class="sd">	:return: binary matrix of same dimensions as A</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -114,6 +117,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.</span>
 <span class="sd">	Returns 1 if a switch has occurred, 0 otherwise</span>
+
 <span class="sd">	:param eps_dict: dictionary {eps_symbols: eps_values}</span>
 <span class="sd">	:return: 0 or 1</span>
 <span class="sd">	&quot;&quot;&quot;</span>
