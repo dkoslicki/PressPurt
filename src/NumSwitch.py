@@ -55,8 +55,8 @@ def ind_switch(Ainv, eps, i, j, k, l):
 def NS(Ainv, eps, k, l):
 	"""
 	This function implements equation 3.5: gives the number of sign switches
-
 	when perturbing the k, l entry
+
 	:param Ainv: inverse input matrix, numpy array
 	:param eps: perturbation size (scalar)
 	:param k: index
@@ -444,11 +444,6 @@ Aigpinv = np.linalg.inv(Aigp)
 # test cases
 # test matrix
 def fast_tests():
-	"""
-	Run the tests
-
-	:return: None
-	"""
 	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
 	Aigp = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, -1], [0, 0.1, -0.015, -1], [0, .045, 0.1, -0.015]])
 	Atriinv = np.linalg.inv(Atri)
