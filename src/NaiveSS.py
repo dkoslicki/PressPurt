@@ -104,6 +104,7 @@ def exists_switch(Ainv, Apinv):
 def naive_SS(A, num_iterates, interval_length, num_threads):
 	"""
 	Computes the sign sensitivity (expected number of perturbations that lead to a sign switch in the inverse Jacobian) when perturbing multiple entries via Monte Carlo Sampling.
+
 	:param A: input matrix
 	:param num_iterates: number of Monte Carlo samples to make
 	:param interval_length: length of interval to draw samples from

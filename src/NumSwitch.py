@@ -10,6 +10,7 @@ import numpy
 def is_stable(A):
 	"""
 	Check if the input matrix is asymptotically stable
+
 	:param A: input matrix
 	:return: Bool (1 iff asymptotically stable)
 	"""
@@ -22,6 +23,7 @@ def is_stable(A):
 def ind_switch(Ainv, eps, i, j, k, l):
 	"""
 	This function implements equation 3.4, telling if a sign switch has occured
+
 	:param Ainv: input matrix, inverted, numpy array
 	:param eps: perturbation size (scalar)
 	:param i: index
@@ -53,6 +55,7 @@ def ind_switch(Ainv, eps, i, j, k, l):
 def NS(Ainv, eps, k, l):
 	"""
 	This function implements equation 3.5: gives the number of sign switches
+
 	when perturbing the k, l entry
 	:param Ainv: inverse input matrix, numpy array
 	:param eps: perturbation size (scalar)
@@ -80,6 +83,7 @@ def largest_root(A, k, l, eps):
 def interval_of_stability(A, Ainv, k, l, max_bound=10):
 	"""
 	This function will return the interval of stability when perturbing just the (k,l) entry of A
+
 	:param A: numpy array
 	:param Ainv: inverse of A
 	:param k: index
@@ -163,6 +167,7 @@ def interval_of_stability(A, Ainv, k, l, max_bound=10):
 def exp_num_switch(A, Ainv, k, l, num_sample=1000, dist=None, interval=None):
 	"""
 	This implements equation 3.6: the expected number of sign switches
+
 	:param A: The original input matrix (numpy array)
 	:param Ainv: The inverse of A (pre-computed), numpy array
 	:param k: index
@@ -216,6 +221,7 @@ def critical_epsilon(Ainv, k, l, i, j):
 	This function finds which epsilon causes the sherman morrison ratio to
 	equal 0 (indicating a switch will occur after this value).
 	Takes advantage of the monotonicity of the SM ratio.
+
 	:param Ainv: Inverse input matrix
 	:param k: index (row being perturbed)
 	:param l: index (column being perturbed)
@@ -235,6 +241,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 	"""
 	This function will get the full description of the num_switch function
 	(using interval notation).
+
 	:param crit_epsilon_array: array of critical epsilon (tensor indexed by (k, l, i, j))
 	:param stab_int_array: array of intervals of stability (tensor index by (k, l, start, end))
 	:param k: index (row to perturb)
@@ -301,6 +308,7 @@ def num_switch_from_crit_eps(crit_epsilon_array, stab_int_array, k, l):
 def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist=None):
 	"""
 	Compute the expectation using the num_switch function
+
 	:param n: dimension of the matrix
 	:param k: index (pert row)
 	:param l: index (pert column)
@@ -330,6 +338,7 @@ def exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, stab_intervals, dist
 def num_switch_to_step(num_switch_funcs, intervals, k, l):
 	"""
 	Helper function to get input arguments for matplotlib step function plot
+
 	:param num_switch_funcs: the full num switch functions in interval notation
 	:param intervals: asympt stab intervals
 	:param k: row you're looking at
@@ -385,6 +394,7 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 def import_matrix(file_path):
 	"""
 	Import a matrix, look for row/column labels, use pandas if they are, otherwise, use numpy
+
 	:param file_path: input matrix file path
 	:return: (matrix:numpy.array, row_labels:Array[string], column_labels:Array[string]
 	"""
@@ -436,6 +446,7 @@ Aigpinv = np.linalg.inv(Aigp)
 def fast_tests():
 	"""
 	Run the tests
+
 	:return: None
 	"""
 	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])

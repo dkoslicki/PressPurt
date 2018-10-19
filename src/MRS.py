@@ -5,6 +5,7 @@ import numpy as np
 def MRS(A):
 	"""
 	This function implements equation 3.21 from the manuscript
+
 	:param A: a non-empty matrix
 	:return: MRS(A) (a scalar)
 	"""
@@ -34,6 +35,7 @@ def MRS(A):
 def quant_sens(A, k ,l):
 	"""
 	Quantitative sensitivity of a matrix (as epsilon goes to infinity). See equation 3.20
+
 	:param A: input numpy matrix
 	:param k: row index (int)
 	:param l: column index (int)
@@ -65,6 +67,7 @@ def quant_sens(A, k ,l):
 def tests():
 	"""
 	Run all the test cases.
+
 	:return: None
 	"""
 	Atri = np.array([[-0.237, -1, 0, 0], [0.1, -0.015, -1, 0], [0, 0.1, -0.015, -1], [0, 0, 0.1, -0.015]])
