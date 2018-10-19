@@ -658,6 +658,11 @@ def test_exp_num_switch_from_crit_eps():
 
 
 def run_all_tests():
+	"""
+	Runs all the tests.
+
+	:return: None
+	"""
 	test_num_switch_from_crit_eps()
 	fast_tests()
 	test_exp_num_switch_from_crit_eps()

@@ -180,6 +180,7 @@ def naive_SS(A, num_iterates, interval_length, num_threads):
 def tests():
 	"""
 		Run all the tests
+
 		:return: None
 		"""
 	assert np.allclose(intervals(4, 1), [-0.5, 0.5])
