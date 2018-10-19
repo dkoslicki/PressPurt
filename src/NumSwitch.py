@@ -74,6 +74,15 @@ def NS(Ainv, eps, k, l):
 
 
 def largest_root(A, k, l, eps):
+	"""
+	Returns the largest real part of the eigenvalues of A when perturbing the (k,l) entry by eps.
+
+	:param A: numpy matrix
+	:param k: int (row)
+	:param l: int (column)
+	:param eps: float (perturbation value)
+	:return:
+	"""
 	zero_matrix = np.zeros(A.shape)
 	zero_matrix[k, l] = eps
 	[s, _] = np.linalg.eig(A + zero_matrix)
