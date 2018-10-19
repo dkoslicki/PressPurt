@@ -80,7 +80,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	input_folder = args.input_folder
 	output_folder = os.path.abspath(input_folder)
-	pythonprefix = args.prefix
+	prefix = args.prefix
 	distribution_type = args.distribution_type
 	input_a = float(args.a)
 	input_b = float(args.b)
