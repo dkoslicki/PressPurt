@@ -23,12 +23,14 @@ def get_parser():
 	parser.add_argument('-m', '--max_bound', type=float, help="some of the matrices are unbounded stable towards one end, this is the limit the user imposes", default=10)
 	parser.add_argument('-z', '--zero_perturb', action='store_true', help="Flag to indicated you want to pertub the zero entries.", default=False)
 	parser.add_argument('-t', '--threads', type=int, help="Number of threads to use.", default=multiprocessing.cpu_count())
+	parser.add_argument('-v', '--verbose', action='store_true', help='Include this flag if you want a couple messages printed to the screen as well.', default=False)
 	return parser
 
 if __name__ == '__main__':
 	parser = get_parser()
 	# read in the arguments
 	args = parser.parse_args()
+	verbose = args.verbose
 	num_threads = int(args.threads)
 	input_file = os.path.abspath(args.input_file)
 	output_folder = args.output_folder
@@ -108,7 +110,8 @@ if __name__ == '__main__':
 		intervals[k, l, :] = val
 
 	# save these
-	print("Saving asymptotic stability to: %s" % asymp_stab_file)
+	if verbose:
+		print("Saving asymptotic stability to: %s" % asymp_stab_file)
 	np.save(asymp_stab_file, intervals)
 
 	# Compute the num switch functions
@@ -132,7 +135,8 @@ if __name__ == '__main__':
 				num_switch_funcs[k, l] = res
 
 	# Save it
-	print("Saving shape of num switch functions to: %s" % num_switch_file)
+	if verbose:
+		print("Saving shape of num switch functions to: %s" % num_switch_file)
 	fid = open(num_switch_file, 'wb')
 	pickle.dump(num_switch_funcs, fid)
 	fid.close()
