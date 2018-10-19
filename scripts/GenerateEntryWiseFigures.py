@@ -89,6 +89,7 @@ if __name__ == '__main__':
 		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
 		row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
 		column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
+		num_nonzero_file = os.path.join(output_folder, prefix + "_num_non_zero.npy")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
@@ -97,10 +98,11 @@ if __name__ == '__main__':
 		matrix_size_file = os.path.join(output_folder, "size.npy")
 		row_names_file = os.path.join(output_folder, "row_names.txt")
 		column_names_file = os.path.join(output_folder, "column_names.txt")
+		num_nonzero_file = os.path.join(output_folder, "num_non_zero.npy")
 
 	n = int(np.load(matrix_size_file))
 	m = n
-	required_files = [asymp_stab_file, num_switch_file, exp_num_switch_file, distribution_file, row_names_file, column_names_file, matrix_size_file]
+	required_files = [asymp_stab_file, num_switch_file, exp_num_switch_file, distribution_file, row_names_file, column_names_file, matrix_size_file, num_nonzero_file]
 	for file in required_files:
 		if not os.access(file, os.R_OK):
 			raise Exception("Missing files. Please first run PreProcessMatrix.py and ComputeEntryWisePerturbationExpectation.py. Files should include: asymptotic_stablity.npy, num_switch_funcs.pkl, expected_num_switch.csv, and distributions.pkl")
@@ -267,7 +269,7 @@ if __name__ == '__main__':
 	plt.draw()
 	plt.pause(0.01)
 
-	num_non_zero = len(np.where(exp_num_switch_array)[0])
+	num_non_zero = np.load(num_nonzero_file)
 	if num_non_zero != 0:
 		ave_expected_num_sign_switches = exp_num_switch_array.sum()/float(num_non_zero)
 	else:

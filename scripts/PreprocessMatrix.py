@@ -46,12 +46,14 @@ if __name__ == '__main__':
 		matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
 		row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
 		column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
+		num_nonzero_file = os.path.join(output_folder, prefix + "_num_non_zero.npy")
 	else:
 		asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
 		num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
 		matrix_size_file = os.path.join(output_folder, "size.npy")
 		row_names_file = os.path.join(output_folder, "row_names.txt")
 		column_names_file = os.path.join(output_folder, "column_names.txt")
+		num_nonzero_file = os.path.join(output_folder, "num_non_zero.npy")
 
 	# check for sanity of input parameters
 	if not max_bound > 0:
@@ -68,6 +70,10 @@ if __name__ == '__main__':
 	with open(column_names_file, 'w') as fid:
 		for item in column_names:
 			fid.write("%s\n" % item)
+
+	# save the number of non-zero entries
+	num_non_zero = len(np.where(A)[0])
+	np.save(num_nonzero_file, num_non_zero)
 
 	Ainv = np.linalg.inv(A)
 	m, n = A.shape
