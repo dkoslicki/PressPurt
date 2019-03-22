@@ -14,3 +14,7 @@ Imports:
   grid,
   gridExtra,
   reticulate
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

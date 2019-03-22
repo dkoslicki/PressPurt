@@ -231,7 +231,7 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
 
 GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=NULL, 
                                      all_numswitch_plots = FALSE,
-                                     list_of_numswitch_to_plot){
+                                     list_of_numswitch_to_plot = NULL){
   # check parameters
   if((all_numswitch_plots == FALSE) & length(list_of_numswitch_to_plot) < 1){
     stop('No plots selected. Please set all_numswitch_plots or list_of_numswitch_to_plot')

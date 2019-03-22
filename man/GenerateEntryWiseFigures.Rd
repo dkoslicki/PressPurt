@@ -6,7 +6,7 @@
 \usage{
 GenerateEntryWiseFigures(input_folder = NULL, EntryWise = NULL,
   prefix = NULL, all_numswitch_plots = FALSE,
-  list_of_numswitch_to_plot)
+  list_of_numswitch_to_plot = NULL)
 }
 \arguments{
 \item{input_folder}{Input folder. The location of the files created by PreprocessMatrix
