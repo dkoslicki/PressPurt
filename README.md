@@ -19,6 +19,18 @@ pip install -r requirements.txt
 ```
 The command line programs are located in the ``scripts`` folder.
 
+## R installation
+
+PressPurtCoreAlg is also avaialable as an R package. You'll need to have python and conda installed. 
+
+Install as an R package:
+
+```
+install.package("devtools")
+devtools::install_github("dkoslicki/PressPurtCoreAlg", 
+                         ref = "gibbond", build_vignettes = TRUE)
+```
+
 # Usage
 In the ``scripts`` folder are a number of command line scripts that can be used.
 The basic steps are:
@@ -52,6 +64,53 @@ For multi-entry perturbation statistics, use:
 ```bash
 python ComputeMultiEntryPerturbationExpectation.py ../ExampleJacobians/IGP.csv 
 ```
+
+## R Usage
+
+### Quick start
+
+* Load the library
+* Check available python versions
+* Set python version and conda environment. You can set up a new conda env or use a previous one.
+
+```
+library(PressPurtCoreAlg)
+find_python()
+set_python("r-reticulate", verbose = TRUE)
+```
+
+* install python dependencies
+
+```
+py_depend("r-reticulate")
+```
+
+* Run PreprocessMatrix
+* Run ComputeEntryWisePerturbationExpectation
+
+
+```
+# Path to your matrix
+infile <- "../ExampleJacobians/Modules/IGP.csv"
+PreProsMatrix <- PreprocessMatrix(input_file = infile, output_folder = NULL, max_bound = 10, threads = 2)
+Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
+                                        distribution_type="truncnorm", 
+                                        input_a=0, input_b=-2, threads=1)
+```
+
+* Plot
+    * specific figures
+    * all figures
+
+```
+list_of_numswitch_to_plot <- list(c(0, 0), c(0, 1))
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = FALSE, 
+                         list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = TRUE)
+```
+
 
 # Complete documentation
 The complete documentation can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).

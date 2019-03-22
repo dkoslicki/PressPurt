@@ -19,19 +19,36 @@ knitr::opts_chunk$set(
 
 # Quick start
 
+* Install `PressPurtCoreAlg`
+
+```{r install, eval=FALSE}
+# Specify branch and build vignettes
+devtools::install_github("dkoslicki/PressPurtCoreAlg", 
+                         ref = "gibbond", build_vignettes = TRUE)
+```
+
 * Load the library
 * Check available python versions
 * Set python, conda env
+* install python dependencies
 * Run PreprocessMatrix
 * Run ComputeEntryWisePerturbationExpectation
 * Plot
     * specific figures
     * all figures
 
-```{r quick_start}
+```{r quick_start_setup}
 library(PressPurtCoreAlg)
 find_python()
 set_python("r-reticulate", verbose = TRUE)
+```
+
+```{r quick_start_install, eval=FALSE}
+py_depend("r-reticulate")
+```
+
+```{r quick_start_run}
+# Path to your matrix
 infile <- "../ExampleJacobians/Modules/IGP.csv"
 PreProsMatrix <- PreprocessMatrix(input_file = infile, output_folder = NULL, max_bound = 10, threads = 2)
 Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
