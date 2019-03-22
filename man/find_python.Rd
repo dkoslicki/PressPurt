@@ -17,3 +17,6 @@ Default: TRUE}
 This function lists available python versions and conda
 environments.
 }
+\examples{
+find_python()
+}

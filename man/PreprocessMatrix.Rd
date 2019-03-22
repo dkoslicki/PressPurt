@@ -11,20 +11,25 @@ PreprocessMatrix(input_file, output_folder = NULL, prefix = NULL,
 \arguments{
 \item{input_file}{Input comma separated file for the jacobian matrix.}
 
-\item{output_folder}{Output folder. A number of files will be created in the form 
-‘output_folder/<prefix>_*.npy’}
+\item{output_folder}{Optional output folder to save python objects to disk. 
+A number of files will be created in the form ‘output_folder/<prefix>_*.npy’.
+Default is NULL.}
 
 \item{prefix}{Prefix of output files, if you so choose.}
 
 \item{max_bound}{some of the matrices are unbounded stable towards one end, this 
 is the limit the user imposes. Default: 10}
 
-\item{zero_perturb}{Flag to indicated you want to pertub the zero entries. 
+\item{zero_perturb}{Flag to indicate you want to pertub the zero entries. 
 Default: FALSE}
 
 \item{threads}{Number of threads to use. Default: 1}
 
 \item{verbose}{TODO}
+}
+\value{
+A list of with the following objects: matrix_size, column_names, row_names,
+non_zero, num_switch_functions, asymptotic_stability
 }
 \description{
 This script pre-processes a matrix by figuring out what the intervals of asymptotic

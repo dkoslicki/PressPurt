@@ -24,33 +24,35 @@ class Helper(object):
 
 def run_preproc(input_file, output_folder, prefix, max_bound, zero_peturb, threads, verbose):
     if __name__ == '__main__':
+        save = False
         verbose = verbose
         num_threads = int(threads)
         input_file = os.path.abspath(input_file)
         output_folder = output_folder
-        if output_folder:
+        if output_folder is not None:
             output_folder = os.path.abspath(output_folder)
-
+            save = True
+            if not os.access(output_folder, os.W_OK):
+                raise Exception("The provided directory %s is not writable." % output_folder)
         prefix = prefix
         max_bound = float(max_bound)
         pert_zero = zero_peturb
-        if not os.access(output_folder, os.W_OK):
-            raise Exception("The provided directory %s is not writable." % output_folder)
 
-        if prefix:
-            asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
-            num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
-            matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
-            row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
-            column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
-            num_nonzero_file = os.path.join(output_folder, prefix + "_num_non_zero.npy")
-        else:
-            asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
-            num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
-            matrix_size_file = os.path.join(output_folder, "size.npy")
-            row_names_file = os.path.join(output_folder, "row_names.txt")
-            column_names_file = os.path.join(output_folder, "column_names.txt")
-            num_nonzero_file = os.path.join(output_folder, "num_non_zero.npy")
+        if save is True:
+            if prefix:
+                asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
+                num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
+                matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
+                row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
+                column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
+                num_nonzero_file = os.path.join(output_folder, prefix + "_num_non_zero.npy")
+            else:
+                asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
+                num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
+                matrix_size_file = os.path.join(output_folder, "size.npy")
+                row_names_file = os.path.join(output_folder, "row_names.txt")
+                column_names_file = os.path.join(output_folder, "column_names.txt")
+                num_nonzero_file = os.path.join(output_folder, "num_non_zero.npy")
 
         # check for sanity of input parameters
         if not max_bound > 0:
@@ -59,22 +61,22 @@ def run_preproc(input_file, output_folder, prefix, max_bound, zero_peturb, threa
         # read in the input matrix
         #A = np.loadtxt(input_file, delimiter=",")
         A, row_names, column_names = NumSwitch.import_matrix(input_file)
-        # save the row and column names
-        with open(row_names_file, 'w') as fid:
-            for item in row_names:
-                fid.write("%s\n" % item)
-
-        with open(column_names_file, 'w') as fid:
-            for item in column_names:
-                fid.write("%s\n" % item)
 
         # save the number of non-zero entries
         num_non_zero = len(np.where(A)[0])
-        np.save(num_nonzero_file, num_non_zero)
 
         Ainv = np.linalg.inv(A)
         m, n = A.shape
-        np.save(matrix_size_file, n)
+
+        if save is True:
+            with open(row_names_file, 'w') as fid:
+                for item in row_names:
+                    fid.write("%s\n" % item)
+            with open(column_names_file, 'w') as fid:
+                for item in column_names:
+                    fid.write("%s\n" % item)
+            np.save(num_nonzero_file, num_non_zero)
+            np.save(matrix_size_file, n)
 
         # make sure the original matrix is itself asymptotically stable
         if not NumSwitch.is_stable(A):
@@ -108,7 +110,8 @@ def run_preproc(input_file, output_folder, prefix, max_bound, zero_peturb, threa
         # save these
         if verbose:
             print("Saving asymptotic stability to: %s" % asymp_stab_file)
-        np.save(asymp_stab_file, intervals)
+        if save is True:
+            np.save(asymp_stab_file, intervals)
 
         # Compute the num switch functions
         # Looks like up to matrices of size 50, the parallelization doesn't help. NumSwitch.critical_epsilon is CPU non-intensive
@@ -133,10 +136,12 @@ def run_preproc(input_file, output_folder, prefix, max_bound, zero_peturb, threa
         # Save it
         if verbose:
             print("Saving shape of num switch functions to: %s" % num_switch_file)
-        fid = open(num_switch_file, 'wb')
-        pickle.dump(num_switch_funcs, fid)
-        fid.close()
-        return(num_non_zero, num_switch_funcs)
+        if save is True:
+            fid = open(num_switch_file, 'wb')
+            pickle.dump(num_switch_funcs, fid)
+            fid.close()
+        if save is False:
+            return(n, column_names, row_names, num_non_zero, num_switch_funcs, intervals)
 
         # This is a text format
        # for k in range(n):

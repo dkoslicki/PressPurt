@@ -51,61 +51,71 @@ class custom_beta():
 known_distributions = ['truncnorm', 'uniform', 'trunc_lognorm', 'beta']
 
 
-def run_EntryWise(input_folder, prefix, distribution_type, input_a, input_b, threads):
+def run_EntryWise(input_folder, prefix, distribution_type,
+                  input_a, input_b, threads, **kwargs):
     if __name__ == '__main__':
-        input_folder = input_folder
-        output_folder = os.path.abspath(input_folder)
+        save = False
         prefix = prefix
         distribution_type = distribution_type
         input_a = float(input_a)
         input_b = float(input_b)
         num_threads = int(threads)
-
-        if not os.access(output_folder, os.R_OK):
-            raise Exception("The provided directory %s is not readable." % output_folder)
-
-        if prefix:
-            asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
-            num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
-            exp_num_switch_file = os.path.join(output_folder, prefix + "_expected_num_switch.csv")
-            distribution_file = os.path.join(output_folder, prefix + "_distributions.pkl")
-            matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
-            row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
-            column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
-        else:
-            asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
-            num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
-            exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
-            distribution_file = os.path.join(output_folder, "distributions.pkl")
-            matrix_size_file = os.path.join(output_folder, "size.npy")
-            row_names_file = os.path.join(output_folder, "row_names.txt")
-            column_names_file = os.path.join(output_folder, "column_names.txt")
-
-        # check if files exist
-        required_files = [asymp_stab_file, num_switch_file, row_names_file, column_names_file, matrix_size_file]
-        for file in required_files:
-            if not os.access(file, os.R_OK):
-                raise Exception("Missing files. Please first run PreProcessMatrix.py and ComputeEntryWisePerturbationExpectation.py. Files should include: asymptotic_stablity.npy, num_switch_funcs.pkl, expected_num_switch.csv, and distributions.pkl")
-
-        n = int(np.load(matrix_size_file))
         if distribution_type not in known_distributions:
-            raise Exception("You can only choose between the following distributions: %s. You provided '%s'." % (", ".join(known_distributions), distribution_type))
+            raise Exception("You can only choose between the following distributions: %s. You provided '%s'." %(", ".join(known_distributions), distribution_type))
+        if input_folder is not None:
+            # If input file is specified, get path to files, check if they
+            # exist, read in files
+            save = True
+            input_folder = input_folder
+            output_folder = os.path.abspath(input_folder)
+            if not os.access(output_folder, os.R_OK):
+                raise Exception("The provided directory %s is not readable." % output_folder)
+            if prefix:
+                asymp_stab_file = os.path.join(output_folder, prefix + "_asymptotic_stability.npy")
+                num_switch_file = os.path.join(output_folder, prefix + "_num_switch_funcs.pkl")
+                exp_num_switch_file = os.path.join(output_folder, prefix + "_expected_num_switch.csv")
+                distribution_file = os.path.join(output_folder, prefix + "_distributions.pkl")
+                matrix_size_file = os.path.join(output_folder, prefix + "_size.npy")
+                row_names_file = os.path.join(output_folder, prefix + "_row_names.txt")
+                column_names_file = os.path.join(output_folder, prefix + "_column_names.txt")
+            else:
+                asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
+                num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
+                exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
+                distribution_file = os.path.join(output_folder, "distributions.pkl")
+                matrix_size_file = os.path.join(output_folder, "size.npy")
+                row_names_file = os.path.join(output_folder, "row_names.txt")
+                column_names_file = os.path.join(output_folder, "column_names.txt")
 
-        # read in the files
-        asymp_stab = np.load(asymp_stab_file)
-        num_switch_funcs = pickle.load(open(num_switch_file, 'rb'))
+            # check if files exist
+            required_files = [asymp_stab_file, num_switch_file,
+                              row_names_file, column_names_file, matrix_size_file]
+            for file in required_files:
+                if not os.access(file, os.R_OK):
+                    raise Exception("Missing files. Please first run PreProcessMatrix.py and ComputeEntryWisePerturbationExpectation.py. Files should include: asymptotic_stablity.npy, num_switch_funcs.pkl, expected_num_switch.csv, and distributions.pkl")
 
-        row_names = []
-        column_names = []
-        with open(row_names_file, 'r') as fid:
-            for line in fid.readlines():
-                line_strip = line.strip()
-                row_names.append(line_strip)
+            # read in the files
+            n = int(np.load(matrix_size_file))
+            asymp_stab = np.load(asymp_stab_file)
+            num_switch_funcs = pickle.load(open(num_switch_file, 'rb'))
 
-        with open(column_names_file, 'r') as fid:
-            for line in fid.readlines():
-                line_strip = line.strip()
-                column_names.append(line_strip)
+            row_names = []
+            column_names = []
+            with open(row_names_file, 'r') as fid:
+                for line in fid.readlines():
+                    line_strip = line.strip()
+                    row_names.append(line_strip)
+
+            with open(column_names_file, 'r') as fid:
+                for line in fid.readlines():
+                    line_strip = line.strip()
+                    column_names.append(line_strip)
+        else:
+            n = kwargs["matrix_size"]
+            asymp_stab = kwargs["asymp_stab"]
+            num_switch_funcs = kwargs["num_switch"]
+            row_names = kwargs["row_names"]
+            column_names = kwargs["col_names"]
 
         # create all the distributions
         dists = dict()
@@ -144,9 +154,10 @@ def run_EntryWise(input_folder, prefix, distribution_type, input_a, input_b, thr
                         dists[k, l] = custom_beta(a, b, loc, scale)
 
         # Save the distributions
-        fid = open(distribution_file, 'wb')
-        pickle.dump(dists, fid)
-        fid.close()
+        if save is True:
+            fid = open(distribution_file, 'wb')
+            pickle.dump(dists, fid)
+            fid.close()
 
         # Do the expectation calculation
         exp_num_switch_array = np.zeros((n, n))
@@ -202,10 +213,10 @@ def run_EntryWise(input_folder, prefix, distribution_type, input_a, input_b, thr
         df = pd.DataFrame(exp_num_switch_array)
         df.index = row_names
         df.columns = column_names
-        df.to_csv(exp_num_switch_file)
+        if save is True:
+            df.to_csv(exp_num_switch_file)
+        if save is False:
+            return(dists, df)
 
 
-#run_EntryWise(input_folder="test", prefix=None, distribution_type="truncnorm", input_a=0, input_b=-2, threads=2)
-
-#print("it worked!")
 

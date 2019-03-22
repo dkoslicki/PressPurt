@@ -4,11 +4,16 @@
 \alias{GenerateEntryWiseFigures}
 \title{Generate Entry Wise Figures}
 \usage{
-GenerateEntryWiseFigures(input_folder, prefix = NULL,
-  all_numswitch_plots = FALSE, list_of_numswitch_to_plot)
+GenerateEntryWiseFigures(input_folder = NULL, EntryWise = NULL,
+  prefix = NULL, all_numswitch_plots = FALSE,
+  list_of_numswitch_to_plot)
 }
 \arguments{
-\item{input_folder}{Input folder. The location of the files created by PreprocessMatrix.}
+\item{input_folder}{Input folder. The location of the files created by PreprocessMatrix
+if you specified an output_folder. This is also where the num switch array was saved. 
+Must specify an input_folder OR EntryWise object. Default: NULL}
+
+\item{EntryWise}{Object where the ComputeEntryWisePerturbationExpectation output was saved.}
 
 \item{prefix}{Prefix of output files, if you so choose.}
 

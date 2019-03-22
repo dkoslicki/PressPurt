@@ -4,13 +4,19 @@
 \alias{ComputeEntryWisePerturbationExpectation}
 \title{Compute Entry Wise Perturbation Expectation}
 \usage{
-ComputeEntryWisePerturbationExpectation(input_folder, prefix = NULL,
+ComputeEntryWisePerturbationExpectation(input_folder = NULL,
+  PreProsMatrix = NULL, prefix = NULL,
   distribution_type = "truncnorm", input_a = 0, input_b = -2,
   threads = 1)
 }
 \arguments{
-\item{input_folder}{Input folder. The location of the files created by PreprocessMatrix.
-This is also where the num switch array will be saved.}
+\item{input_folder}{Input folder. The location of the files created by PreprocessMatrix
+if you specified an output_folder. If this option is specified, this
+is also where the num switch array will be saved. Must specify an 
+input_folder OR PreProsMatrix. Default: NULL}
+
+\item{PreProsMatrix}{Object where the PreprocessMatrix output was saved.
+Must specify an input_folder OR PreProsMatrix. Default: NULL}
 
 \item{prefix}{Prefix of output files, if you so choose.}
 
@@ -25,6 +31,13 @@ Default: 0}
 \item{b}{First parameter to the distribution you choose. For truncnorm, this is the variance.
 Using a negative value indicates you want the standard deviation to be the length of the 
 interval divided by the absolute value of the input parameter. Default: -2}
+}
+\value{
+If and input folder is specified the objects will be saved to that folder.
+If the PreProsMatrix object is specified, an R list object with the following: 
+matrix_size, column_names, row_names,
+non_zero, num_switch_functions, asymptotic_stability, distributions,
+expected_num_switch
 }
 \description{
 This function computes the expected number of sign switches from perturbing 
