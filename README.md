@@ -42,7 +42,9 @@ When any script is called, it will create a number of auxiliary files that are u
 A user will be interested in the produced ``*.csv`` files, as these contain the statistical information about their network.
 
 
-# Example
+##  Python Usage
+What follows is a quick example using some data included in this repository.
+
 All these examples are run in the `scripts` directory.
 
 For single entry perturbation statistics, use the following:
