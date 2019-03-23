@@ -21,12 +21,12 @@ The command line programs are located in the ``scripts`` folder.
 
 ## R installation
 
-PressPurtCoreAlg is also avaialable as an R package. You'll need to have python and conda installed. 
+PressPurtCoreAlg is also available as an R package. You'll need to have python and conda installed.
 
 Install as an R package:
 
 ```
-install.package("devtools")
+install.packages("devtools")
 devtools::install_github("dkoslicki/PressPurtCoreAlg", 
                          ref = "gibbond", build_vignettes = TRUE)
 ```
