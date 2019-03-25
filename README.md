@@ -21,12 +21,13 @@ The command line programs are located in the ``scripts`` folder.
 
 ## R installation
 
-PressPurtCoreAlg is also avaialable as an R package. You'll need to have python and conda installed. 
+PressPurtCoreAlg is also available as an R package. You'll need to have python and conda installed.
+You will also need an R version greater than or equal to 3.5.1.
 
 Install as an R package:
 
 ```
-install.package("devtools")
+install.packages("devtools")
 devtools::install_github("dkoslicki/PressPurtCoreAlg", 
                          ref = "gibbond", build_vignettes = TRUE)
 ```
@@ -42,7 +43,9 @@ When any script is called, it will create a number of auxiliary files that are u
 A user will be interested in the produced ``*.csv`` files, as these contain the statistical information about their network.
 
 
-# Example
+##  Python Usage
+What follows is a quick example using some data included in this repository.
+
 All these examples are run in the `scripts` directory.
 
 For single entry perturbation statistics, use the following:
