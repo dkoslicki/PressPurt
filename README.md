@@ -22,7 +22,7 @@ The command line programs are located in the ``scripts`` folder.
 ## R installation
 
 PressPurtCoreAlg is also available as an R package. You'll need to have python and conda installed.
-You will also need an R version greater than or equal to 3.5.1.
+You will also need an R version greater than or equal to 3.1.0.
 
 Install as an R package:
 
