@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Dana Gibbon" />
+
+<meta name="date" content="2019-03-27" />
+
+<title>Set up</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Set up</h1>
+<h4 class="author"><em>Dana Gibbon</em></h4>
+<h4 class="date"><em>2019-03-27</em></h4>
+
+
+
+<div id="installing-dependencies" class="section level1">
+<h1>Installing Dependencies</h1>
+<div id="r" class="section level2">
+<h2>R</h2>
+<p>PressPurtCoreAlg depends on R &gt;= 3.1.0. To check your R version run <code>version</code> from the R console.</p>
+<p>This package also depends on the following R libraries:</p>
+<ul>
+<li><code>data.table</code></li>
+<li><code>ggplot2</code></li>
+<li><code>gridExtra</code></li>
+<li><code>reticulate &gt;= 1.11</code></li>
+</ul>
+<p>If not already installed, these packages will be installed upon the installation of <code>PressPurtCoreAlg</code>.</p>
+</div>
+<div id="python" class="section level2">
+<h2>Python</h2>
+<p>This package is dependent on python and uses the R package <code>reticulate</code> under the hood to use python. Thus python and the dependant packages must be installed.</p>
+<p>There are two suggested approaches:</p>
+<ul>
+<li>Conda (Anaconda/miniconda) which supports Linux/Mac/Windows</li>
+<li>Virtual environments which supports Linux/Mac OS</li>
+</ul>
+<p>It is also possible to set a specific version of python with <code>reticulate::use_python(&quot;/path/to/python&quot;)</code> before you run any of the <code>PressPurtCoreAlg</code> commands but it is not recommended. You’ll also have to ensure that the dependent python packages are installed. For more information on using <code>reticulate</code> directly: <a href="https://rstudio.github.io/reticulate/articles/python_packages.html">see the reticulate docs</a>.</p>
+<div id="conda" class="section level3">
+<h3>Conda</h3>
+<div id="install-anaconda-or-miniconda" class="section level4">
+<h4>Install Anaconda or Miniconda</h4>
+<p>Conda is a package and environment manager that is open source. The main difference between Anaconda and Miniconda is that Anaconda comes with a bundle of pre-installed packages so it takes longer to download and install. Both Miniconda and Anaconda come with python but you can specify a specific version of python later as well.</p>
+<p>This document will show you how to install Miniconda via the command-line. For more information on installation and how to install it graphically (no command-line) <a href="https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html">see the conda docs</a></p>
+<div id="linux" class="section level5">
+<h5>Linux</h5>
+<ol style="list-style-type: decimal">
+<li><a href="https://docs.conda.io/en/latest/miniconda.html">Download the Miniconda installer for Linux</a></li>
+<li>In a terminal window run: <code>bash Miniconda3-latest-Linux-x86_64.sh</code></li>
+<li>Follow the prompts - accepting defaults should be fine.</li>
+<li>Close your Terminal window and re-open a new one.</li>
+<li>Test your installation by running: <code>conda list</code>
+<ul>
+<li>This should result in a list of installed packages.</li>
+</ul></li>
+</ol>
+</div>
+<div id="macos" class="section level5">
+<h5>MacOS</h5>
+<ol style="list-style-type: decimal">
+<li><a href="https://docs.conda.io/en/latest/miniconda.html">Download the Miniconda installer for macOS</a></li>
+<li>In a terminal window run: <code>bash Miniconda3-latest-MacOSX-x86_64.sh</code></li>
+<li>Follow the prompts - accepting defaults should be fine.</li>
+<li>Close your Terminal window and re-open a new one.</li>
+<li>Test your installation by running: <code>conda list</code>
+<ul>
+<li>This should result in a list of installed packages.</li>
+</ul></li>
+</ol>
+</div>
+<div id="windows" class="section level5">
+<h5>Windows</h5>
+<ol style="list-style-type: decimal">
+<li><a href="https://docs.conda.io/en/latest/miniconda.html">Download the Miniconda installer for Windows</a></li>
+<li>Run the <code>.exe</code> file by double clicking.</li>
+<li>Follow the prompts - accepting defaults should be fine.</li>
+<li>Test your installation by opeing the Anacond Prompt from the Start menu and running running: <code>conda list</code>
+<ul>
+<li>This should result in a list of installed packages.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="installing-python-dependencies" class="section level4">
+<h4>Installing python dependencies</h4>
+<div id="from-r" class="section level5">
+<h5>From R</h5>
+<p>First you’ll need to load <code>PressPurtCoreAlg</code>, check which versions of python are found and if any Conda envrionments exists.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
+<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="co"># Find the versions of python and conda environments available on your machine:</span>
+<span class="kw">find_python</span>()
+<span class="co">#&gt; Default Python:</span>
+<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Python versions found:</span>
+<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/anaconda3/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  List of condaenvironments:</span>
+<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python,</span></code></pre></div>
+<p>This shows you your default Python path, other available python paths, and a list of your conda environments.</p>
+<p>The <code>set_python</code> function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you’ll need to specify which python version to use in addition to the conda envirnment name.</p>
+<p>You may have python installed under <code>/usr/bin/python3</code>, Anaconda2 and/or Anaconda3 installed so it’s important to specify which python to use. In this case I’ll use the anaconda3 python.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python</span>(<span class="dt">condaenv=</span><span class="st">&quot;test-r&quot;</span>, <span class="dt">version=</span><span class="st">&quot;/home/gibbond/anaconda3/bin/python&quot;</span>,<span class="dt">verbose =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>Next you’ll need to install the python dependencies in your conda environment. This will install the following into your <code>test-r</code> conda env:</p>
+<ul>
+<li><code>numpy</code></li>
+<li><code>scipy</code></li>
+<li><code>matplotlib</code></li>
+<li><code>sympy</code></li>
+<li><code>pathos</code></li>
+<li><code>pandas</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">py_depend</span>(<span class="st">&quot;test-r&quot;</span>)</code></pre></div>
+<p>If the dependencies don’t install correctly see below for instructions on how to install via the command-line.</p>
+<p>If you want to use the <code>test-r</code> environment in a new R session you can access it via:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python</span>(<span class="dt">condaenv=</span><span class="st">&quot;test-r&quot;</span>)</code></pre></div>
+</div>
+<div id="command-line" class="section level5">
+<h5>Command-line</h5>
+<p>You can also install your Python dependencies via the command line with conda or with the Anaconda Prompt (Windows).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Check that conda is running</span>
+<span class="ex">conda</span> --version
+<span class="co"># List conda envs</span>
+<span class="ex">conda</span> info --envs
+<span class="co"># Create conda environment &quot;test-r&quot;</span>
+<span class="ex">conda</span> create --name test-r
+<span class="co"># activate test-r</span>
+<span class="bu">source</span> activate test-r
+<span class="co"># check installed packages</span>
+<span class="ex">conda</span> list
+<span class="co"># install python dependencies</span>
+<span class="ex">conda</span> install matplotlib numpy pandas scipy sympy
+<span class="ex">pip</span> install pathos
+<span class="co"># Check to make sure they were installed</span>
+<span class="ex">conda</span> list</code></pre></div>
+<p>Now that you have created the conda environments and installed dependencies, you can use the new env in R! Run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
+<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="co"># You should see &quot;test-r&quot; listed as a conda env</span>
+<span class="kw">find_python</span>()
+<span class="co"># Set your conda env</span>
+<span class="kw">set_python</span>(<span class="dt">condaenv=</span><span class="st">&quot;test-r&quot;</span>)</code></pre></div>
+</div>
+</div>
+</div>
+<div id="virtualenv" class="section level3">
+<h3>Virtualenv</h3>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

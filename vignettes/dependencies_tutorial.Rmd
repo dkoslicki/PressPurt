@@ -1,0 +1,160 @@
+---
+title: "Set up"
+author: "Dana Gibbon"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Installing Dependencies
+
+## R
+
+PressPurtCoreAlg depends on R >= 3.1.0. To check your R version run `version` from the R console.
+
+This package also depends on the following R libraries:
+
+* `data.table` 
+* `ggplot2`
+* `gridExtra`
+* `reticulate >= 1.11`
+
+If not already installed, these packages will be installed upon the installation of `PressPurtCoreAlg`.
+
+## Python
+
+This package is dependent on python and uses the R package `reticulate` under the hood to use python. Thus python and the dependant packages must be installed. 
+
+There are two suggested approaches: 
+
+* Conda (Anaconda/miniconda) which supports Linux/Mac/Windows
+* Virtual environments which supports Linux/Mac OS
+
+It is also possible to set a specific version of python with `reticulate::use_python("/path/to/python")` before you run any of the `PressPurtCoreAlg` commands but it is not recommended. You'll also have to ensure that the dependent python packages are installed. For more information on using `reticulate` directly: [see the reticulate docs](https://rstudio.github.io/reticulate/articles/python_packages.html).
+
+### Conda
+
+#### Install Anaconda or Miniconda 
+
+Conda is a package and environment manager that is open source. The main difference between Anaconda and Miniconda is that Anaconda comes with a bundle of pre-installed packages so it takes longer to download and install. Both Miniconda and Anaconda come with python but you can specify a specific version of python later as well.
+
+This document will show you how to install Miniconda via the command-line. For more information on installation and how to install it graphically (no command-line) [see the conda docs](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+
+##### Linux
+
+1. [Download the Miniconda installer for Linux](https://docs.conda.io/en/latest/miniconda.html)
+2. In a terminal window run: `bash Miniconda3-latest-Linux-x86_64.sh`
+3. Follow the prompts - accepting defaults should be fine.
+4. Close your Terminal window and re-open a new one.
+5. Test your installation by running: `conda list`
+    * This should result in a list of installed packages.
+
+##### MacOS
+
+1. [Download the Miniconda installer for macOS](https://docs.conda.io/en/latest/miniconda.html)
+2. In a terminal window run: `bash Miniconda3-latest-MacOSX-x86_64.sh`
+3. Follow the prompts - accepting defaults should be fine.
+4. Close your Terminal window and re-open a new one.
+5. Test your installation by running: `conda list`
+    * This should result in a list of installed packages.
+
+##### Windows
+
+1. [Download the Miniconda installer for Windows](https://docs.conda.io/en/latest/miniconda.html)
+2. Run the `.exe` file by double clicking.
+3. Follow the prompts - accepting defaults should be fine.
+5. Test your installation by opeing the Anacond Prompt from the Start menu and running running: `conda list`
+    * This should result in a list of installed packages.
+
+#### Installing python dependencies
+
+##### From R
+
+First you'll need to load `PressPurtCoreAlg`, check which versions of python are found and if any Conda envrionments exists.
+
+```{r}
+# load the library
+library(PressPurtCoreAlg)
+# Find the versions of python and conda environments available on your machine:
+find_python()
+
+```
+
+This shows you your default Python path, other available python paths, and a list of your conda environments.
+
+The `set_python` function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you'll need to specify which python version to use in addition to the conda envirnment name.
+
+You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed so it's important to specify which python to use. In this case I'll use the anaconda3 python.
+
+```{r, eval=FALSE}
+set_python(condaenv="test-r", version="/home/gibbond/anaconda3/bin/python",verbose = TRUE)
+```
+
+Next you'll need to install the python dependencies in your conda environment. This will install the following into your `test-r` conda env: 
+
+* `numpy`
+* `scipy`
+* `matplotlib`
+* `sympy`
+* `pathos`
+* `pandas`
+
+```{r, eval=FALSE}
+py_depend("test-r")
+```
+
+If the dependencies don't install correctly see below for instructions on how to install via the command-line.
+
+If you want to use the `test-r` environment in a new R session you can access it via:
+
+```{r, eval=FALSE}
+set_python(condaenv="test-r")
+```
+
+##### Command-line
+
+You can also install your Python dependencies via the command line with conda or with the Anaconda Prompt (Windows).
+
+```{bash, eval=FALSE}
+# Check that conda is running
+conda --version
+# List conda envs
+conda info --envs
+# Create conda environment "test-r"
+conda create --name test-r
+# activate test-r
+source activate test-r
+# check installed packages
+conda list
+# install python dependencies
+conda install matplotlib numpy pandas scipy sympy
+pip install pathos
+# Check to make sure they were installed
+conda list
+```
+
+Now that you have created the conda environments and installed dependencies, you can use the new env in R! Run:
+
+```{r, eval=FALSE}
+# load the library
+library(PressPurtCoreAlg)
+# You should see "test-r" listed as a conda env
+find_python()
+# Set your conda env
+set_python(condaenv="test-r")
+```
+
+### Virtualenv
+
+

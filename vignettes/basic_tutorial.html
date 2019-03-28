@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dana Gibbon" />
 
-<meta name="date" content="2019-03-22" />
+<meta name="date" content="2019-03-27" />
 
 <title>Basic Tutorial</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Basic Tutorial</h1>
 <h4 class="author"><em>Dana Gibbon</em></h4>
-<h4 class="date"><em>2019-03-22</em></h4>
+<h4 class="date"><em>2019-03-27</em></h4>
 
 
 
@@ -85,7 +85,7 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <ul>
 <li>Load the library</li>
 <li>Check available python versions</li>
-<li>Set python, conda env</li>
+<li>Set python with previously made conda environment</li>
 <li>install python dependencies</li>
 <li>Run PreprocessMatrix</li>
 <li>Run ComputeEntryWisePerturbationExpectation</li>
@@ -101,10 +101,10 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Python versions found:</span>
-<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/anaconda3/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python </span>
+<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/anaconda3/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  List of condaenvironments:</span>
-<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python,</span>
+<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python,</span>
 <span class="kw">set_python</span>(<span class="st">&quot;r-reticulate&quot;</span>, <span class="dt">verbose =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; No python version set. Default python is:</span>
 <span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>

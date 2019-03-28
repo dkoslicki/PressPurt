@@ -29,7 +29,7 @@ devtools::install_github("dkoslicki/PressPurtCoreAlg",
 
 * Load the library
 * Check available python versions
-* Set python, conda env
+* Set python with previously made conda environment
 * install python dependencies
 * Run PreprocessMatrix
 * Run ComputeEntryWisePerturbationExpectation
