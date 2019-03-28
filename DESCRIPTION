@@ -13,7 +13,7 @@ Imports:
   ggplot2,
   grid,
   gridExtra,
-  reticulate
+  reticulate (>= 1.11)
 Suggests: 
     knitr,
     rmarkdown
