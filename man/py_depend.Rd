@@ -12,9 +12,14 @@ py_depend(condaenv)
 \description{
 This function installs needed python libraries into the specified conda
 environment. Should be the same as the one specified in set_python.
-On CentOS 7 pandas & scipy must be installed with pip install from 
-the command line. Will get the error: /lib/libstdc++.so.6: version
+Required python libraries: matplotlib, numpy, pandas, pathos,
+scipy and sympy
+}
+\details{
+On CentOS 7 pandas & scipy may need to be installed with pip install 
+from the command line. Will get the error: /lib/libstdc++.so.6: version
 `CXXABI_1.3.9' not found
+See vingette for more information.
 }
 \examples{
 py_depend(condaenv = "r-reticulate")

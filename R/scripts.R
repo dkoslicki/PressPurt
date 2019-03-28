@@ -56,8 +56,8 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
   # check if conda environment exists, if not make it
   condalist <- conda_list()
   if(!(condaenv %in% condalist$name)){
-    cat("\n Your specified condaenvironment, ", condaenv, 
-                " was not found.\n Making new condaenvironment. \n")
+    cat("\n Your specified conda environment, ", condaenv, 
+                " was not found.\n Making new conda environment. \n")
     # create conda env
     conda_create(condaenv, packages = "python", conda = "auto")
     use_condaenv(condaenv = condaenv, required = T) # set conda environment
@@ -66,7 +66,7 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
     use_condaenv(condaenv = condaenv, required = T) # set conda environment
   }
   if(verbose == TRUE){
-    cat("\n Python/condaenvironment in use: \n")
+    cat("\n Python/conda environment in use: \n")
     return(py_config())
   }
 }
@@ -76,9 +76,13 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
 #'
 #' This function installs needed python libraries into the specified conda
 #' environment. Should be the same as the one specified in set_python.
-#' On CentOS 7 pandas & scipy must be installed with pip install from 
-#' the command line. Will get the error: /lib/libstdc++.so.6: version
+#' Required python libraries: matplotlib, numpy, pandas, pathos,
+#' scipy and sympy
+#' 
+#' On CentOS 7 pandas & scipy may need to be installed with pip install 
+#' from the command line. Will get the error: /lib/libstdc++.so.6: version
 #' `CXXABI_1.3.9' not found
+#' See vingette for more information.
 #' @param condaenv Name of conda environment to install python libraries to.
 #' @export
 #' @examples py_depend(condaenv = "r-reticulate")
@@ -87,7 +91,7 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
 py_depend <- function(condaenv){
   # symengine not installing on windows, will add later
   # issues with pandas & scipy on CentOS7
-  required_py <- c("matplotlib", "numpy", "pandas", "scipy")
+  required_py <- c("matplotlib", "numpy", "pandas", "pathos", "scipy", "sympy")
   conda_install(envname = condaenv, packages = required_py, pip = FALSE)
 }
 
