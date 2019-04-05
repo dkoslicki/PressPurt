@@ -50,6 +50,18 @@ class custom_beta():
 
 known_distributions = ['truncnorm', 'uniform', 'trunc_lognorm', 'beta']
 
+class Helper(object):
+    def __int__(self):
+        pass
+
+    def helper(self, n, k, l, num_switch_funcs, asymp_stab, dists):
+        try:
+            val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
+        except KeyError:
+            val = None
+            return (val, k, l)
+    def helper_star(self, arg):
+        return self.helper(*arg)
 
 def run_EntryWise(input_folder, prefix, distribution_type,
                   input_a, input_b, threads, **kwargs):
@@ -171,36 +183,37 @@ def run_EntryWise(input_folder, prefix, distribution_type,
                         pass
         else:  # do it in parallel
             # try the same thing, but parallelized
-            def helper(k, l):
-                """
-                helper function to make it easier to parallelize
-                :param k: index
-                :param l: index
-                :return: none or float
-                """
-                try:
-                    val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
-                except KeyError:
-                    val = None
-                    return (val, k, l)
+            #def helper(k, l):
+            #    """
+            #    helper function to make it easier to parallelize
+            #    :param k: index
+            #    :param l: index
+            #    :return: none or float
+            #    """
+            #    try:
+            #        val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
+            #    except KeyError:
+            #        val = None
+            #        return (val, k, l)
 
-            def helper_star(arg):
-                """
-                unwrap the tuple
-                :param arg: tuple of (k,l) indices
-                :return: none or float
-                """
-                return helper(*arg)
+            #def helper_star(arg):
+            #    """
+            #    unwrap the tuple
+            #    :param arg: tuple of (k,l) indices
+            #    :return: none or float
+            #    """
+            #    return helper(*arg)
 
             # get all the arguments to compute
             to_compute_args = []
             for k in range(n):
                 for l in range(n):
-                    to_compute_args.append((k, l))
+                    to_compute_args.append((n, k, l, num_switch_funcs, asymp_stab, dists))
 
             # start the pool and do the computations
+            helper_obj = Helper()
             pool = Pool(processes=num_threads)
-            res = pool.map(helper_star, to_compute_args)
+            res = pool.map(helper_obj.helper_star, to_compute_args)
 
             # collect the results
             for val, k, l in res:
