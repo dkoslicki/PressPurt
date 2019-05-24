@@ -94,6 +94,7 @@ def run_EntryWise(input_folder, prefix, distribution_type,
                 asymp_stab_file = os.path.join(output_folder, "asymptotic_stability.npy")
                 num_switch_file = os.path.join(output_folder, "num_switch_funcs.pkl")
                 exp_num_switch_file = os.path.join(output_folder, "expected_num_switch.csv")
+                #exp_num_test = os.path.join(output_folder, "expected_num_switch.pkl")
                 distribution_file = os.path.join(output_folder, "distributions.pkl")
                 matrix_size_file = os.path.join(output_folder, "size.npy")
                 row_names_file = os.path.join(output_folder, "row_names.txt")
@@ -223,13 +224,25 @@ def run_EntryWise(input_folder, prefix, distribution_type,
 
         # export the results
         #np.savetxt(exp_num_switch_file, exp_num_switch_array, delimiter=',')
+        #exp_test = exp_num_switch_array
         df = pd.DataFrame(exp_num_switch_array)
         df.index = row_names
         df.columns = column_names
+        #exp_num_test = pickle.load(open("test_r/test3/expected_num_switch.pkl", 'rb'))
+        #print(exp_num_test)
+        #print(round(df.iat[0,0], 18))
         if save is True:
             df.to_csv(exp_num_switch_file)
+            #df.to_pickle(exp_num_test)
+            #return(df)
         if save is False:
             return(dists, df)
+            #return(exp_num_test, df)
 
 
+#infold = "test_r/test3"
+#tips = run_EntryWise(input_folder = infold, prefix = None, distribution_type = "truncnorm",
+#                     input_a = 0, input_b = -2, threads = 1)
+#print(tips)
+#print(type(tips))
 

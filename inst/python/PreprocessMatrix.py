@@ -141,7 +141,7 @@ def run_preproc(input_file, output_folder, prefix, max_bound, zero_peturb, threa
             pickle.dump(num_switch_funcs, fid)
             fid.close()
         if save is False:
-            return(n, column_names, row_names, num_non_zero, num_switch_funcs, intervals)
+            return(A, n, column_names, row_names, num_non_zero, num_switch_funcs, intervals)
 
         # This is a text format
        # for k in range(n):

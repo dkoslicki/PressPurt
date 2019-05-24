@@ -135,8 +135,18 @@ PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bo
   } else{
     tt <- py_to_r(run_preproc(input_file, output_folder, prefix, max_bound, 
                               zero_perturb, threads, verbose))
-    names(tt) <- c("matrix_size", "column_names", "row_names", "non_zero", 
+    names(tt) <- c("original_matrix", "matrix_size", "column_names", "row_names", "non_zero", 
                    "num_switch_functions", "asymptotic_stability")
+    # separate AS matrix into start and end
+    tt$asymptotic_stability_start <- tt$asymptotic_stability[,,1]
+    tt$asymptotic_stability_end <- tt$asymptotic_stability[,,2]
+    tt$asymptotic_stability <- NULL
+    # r based names
+    names(tt$num_switch_functions) <- .r_index(names = tt$num_switch_functions, to_r = T)
+    # unlist num_switch_funcs
+    tt$num_switch_funcs_r <- lapply(names(tt$num_switch_functions), function(x) 
+      .NS_func_r(num_switch_funcs = tt$num_switch_functions, name = x))
+    names(tt$num_switch_funcs_r) <- names(tt$num_switch_functions)
     return(tt)
   }
 }
@@ -200,16 +210,47 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
                                        input_a, input_b, threads))
     return(paste0("Output saved to input_folder: ", input_folder)) 
   } else{
+    # back to single array for python
+    asymptotic_stability <- .back_to_array(
+      as_start = PreProsMatrix$asymptotic_stability_start,
+      as_stop = PreProsMatrix$asymptotic_stability_end)
+    # go back to python based
+    names(PreProsMatrix$num_switch_functions) <- .r_index(
+      names = PreProsMatrix$num_switch_functions, to_r = F)
+    # run main function
     entrywise <- py_to_r(run_EntryWise(NULL, prefix, distribution_type, 
                                        input_a, input_b, threads, 
                                        matrix_size=PreProsMatrix$matrix_size, 
                                        col_names=PreProsMatrix$column_names, 
                                        row_names=PreProsMatrix$row_names, 
                                        num_switch=PreProsMatrix$num_switch_functions, 
-                                       asymp_stab=PreProsMatrix$asymptotic_stability))
+                                       asymp_stab=asymptotic_stability))
     names(entrywise) <- c("distributions", "expected_num_switch")
     combined <- c(PreProsMatrix, entrywise)
-    return(combined) 
+    names(combined$num_switch_functions) <- .r_index(
+      names = combined$num_switch_functions, to_r = T)
+    names(combined$distributions) <- .r_index(
+      names = combined$distributions, to_r = T)
+    m <- combined$matrix_size
+    n <- m
+    test_l <- vector(mode="list", length=length(combined$distributions))
+    names(test_l) <- names(combined$distributions)
+    # need to change this to map or sapply
+    for(k in 1:m){
+      for(l in 1:n){
+        if(paste("(", k, ", ", l, ")", sep = '') %in% names(combined$distributions)){
+          test <- get_distributions_single(
+            matrix_interval = c(k,l), 
+            distribution_list = combined$distributions, 
+            asymp_stab = c(combined$asymptotic_stability_start[k,l], 
+                           combined$asymptotic_stability_end[k,l]))
+          test_l[[paste("(", k, ", ", l, ")", sep = '')]] <- test
+        }
+      }
+    }
+    combined$distributions_object <- test_l
+    return(combined)
+    #return(entrywise)
   }
 }
 
@@ -285,8 +326,10 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
     m <- n
     column_names <- EntryWise$column_names
     row_names <- EntryWise$row_names 
-    num_switch_funcs <- EntryWise$num_switch_functions 
-    intervals <- EntryWise$asymptotic_stability
+    num_switch_funcs <- EntryWise$num_switch_functions
+    asymptotic_stability <- .back_to_array(as_start = EntryWise$asymptotic_stability_start,
+                                           as_stop = EntryWise$asymptotic_stability_end)
+    intervals <- asymptotic_stability
     dists <- EntryWise$distributions
   }
   if(length(list_of_numswitch_to_plot) > 0){
@@ -377,59 +420,3 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
   }
 }
 
-############ Helper functions
-
-#' Get PDF distribution
-#'
-#' This function retrieves the PDF (Probablity Distribution Function)
-#' object from the scipy method 
-#' <scipy.stats._distn_infrastructure.rv_frozen>.
-#' @param matrix_interval Position in the matrix. Example: c(0, 0)
-#' @param distribution_list list of scipy distribution
-#' @param asymp_stab asymptotic stability matrix
-#' @export
-#' @examples ax2 <- get_distributions(matrix_interval = c(0, 0), distribution_list, asymp_stab)
-#' @import reticulate
-
-get_distributions <- function(matrix_interval, distribution_list, asymp_stab){
-  np <- reticulate::import("numpy")
-  k <- matrix_interval[1]
-  l <- matrix_interval[2]
-  interval <- asymp_stab[(k+1), (l+1),] # change back to R 1 based
-  padding <- (interval[2] - interval[1])/100
-  x_range <- np$linspace((interval[1] - padding), (interval[2] + padding), 250)
-  dist.py <- distribution_list[paste("(", k, ", ", l, ")", sep = '')]
-  dist_vals <- sapply(x_range, function(x){dist.py[[1]]$pdf(x)})
-  ax2 <- data.frame(x_range = as.numeric(x_range), dist_vals = dist_vals)
-  return(ax2)
-}
-
-
-.check_read_file <- function(file_path){
-  if(!file.exists(file_path)){
-    # check if the file exists
-    stop(paste("The file, ", file_path, ", does not appear to exist.", sep = ''))
-  }
-  tr <- data.table::fread(file_path)
-  return(tr)
-}
-
-.grid_helper <- function(n, m, plots){
-  # info for grid
-  matrix.grid <- data.frame(n=n, m=m, total=n*m)
-  # empty matrix for gridExtra::grid.arrange
-  empty.grid <- matrix(as.numeric(NA), nrow = matrix.grid$n, ncol = matrix.grid$m)
-  # now need to set up matrix position to list name
-  layout.matrix <- data.frame(do.call(rbind, strsplit(names(plots), "[.]")))
-  colnames(layout.matrix) <- c("rows", "cols")
-  layout.matrix$index <- rownames(layout.matrix)
-  # change to 1 based index
-  layout.matrix$rows.r <- as.numeric(as.character(layout.matrix$rows)) + 1
-  layout.matrix$cols.r <- as.numeric(as.character(layout.matrix$cols)) + 1
-  # populate empty.grid
-  for(i in 1:nrow(layout.matrix)){
-    empty.grid[layout.matrix$rows.r[i], layout.matrix$cols.r[i]] <- as.numeric(layout.matrix$index[i])
-    #print(layout.matrix$index[i])
-  }
-  return(empty.grid)
-}
