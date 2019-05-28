@@ -2,7 +2,7 @@
 % Please edit documentation in R/scripts.R
 \name{set_python}
 \alias{set_python}
-\title{Set Up Python Configuration}
+\title{Set Up Python Conda Configuration}
 \usage{
 set_python(condaenv, version = NULL, verbose = TRUE)
 }
@@ -19,6 +19,9 @@ This function sets your python version and conda environment.
 Run this command before PreprocessMatrix. Install python dependencies in the
 same conda environment that you set here.
 If conda environment does not exist, this function will make a new one.
+If the conda environment already exists, no need to set the python version.
+When making a new conda environment, if the python version isn't set, then
+your default one will be used.
 }
 \examples{
 set_python(version = "~/anaconda3/bin/python", condaenv = "r-reticulate", verbose = TRUE)

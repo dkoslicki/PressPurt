@@ -4,14 +4,19 @@
 \alias{py_depend}
 \title{Install Python Dependencies}
 \usage{
-py_depend(condaenv)
+py_depend(condaenv = NULL, virtualenv = NULL)
 }
 \arguments{
-\item{condaenv}{Name of conda environment to install python libraries to.}
+\item{condaenv}{Name of conda environment to install python libraries to.
+Default: NULL}
+
+\item{virtualenv}{Name of virtual environment to install python libraries to.
+Default: NULL}
 }
 \description{
 This function installs needed python libraries into the specified conda
-environment. Should be the same as the one specified in set_python.
+environment OR virtual environment. Should be the same as the one 
+specified in set_python.
 Required python libraries: matplotlib, numpy, pandas, pathos,
 scipy and sympy
 }
@@ -22,5 +27,6 @@ from the command line. Will get the error: /lib/libstdc++.so.6: version
 See vingette for more information.
 }
 \examples{
-py_depend(condaenv = "r-reticulate")
+py_depend(condaenv = "r-reticulate", virtualenv = NULL)
+py_depend(virtualenv = "r-reticulate", condaenv = NULL)
 }

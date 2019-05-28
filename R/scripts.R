@@ -1,41 +1,52 @@
-#' Find Python versions and Conda Environments
+#' Find Python versions, Conda, & Virtual Environments
 #'
-#' This function lists available python versions and conda
-#' environments.
+#' This function lists available python versions, conda
+#' environments, and virtual environments. One may show
+#' all three or just one.
 #' @param python If TRUE will list available python versions.
 #' Default: TRUE
 #' @param conda If TRUE will list available conda environments.
+#' Default: TRUE
+#' @param virtualenv If TRUE will list available virtual environments.
 #' Default: TRUE
 #' @return
 #' @export
 #' @examples find_python()
 #' @import reticulate
 
-find_python <- function(python=TRUE, conda=TRUE){
+find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
   f_py <- py_discover_config()
   condalist <- conda_list()
-  if(python == TRUE & conda == TRUE){
+  virtlist <- virtualenv_list()
+  if(python == TRUE & conda == TRUE & virtualenv == TRUE){
     cat("Default Python:\n", f_py$python, "\n\n",
                 "Python versions found:\n", f_py$python_versions, "\n\n",
                         "List of condaenvironments:\n",
-                        paste0(condalist$name, ": ", condalist$python, ","))
-  } else if(python == TRUE & conda == FALSE){
+                        paste0(condalist$name, ": ", condalist$python, ","),
+        "\n\n",
+        "List of virtualenvs:\n", virtlist)
+  } else if(python == TRUE & conda == FALSE & virtualenv == FALSE){
     cat("Default Python:\n", f_py$python, "\n\n",
                 "Python versions found:\n", f_py$python_versions, "\n\n")
-  } else if(python == FALSE & conda == TRUE){
+  } else if(python == FALSE & conda == TRUE & virtualenv == FALSE){
     cat("List of condaenvironments:\n", 
                 paste0(condalist$name, ": ", condalist$python, ","))
+  } else if(python == FALSE & conda == FALSE & virtualenv == TRUE){
+    cat("List of virtualenvs:\n", virtlist)
   } else {
-    cat("Please set python and/or conda to TRUE")
+    cat("Please set python, virtualevl, and/or conda to TRUE")
   }
 }
 
-#' Set Up Python Configuration
+#' Set Up Python Conda Configuration
 #'
 #' This function sets your python version and conda environment.
 #' Run this command before PreprocessMatrix. Install python dependencies in the
 #' same conda environment that you set here.
 #' If conda environment does not exist, this function will make a new one.
+#' If the conda environment already exists, no need to set the python version.
+#' When making a new conda environment, if the python version isn't set, then
+#' your default one will be used.
 #' @param condaenv Specify conda environment name
 #' @param version Set path to specific version of python.
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
@@ -60,10 +71,12 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
                 " was not found.\n Making new conda environment. \n")
     # create conda env
     conda_create(condaenv, packages = "python", conda = "auto")
-    use_condaenv(condaenv = condaenv, required = T) # set conda environment
+    # set conda environment
+    use_condaenv(condaenv = condaenv, required = T) 
   } else {
     cat('\n Setting condaenvironment \n')
-    use_condaenv(condaenv = condaenv, required = T) # set conda environment
+    # set conda environment
+    use_condaenv(condaenv = condaenv, required = T)
   }
   if(verbose == TRUE){
     cat("\n Python/conda environment in use: \n")
@@ -72,10 +85,58 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
 }
 
 
+#' Set Up Virtual Environment for Python Configuration
+#'
+#' This function sets your python version and Virtual environment.
+#' Run this command before PreprocessMatrix. Install python dependencies in the
+#' same Virtual environment that you set here.
+#' If the virtual environment does not exist, this function will make a new one.
+#' If the virtual environment already exists, no need to set the python version.
+#' When making a new virtual environment, if the python version isn't set, then
+#' your default one will be used.
+#' @param virtualenv Specify conda environment name
+#' @param version Set path to specific version of python.
+#' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
+#' Default: TRUE
+#' @return
+#' @export
+#' @examples set_python_virtual(version = "/usr/bin/python3", virtualenv = "r-reticulate", verbose = TRUE)
+#' @import reticulate
+
+set_python_virtual <- function(virtualenv, version=NULL, verbose = TRUE){
+  if(!is.null(version)){
+    # set python version
+    use_python(version, required = T)
+  } else {
+    f_py <- py_discover_config()
+    cat("No python version set. Default python is:\n", f_py$python, "\n")
+  }
+  # check if virtual environment exists, if not make it
+  virtlist <- virtualenv_list()
+  if(!(virtualenv %in% virtlist)){
+    cat("\n Your specified virtual environment, ", virtualenv, 
+        " was not found.\n Making new virtual environment. \n")
+    # create virtual env
+    virtualenv_create(envname = virtualenv)
+    # set virtual environment
+    use_virtualenv(virtualenv = virtualenv, required = T) 
+  } else {
+    cat('\n Setting virtual environment \n')
+    use_virtualenv(virtualenv = virtualenv, required = T)
+  }
+  if(verbose == TRUE){
+    cat("\n Python/virtual environment in use: \n")
+    return(py_config())
+  }
+}
+
+
+
 #' Install Python Dependencies
 #'
 #' This function installs needed python libraries into the specified conda
-#' environment. Should be the same as the one specified in set_python.
+#' environment OR virtual environment. Should be the same as the one 
+#' specified in set_python.
 #' Required python libraries: matplotlib, numpy, pandas, pathos,
 #' scipy and sympy
 #' 
@@ -84,15 +145,24 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
 #' `CXXABI_1.3.9' not found
 #' See vingette for more information.
 #' @param condaenv Name of conda environment to install python libraries to.
+#' Default: NULL
+#' @param virtualenv Name of virtual environment to install python libraries to.
+#' Default: NULL
 #' @export
-#' @examples py_depend(condaenv = "r-reticulate")
+#' @examples py_depend(condaenv = "r-reticulate", virtualenv = NULL)
+#' @examples py_depend(virtualenv = "r-reticulate", condaenv = NULL)
 #' @import reticulate
 
-py_depend <- function(condaenv){
+py_depend <- function(condaenv=NULL, virtualenv=NULL){
   # symengine not installing on windows, will add later
   # issues with pandas & scipy on CentOS7
   required_py <- c("matplotlib", "numpy", "pandas", "pathos", "scipy", "sympy")
-  conda_install(envname = condaenv, packages = required_py, pip = FALSE)
+  if(!is.null(condaenv)){
+    conda_install(envname = condaenv, packages = required_py, pip = FALSE)
+  } else if(!is.null(virtualenv)){
+    virtualenv_install(envname = virtualenv, 
+                       packages = required_py, ignore_installed = TRUE)
+  }
 }
 
 
