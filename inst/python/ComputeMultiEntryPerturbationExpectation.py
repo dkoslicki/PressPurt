@@ -48,5 +48,4 @@ def run_MultiEntry(input_file, num_iterates, interval_length, threads):
         #A = np.loadtxt(input_file, delimiter=",")
         A, row_names, column_names = NumSwitch.import_matrix(input_file)
         expectation = NaiveSS.naive_SS(A, num_iterates=num_iterates, interval_length=interval_length, num_threads=num_threads)
-        print(expectation)
         return(expectation)

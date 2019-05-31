@@ -4,15 +4,17 @@
 \alias{get_distributions}
 \title{Get PDF distribution}
 \usage{
-get_distributions(matrix_interval, distribution_list, asymp_stab,
+get_distributions(matrix_entry, distribution_list, asymp_stab,
   points = 250)
 }
 \arguments{
-\item{matrix_interval}{Position in the matrix. Example: c(0, 0)}
+\item{matrix_entry}{Position in the matrix. Example: c(0, 0) # matrix entry}
 
 \item{distribution_list}{list of scipy distribution}
 
 \item{asymp_stab}{asymptotic stability interval}
+
+\item{points}{the number of values in x range}
 }
 \description{
 This function retrieves the PDF (Probablity Distribution Function)
@@ -20,5 +22,5 @@ object from the scipy method
 <scipy.stats._distn_infrastructure.rv_frozen>.
 }
 \examples{
-ax2 <- get_distributions(matrix_interval = c(0, 0), distribution_list, asymp_stab)
+ax2 <- get_distributions(matrix_entry = c(0, 0), distribution_list, asymp_stab)
 }
