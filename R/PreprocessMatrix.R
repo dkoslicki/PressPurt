@@ -36,10 +36,18 @@ PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bo
                               zero_perturb, threads, verbose))
     return(paste0("Output saved to output_folder: ", output_folder)) 
   } else{
-    tt <- py_to_r(run_preproc(input_file, output_folder, prefix, max_bound, 
-                              zero_perturb, threads, verbose))
-    names(tt) <- c("original_matrix", "matrix_size", "column_names", "row_names", "non_zero", 
-                   "num_switch_functions", "asymptotic_stability")
+    py_temp <- run_preproc(input_file, output_folder, prefix, max_bound, 
+                              zero_perturb, threads, verbose)
+    tt <- list("original_matrix" = py_to_r(py_temp[[0]]),
+               "matrix_size" = py_to_r(py_temp[[1]]),
+               "column_names" = py_to_r(py_temp[[2]]),
+               "row_names" = py_to_r(py_temp[[3]]),
+               "non_zero" = py_to_r(py_temp[[4]]),
+               "num_switch_functions_py" = py_temp[[5]],
+               "num_switch_functions" = py_to_r(py_temp[[5]]),
+               "asymptotic_stability" = py_to_r(py_temp[[6]]))
+    #names(tt) <- c("original_matrix", "matrix_size", "column_names", "row_names", "non_zero", 
+    #               "num_switch_functions", "asymptotic_stability")
     # separate AS matrix into start and end
     tt$asymptotic_stability_start <- tt$asymptotic_stability[,,1]
     tt$asymptotic_stability_end <- tt$asymptotic_stability[,,2]
@@ -50,6 +58,7 @@ PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bo
     tt$num_switch_funcs_r <- lapply(names(tt$num_switch_functions), function(x) 
       .NS_func_r(num_switch_funcs = tt$num_switch_functions, name = x))
     names(tt$num_switch_funcs_r) <- names(tt$num_switch_functions)
+    tt$num_switch_functions <- NULL
     return(tt)
   }
 }

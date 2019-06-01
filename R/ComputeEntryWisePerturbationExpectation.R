@@ -62,20 +62,20 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
       as_start = PreProsMatrix$asymptotic_stability_start,
       as_stop = PreProsMatrix$asymptotic_stability_end)
     # go back to python based
-    names(PreProsMatrix$num_switch_functions) <- .r_index(
-      names = PreProsMatrix$num_switch_functions, to_r = F)
+    #names(PreProsMatrix$num_switch_functions) <- .r_index(
+    #  names = PreProsMatrix$num_switch_functions, to_r = F)
     # run main function
     entrywise <- py_to_r(run_EntryWise(NULL, prefix, distribution_type, 
                                        input_a, input_b, threads, 
                                        matrix_size=PreProsMatrix$matrix_size, 
                                        col_names=PreProsMatrix$column_names, 
                                        row_names=PreProsMatrix$row_names, 
-                                       num_switch=PreProsMatrix$num_switch_functions, 
+                                       num_switch=PreProsMatrix$num_switch_functions_py, 
                                        asymp_stab=asymptotic_stability))
     names(entrywise) <- c("distributions", "expected_num_switch")
     combined <- c(PreProsMatrix, entrywise)
-    names(combined$num_switch_functions) <- .r_index(
-      names = combined$num_switch_functions, to_r = T)
+    #names(combined$num_switch_functions) <- .r_index(
+    #  names = combined$num_switch_functions, to_r = T)
     names(combined$distributions) <- .r_index(
       names = combined$distributions, to_r = T)
     distributions_object <- lapply(names(combined$distributions), function(x){
@@ -92,6 +92,7 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
     })
     names(distributions_object) <- names(combined$distributions)
     combined$distributions_object <- distributions_object
+    combined$distributions <- NULL
     return(combined)
     #return(entrywise)
   }

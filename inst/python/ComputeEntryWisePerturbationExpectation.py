@@ -11,7 +11,7 @@ from scipy.stats import rv_continuous
 from multiprocessing import Pool  # Much faster without dummy (threading)
 import multiprocessing
 import pandas as pd
-
+import decimal
 # import stuff in the src folder
 import MRS
 import SS
@@ -127,6 +127,9 @@ def run_EntryWise(input_folder, prefix, distribution_type,
             n = kwargs["matrix_size"]
             asymp_stab = kwargs["asymp_stab"]
             num_switch_funcs = kwargs["num_switch"]
+            #num_switch_file = "test_r/test3/num_switch_funcs.pkl"
+            #num_switch_file = "test_r/test3/test_num_switch.pkl"
+            #num_switch_funcs = pickle.load(open(num_switch_file, 'rb'))
             row_names = kwargs["row_names"]
             column_names = kwargs["col_names"]
 
@@ -229,15 +232,11 @@ def run_EntryWise(input_folder, prefix, distribution_type,
         df.index = row_names
         df.columns = column_names
         #exp_num_test = pickle.load(open("test_r/test3/expected_num_switch.pkl", 'rb'))
-        #print(exp_num_test)
-        #print(round(df.iat[0,0], 18))
         if save is True:
             df.to_csv(exp_num_switch_file)
-            #df.to_pickle(exp_num_test)
-            #return(df)
         if save is False:
             return(dists, df)
-            #return(exp_num_test, df)
+            #return(kwargs["num_switch"])
 
 
 #infold = "test_r/test3"
