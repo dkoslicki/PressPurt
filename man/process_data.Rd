@@ -4,13 +4,13 @@
 \alias{process_data}
 \title{Convert data to R format if saved to disk}
 \usage{
-process_data(matrix, type, folder)
+process_data(matrix, type = "csv", folder)
 }
 \arguments{
 \item{matrix}{path to the original matrix.}
 
 \item{type}{csv or tab. Is the oringal matrix comma separated
-or tab separated?}
+or tab separated? Default: csv}
 
 \item{folder}{path to the folder where output data was saved.}
 }

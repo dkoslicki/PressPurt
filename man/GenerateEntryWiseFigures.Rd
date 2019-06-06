@@ -28,3 +28,10 @@ This function plots the number of mis-predictions versus perturbation
 value, overlaid with distribution over stable pertrubation values.
 Run after ComputeEntryWisePerturbationExpectation()
 }
+\examples{
+list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
+GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+GenerateEntryWiseFigures(input_folder = "test_r/test3", 
+all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = TRUE)
+}
