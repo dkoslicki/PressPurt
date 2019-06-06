@@ -93,7 +93,20 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
     names(distributions_object) <- names(combined$distributions)
     combined$distributions_object <- distributions_object
     combined$distributions <- NULL
+    ns_object <- lapply(names(combined$num_switch_funcs_r), function(x){
+      split_name <- unlist(lapply(
+        strsplit(gsub("\\(", "", gsub(")", "", x)), ","), as.numeric))
+      k <- split_name[1]
+      l <- split_name[2]
+      num_switch_func <- combined$num_switch_funcs_r[
+        paste("(", k, ", ", l, ")", sep = '')][[1]]
+      ns_step <- ns_to_step(asymp_stab_start = combined$asymptotic_stability_start[k,l],
+                            asymp_stab_end = combined$asymptotic_stability_end[k,l],
+                            num_switch_func = num_switch_func)
+      return(ns_step)
+    })
+    names(ns_object) <- names(combined$num_switch_funcs_r)
+    combined$ns_object_plot <- ns_object
     return(combined)
-    #return(entrywise)
   }
 }

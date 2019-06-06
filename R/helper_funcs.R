@@ -182,7 +182,7 @@ py_depend <- function(condaenv=NULL, virtualenv=NULL){
 #' numpy or pickle objects. 
 #' @param matrix path to the original matrix.
 #' @param type csv or tab. Is the oringal matrix comma separated
-#' or tab separated?
+#' or tab separated? Default: csv
 #' @param folder path to the folder where output data was saved.
 #' @return object formatted in the same way the output of 
 #' ComputeEntryWisePerturbationExpectation
@@ -190,14 +190,22 @@ py_depend <- function(condaenv=NULL, virtualenv=NULL){
 #' @examples data <- process_data(matrix = infile, type = "csv", folder = "test_r/test3")
 #' @import reticulate
 
-process_data <- function(matrix, type, folder){
+process_data <- function(matrix, type="csv", folder){
   np <- reticulate::import("numpy")
   if(type == "csv"){
-    original_matrix <- as.matrix(read.csv(matrix, header = F))
-    colnames(original_matrix) <- 1:ncol(original_matrix)
+    if(!is.null(matrix)){
+      original_matrix <- as.matrix(read.csv(matrix, header = F))
+      colnames(original_matrix) <- 1:ncol(original_matrix)
+    } else {
+      original_matrix <- matrix
+    }
   } else if (type == "tab"){
-    original_matrix <- as.matrix(read.table(matrix, sep = "\t"))
-    colnames(original_matrix) <- 1:ncol(original_matrix)
+    if(!is.null(matrix)){
+      original_matrix <- as.matrix(read.table(matrix, sep = "\t"))
+      colnames(original_matrix) <- 1:ncol(original_matrix)
+    } else {
+      original_matrix <- matrix
+    }
   } else {
     cat("Please specify csv file or tab separated file in type")
     stop()
@@ -254,19 +262,35 @@ process_data <- function(matrix, type, folder){
     return(single_dist)
   })
   names(distributions_object) <- names(distributions)
+  # plot ready Num Switch
+  ns_object <- lapply(names(num_switch_funcs_r), function(x){
+    split_name <- unlist(lapply(
+      strsplit(gsub("\\(", "", gsub(")", "", x)), ","), as.numeric))
+    k <- split_name[1]
+    l <- split_name[2]
+    num_switch_func <- num_switch_funcs_r[
+      paste("(", k, ", ", l, ")", sep = '')][[1]]
+    ns_step <- ns_to_step(asymp_stab_start = asymptotic_stability_start[k,l],
+                          asymp_stab_end = asymptotic_stability_end[k,l],
+                          num_switch_func = num_switch_func)
+    return(ns_step)
+  })
+  names(ns_object) <- names(num_switch_funcs_r)
   # place everything in list
   output <- list(original_matrix, matrix_size, 
                  column_names, row_names, non_zero,
                  asymptotic_stability_start,
                  asymptotic_stability_end,
-                 num_switch_funcs_r, distributions_object)
+                 num_switch_funcs_r, distributions_object,
+                 ns_object)
   names(output) <- c("original_matrix", "matrix_size",
                      "column_names", "row_names",
                      "non_zero", 
                      "asymptotic_stability_start",
                      "asymptotic_stability_end",
                      "num_switch_funcs_r",
-                     "distributions_object")
+                     "distributions_object",
+                     "ns_object_plot")
   return(output)
 }
 
@@ -277,30 +301,16 @@ process_data <- function(matrix, type, folder){
 #' This function retrieves the PDF (Probablity Distribution Function)
 #' object from the scipy method 
 #' <scipy.stats._distn_infrastructure.rv_frozen>.
-#' @param matrix_entry Position in the matrix. Example: c(0, 0) # matrix entry 
+#' @param matrix_entry Position in the matrix. Example: c(1, 1)
 #' @param distribution_list list of scipy distribution
 #' @param asymp_stab asymptotic stability interval
 #' @param points the number of values in x range
 #' @export
-#' @examples ax2 <- get_distributions(matrix_entry = c(0, 0), distribution_list, asymp_stab)
+#' @examples single_dist <- get_distributions_single(matrix_entry = c(k,l), 
+#' distribution_list = combined$distributions, 
+#' asymp_stab = c(combined$asymptotic_stability_start[k,l], 
+#' combined$asymptotic_stability_end[k,l]))
 #' @import reticulate
-
-get_distributions <- function(matrix_entry, 
-                              distribution_list, asymp_stab,
-                              points=250){
-  np <- reticulate::import("numpy")
-  k <- matrix_entry[1]
-  l <- matrix_entry[2]
-  interval <- asymp_stab[(k+1), (l+1),] # change back to R 1 based
-  padding <- (interval[2] - interval[1])/100
-  x_range <- np$linspace((interval[1] - padding), (interval[2] + padding), points)
-  dist.py <- distribution_list[paste("(", k, ", ", l, ")", sep = '')]
-  dist_vals <- sapply(x_range, function(x){dist.py[[1]]$pdf(x)})
-  ax2 <- data.frame(x_range = as.numeric(x_range), dist_vals = dist_vals)
-  return(ax2)
-}
-
-# new version of get_distribution?
 
 get_distributions_single <- function(matrix_entry, 
                                      distribution_list, asymp_stab,
@@ -318,6 +328,51 @@ get_distributions_single <- function(matrix_entry,
                    distribution = ax2)
   return(out_list)
 }
+
+
+#' Num Switch Function to step function
+#'
+#' This function transforms a Num Switch Function
+#' to a plot ready step function with x and y values.
+#' Returns a data frame of x and y values to plot.
+#' @param asymp_stab_start start interval from asymptotic_stability
+#' @param asymp_stab_end end interval from asymptotic_stability
+#' @param num_switch_func a single num switch function
+#' @export
+#' @examples ns_step <- ns_to_step(asymp_stab_start = Entrywise$asymptotic_stability_start[1,1],
+#' asymp_stab_end = Entrywise$asymptotic_stability_end[1,1],
+#' num_switch_func = Entrywise$num_switch_funcs_r$`(1, 1)`)
+#' @import reticulate
+
+ns_to_step <- function(asymp_stab_start, asymp_stab_end, 
+                       num_switch_func){
+  asymp_stab <- c(asymp_stab_start, asymp_stab_end)
+  # check which AS interval is already in NS
+  asymp_stab.df <- data.frame("AS" = asymp_stab, 
+                              "in_NS" = c(asymp_stab[1] %in% num_switch_func,
+                                          asymp_stab[2] %in% num_switch_func))
+  AS_to_add <- asymp_stab.df[asymp_stab.df$in_NS == FALSE, 1]
+  if(abs(num_switch_func[1,3]) - abs(num_switch_func[1,2]) > 0){
+    # increasing
+    nsx <- c(AS_to_add, num_switch_func[1,2], 
+             num_switch_func[,3]) # AS, start, ends
+    nsy <- c(0, 0, num_switch_func[,1])
+    out.df <- data.frame(nsx, nsy)
+  } else if(abs(num_switch_func[1,3]) - 
+            abs(num_switch_func[1,2]) < 0){
+    # decreasing
+    nsx <- c(AS_to_add, num_switch_func[,3], 
+             num_switch_func[nrow(num_switch_func),2]) # AS, ends, start
+    nsy <- c(0, num_switch_func[,1], 
+             num_switch_func[nrow(num_switch_func),1])
+    out.df <- data.frame(nsx, nsy)
+    out.df <- out.df[order(out.df$nsx),]
+  } else{
+    print("No change in interval")
+  }
+  return(out.df)
+}
+
 
 # check if file exists
 
@@ -342,8 +397,8 @@ get_distributions_single <- function(matrix_entry,
   colnames(layout.matrix) <- c("rows", "cols")
   layout.matrix$index <- rownames(layout.matrix)
   # change to 1 based index
-  layout.matrix$rows.r <- as.numeric(as.character(layout.matrix$rows)) + 1
-  layout.matrix$cols.r <- as.numeric(as.character(layout.matrix$cols)) + 1
+  layout.matrix$rows.r <- as.numeric(as.character(layout.matrix$rows))
+  layout.matrix$cols.r <- as.numeric(as.character(layout.matrix$cols))
   # populate empty.grid
   for(i in 1:nrow(layout.matrix)){
     empty.grid[layout.matrix$rows.r[i], layout.matrix$cols.r[i]] <- as.numeric(layout.matrix$index[i])

@@ -354,7 +354,8 @@ def num_switch_to_step(num_switch_funcs, intervals, k, l):
 	:param l: column you're looking at
 	:return: (x,y) suitable for input to plt.step(x,y)
 	"""
-	num_switch_func = num_switch_funcs["(" + str(k) + ", " + str(l) + ")"]
+	num_switch_func = num_switch_funcs[k, l]
+        #num_switch_func = num_switch_funcs["(" + str(k) + ", " + str(l) + ")"]
         # in R dict keys get converted to char
         #strr = "'(" + str(k) + ", " + str(l) + ")'"
         #num_switch_func = num_switch_funcs[k, l]
