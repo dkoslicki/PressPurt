@@ -86,12 +86,12 @@ First you'll need to load `PressPurtCoreAlg`, check which versions of python are
 ```{r}
 # load the library
 library(PressPurtCoreAlg)
-# Find the versions of python and conda environments available on your machine:
+# Find the versions of python, conda environments and virtualenvs available on your machine:
 find_python()
 
 ```
 
-This shows you your default Python path, other available python paths, and a list of your conda environments.
+This shows you your default Python path, other available python paths, a list of your conda environments and virtualenvs.
 
 The `set_python` function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you'll need to specify which python version to use in addition to the conda envirnment name.
 
@@ -111,7 +111,7 @@ Next you'll need to install the python dependencies in your conda environment. T
 * `pandas`
 
 ```{r, eval=FALSE}
-py_depend("test-r")
+py_depend(condaenv = "test-r")
 ```
 
 If the dependencies don't install correctly see below for instructions on how to install via the command-line.
@@ -157,4 +157,64 @@ set_python(condaenv="test-r")
 
 ### Virtualenv
 
+#### Install virtual environment
+
+If needed, install `virtualenv` with `pip`.
+
+##### Command-line
+
+* Intall, test and (optionally) create a new virtenv from the commandline
+
+```{bash, eval=FALSE}
+# install virtualenv with pip
+pip install virtualenv
+# test your installation
+virtualenv --version
+# create a virtualenv
+virtualenv venv
+```
+
+
+#### Installing python dependencies
+
+##### From R
+
+The `set_python_virtual` function lets one specify a virtual envrionemnt to use. If you want to make a new virtual environment, you'll need to specify which python version to use in addition to the virtual envirnment name.
+
+You may check which version(s) of python you have in a fresh R session with `find_python()`. You should use the sample one you used to intall `virtualenv`.
+
+```{r, eval=FALSE}
+set_python_virtual(version = "/usr/bin/python3", virtualenv = "r-reticulate", verbose = TRUE)
+```
+
+Next you'll need to install the python dependencies in your virtual environment. This will install the following into your `PressPurt` virtual env: 
+
+* `numpy`
+* `scipy`
+* `matplotlib`
+* `sympy`
+* `pathos`
+* `pandas`
+
+```{r, eval=FALSE}
+py_depend(virtualenv = "PressPurt")
+```
+
+If you want to use the `PressPurt` environment in a new R session you can access it via:
+
+```{r, eval=FALSE}
+set_python_virtual(virtualenv = "PressPurt")
+```
+
+
+Now that you have created the virtual environment and installed dependencies, you can use the new env in R! Run:
+
+```{r, eval=FALSE}
+# load the library
+library(PressPurtCoreAlg)
+# You should see "test-r" listed as a conda env
+find_python()
+# Set your virtualenv
+set_python_virtual(virtualenv = "PressPurt")
+```
 

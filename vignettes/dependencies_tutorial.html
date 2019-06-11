@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dana Gibbon" />
 
-<meta name="date" content="2019-03-27" />
+<meta name="date" content="2019-06-11" />
 
 <title>Set up</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Set up</h1>
 <h4 class="author"><em>Dana Gibbon</em></h4>
-<h4 class="date"><em>2019-03-27</em></h4>
+<h4 class="date"><em>2019-06-11</em></h4>
 
 
 
@@ -149,17 +149,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>First you’ll need to load <code>PressPurtCoreAlg</code>, check which versions of python are found and if any Conda envrionments exists.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
 <span class="kw">library</span>(PressPurtCoreAlg)
-<span class="co"># Find the versions of python and conda environments available on your machine:</span>
+<span class="co"># Find the versions of python, conda environments and virtualenvs available on your machine:</span>
 <span class="kw">find_python</span>()
 <span class="co">#&gt; Default Python:</span>
 <span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Python versions found:</span>
-<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/anaconda3/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
+<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /home/gibbond/anaconda3/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/.virtualenvs/PressPurt/bin/python /home/gibbond/.virtualenvs/Test/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/picrust2/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  List of condaenvironments:</span>
-<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python,</span></code></pre></div>
-<p>This shows you your default Python path, other available python paths, and a list of your conda environments.</p>
+<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, picrust2: /home/gibbond/anaconda3/envs/picrust2/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python, </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  List of virtualenvs:</span>
+<span class="co">#&gt;  PressPurt Test</span></code></pre></div>
+<p>This shows you your default Python path, other available python paths, a list of your conda environments and virtualenvs.</p>
 <p>The <code>set_python</code> function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you’ll need to specify which python version to use in addition to the conda envirnment name.</p>
 <p>You may have python installed under <code>/usr/bin/python3</code>, Anaconda2 and/or Anaconda3 installed so it’s important to specify which python to use. In this case I’ll use the anaconda3 python.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python</span>(<span class="dt">condaenv=</span><span class="st">&quot;test-r&quot;</span>, <span class="dt">version=</span><span class="st">&quot;/home/gibbond/anaconda3/bin/python&quot;</span>,<span class="dt">verbose =</span> <span class="ot">TRUE</span>)</code></pre></div>
@@ -172,7 +175,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>pathos</code></li>
 <li><code>pandas</code></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">py_depend</span>(<span class="st">&quot;test-r&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">py_depend</span>(<span class="dt">condaenv =</span> <span class="st">&quot;test-r&quot;</span>)</code></pre></div>
 <p>If the dependencies don’t install correctly see below for instructions on how to install via the command-line.</p>
 <p>If you want to use the <code>test-r</code> environment in a new R session you can access it via:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python</span>(<span class="dt">condaenv=</span><span class="st">&quot;test-r&quot;</span>)</code></pre></div>
@@ -207,6 +210,50 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="virtualenv" class="section level3">
 <h3>Virtualenv</h3>
+<div id="install-virtual-environment" class="section level4">
+<h4>Install virtual environment</h4>
+<p>If needed, install <code>virtualenv</code> with <code>pip</code>.</p>
+<div id="command-line-1" class="section level5">
+<h5>Command-line</h5>
+<ul>
+<li>Intall, test and (optionally) create a new virtenv from the commandline</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># install virtualenv with pip</span>
+<span class="ex">pip</span> install virtualenv
+<span class="co"># test your installation</span>
+<span class="ex">virtualenv</span> --version
+<span class="co"># create a virtualenv</span>
+<span class="ex">virtualenv</span> venv</code></pre></div>
+</div>
+</div>
+<div id="installing-python-dependencies-1" class="section level4">
+<h4>Installing python dependencies</h4>
+<div id="from-r-1" class="section level5">
+<h5>From R</h5>
+<p>The <code>set_python_virtual</code> function lets one specify a virtual envrionemnt to use. If you want to make a new virtual environment, you’ll need to specify which python version to use in addition to the virtual envirnment name.</p>
+<p>You may check which version(s) of python you have in a fresh R session with <code>find_python()</code>. You should use the sample one you used to intall <code>virtualenv</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python_virtual</span>(<span class="dt">version =</span> <span class="st">&quot;/usr/bin/python3&quot;</span>, <span class="dt">virtualenv =</span> <span class="st">&quot;r-reticulate&quot;</span>, <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>Next you’ll need to install the python dependencies in your virtual environment. This will install the following into your <code>PressPurt</code> virtual env:</p>
+<ul>
+<li><code>numpy</code></li>
+<li><code>scipy</code></li>
+<li><code>matplotlib</code></li>
+<li><code>sympy</code></li>
+<li><code>pathos</code></li>
+<li><code>pandas</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">py_depend</span>(<span class="dt">virtualenv =</span> <span class="st">&quot;PressPurt&quot;</span>)</code></pre></div>
+<p>If you want to use the <code>PressPurt</code> environment in a new R session you can access it via:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python_virtual</span>(<span class="dt">virtualenv =</span> <span class="st">&quot;PressPurt&quot;</span>)</code></pre></div>
+<p>Now that you have created the virtual environment and installed dependencies, you can use the new env in R! Run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
+<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="co"># You should see &quot;test-r&quot; listed as a conda env</span>
+<span class="kw">find_python</span>()
+<span class="co"># Set your virtualenv</span>
+<span class="kw">set_python_virtual</span>(<span class="dt">virtualenv =</span> <span class="st">&quot;PressPurt&quot;</span>)</code></pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
