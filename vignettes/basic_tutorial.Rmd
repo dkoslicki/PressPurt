@@ -49,8 +49,12 @@ py_depend("r-reticulate")
 
 ```{r quick_start_run}
 # Path to your matrix
-infile <- system.file("extdata", "IGP.csv", package = "PressPurtCoreAlg")
-PreProsMatrix <- PreprocessMatrix(input_file = infile, output_folder = NULL, max_bound = 10, threads = 2)
+infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurtCoreAlg")
+MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file = infile)
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+                                  output_folder = NULL, 
+                                  max_bound = 10, 
+                                  threads = 2)
 Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
                                         distribution_type="truncnorm", 
                                         input_a=0, input_b=-2, threads=1)
@@ -64,3 +68,233 @@ GenerateEntryWiseFigures(EntryWise=Entrywise,
 GenerateEntryWiseFigures(EntryWise=Entrywise, 
                          all_numswitch_plots = TRUE)
 ```
+
+# Load Python
+
+This package uses python through the R package `reticulate`. You'll need to install the needed python libraries into a conda env or a virtualenv. The "dependencies_tutorial" walks you through how to do this. Once this is done, you'll need to load your conda env or virtualenv.
+
+Note: If you want to change conda envs, you'll need to restart R because of how `reticulate` works.
+
+```{r load_py, eval=FALSE}
+# set the conda env
+set_python("r-reticulate", verbose = TRUE)
+```
+
+# Example: IGP.csv
+When running this workflow, one may keep everything in R memory or save the output and intermediate files to a specified folder. However, many of these output files are python objects. Let's start by looking at the R-based version:
+
+## R-object based
+
+### Compute Multi Entry Perturbation Expectation
+This function takes a jacobian matrix and computes the multi-entry perturbation expectation.
+
+In this example we take the `IGP.csv` matrix and use the default `num_iterates` and `interval_length` values.
+
+```{r multi}
+infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurtCoreAlg")
+MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file = infile)
+MultiPert
+```
+
+### PreprocessMatrix
+
+This function pre-processes a matrix by figuring out what the intervals of asymptotic stability are, as well as finding which perturbation values lead to a sign switch.
+
+In this example we use a `max_bound` of 10, don't perturb zero entries and use 2 threads.
+
+```{r PrePros}
+PreProsMatrix <- PreprocessMatrix(input_file = infile,
+                                  max_bound = 10,
+                                  zero_perturb = FALSE,
+                                  threads = 2)
+```
+
+#### Output
+
+The output is a list of 9 objects which includes:
+`r names(PreProsMatrix)`
+
+##### Matrix
+
+This includes the original matrix and information about that matrix:
+```{r matrix}
+# Original Matrix
+PreProsMatrix$original_matrix
+# Matrix size
+PreProsMatrix$matrix_size
+# row names
+PreProsMatrix$row_names
+# column names
+PreProsMatrix$column_names
+# number of entries that aren't zero
+PreProsMatrix$non_zero
+```
+
+##### Asymptotic of Stability intervals
+
+The asymptotic of stability intervals are divided up into two matrices: start and stop.
+
+```{r AS}
+# Start
+PreProsMatrix$asymptotic_stability_start
+# End
+PreProsMatrix$asymptotic_stability_end
+# To access entry 1,1:
+PreProsMatrix$asymptotic_stability_start[1,1]
+PreProsMatrix$asymptotic_stability_end[1,1]
+```
+
+##### Num Switch
+
+The `num_switch_funcs` object is a list of each non-zero entry in the matrix and the corresponding perturbation values that leads to a sign switch.
+
+For example, entry 1,1 has 1 sign switch and 2,2 has 2.
+
+```{r num_switch}
+# get the length of the list, see it's 
+# the same as the non-zero entries
+length(PreProsMatrix$num_switch_funcs_r)
+# see the names of the entries
+names(PreProsMatrix$num_switch_funcs_r)
+# num switch function for 1,1
+PreProsMatrix$num_switch_funcs_r$`(1, 1)`
+# num switch function for 2,2
+PreProsMatrix$num_switch_funcs_r$`(2, 2)`
+```
+
+You can ignore the `num_switch_functions_py` object as it is a python dictionary that is passed to the next step.
+
+### Compute Entry Wise Perturbation Expectation
+
+This function computes the expected number of sign switches from perturbing each entry individually.
+
+In this example, the `PreProsMatrix` object is passed, "truncnorm" distribution is used, `input_a` is 0 and `input_b` is -2.
+
+```{r entrywise}
+Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
+                                        distribution_type="truncnorm", 
+                                        input_a=0, input_b=-2, threads=1)
+```
+
+#### Output
+
+The output includes the same object that were found in `PreProsMatrix` with 3 additions: 
+`r names(Entrywise)`
+
+##### Expected num switch
+
+This is a data frame of expected sign switches.
+
+```{r exp_NS}
+Entrywise$expected_num_switch
+```
+
+##### Distributions Object
+
+This object gets the probability density distribution into a plot ready format for each non-zero interval in the matrix. By default there are 250 points in the distribution.
+
+```{r dists_ob}
+# distributions object of each non-zero entry in the matrix
+names(Entrywise$distributions_object)
+# position in the matrix
+Entrywise$distributions_object$`(1, 1)`[1]
+# Interval of asymptotic of stability
+Entrywise$distributions_object$`(1, 1)`[2]
+# ready to plot probability density distribution dataframe
+head(Entrywise$distributions_object$`(1, 1)`[[3]], n = 10)
+```
+
+##### Num Switch Object
+
+The `ns_object_plot` is the Num Switch functions that have been converted into step functions and are ready to plot!
+
+```{r NS_plot}
+# Step function for each non-zero entry in the matrix
+names(Entrywise$ns_object_plot)
+# entry 1,1
+Entrywise$ns_object_plot$`(1, 1)`
+# entry 4,2
+Entrywise$ns_object_plot$`(4, 2)`
+```
+
+The y-0 position has been added to the step function:
+
+```{r compare_NS}
+# Before
+Entrywise$num_switch_funcs_r$`(1, 1)`
+# After - step function
+Entrywise$ns_object_plot$`(1, 1)`
+```
+
+### Generate Entry Wise Figures
+
+The `GenerateEntryWiseFigures` function plots the Num Switch step function on the Y-axis in black and the probability density on the Y-axis in grey. 
+
+One may plot individual entries or a list of entries with the `list_of_numswitch_to_plot` option:
+
+```{r plot_entry}
+list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = FALSE, 
+                         list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+
+```
+
+Or plot all figures with `all_numswitch_plots`. 
+
+For large matrices it is not recommended that you plot them all in one plot.
+
+```{r plot_all, fig.width=9, fig.height=8}
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = TRUE)
+```
+
+## Save to disk
+
+### Basic pipeline
+
+One may instead save objects to disk if one sets an `output_folder`. The following files will be created in the specified folder:
+
+* asymptotic_stability.npy
+* distributions.pkl
+* num_non_zero.npy
+* row_names.txt
+* column_names.txt
+* expected_num_switch.csv  
+* num_switch_funcs.pkl
+* size.npy
+
+If you are going to be doing multiple runs in the same folder it is recommended that you specify a file prefix - this will add <prefix>_ to the beginning of every file.
+
+```{r save_disk, eval=FALSE}
+# Not run in vignette creation
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+                                  output_folder = "test_r/test4", 
+                                  prefix = "IGP", max_bound = 10, threads = 2)
+Entrywise <- ComputeEntryWisePerturbationExpectation(input_folder = "test_r/test4",
+                                                     prefix = "IGP",
+                                                     distribution_type="truncnorm", 
+                                                     input_a=0, input_b=-2, threads=1)
+
+list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
+GenerateEntryWiseFigures(input_folder = "test_r/test4",
+                         prefix = "IGP",
+                         all_numswitch_plots = FALSE, 
+                         list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+
+```
+
+
+Many of them are numpy or pickle python objects. But the `GenerateEntryWiseFigures` can handle them!
+
+### Process Data
+
+One may also turn the data saved to a folder into an R friendly format with `process_data`. This function will put the data in the same format as the output as `ComputeEntryWisePerturbationExpectation`.
+
+```{r proc_disk, eval=FALSE}
+Entrywise_from_disk <- process_data(matrix = infile, 
+                                    type = "csv", 
+                                    folder = "test_r/test4", 
+                                    prefix = "IGP")
+```
+
