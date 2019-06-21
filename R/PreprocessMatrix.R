@@ -9,16 +9,21 @@
 #' @param prefix Prefix of output files, if you so choose.
 #' @param max_bound some of the matrices are unbounded stable towards one end, this 
 #' is the limit the user imposes. Default: 10
-#' @param zero_perturb Flag to indicate you want to pertub the zero entries. 
+#' @param zero_perturb Flag to indicate you want to perturb the zero entries. 
 #' Default: FALSE
 #' @param threads Number of threads to use. Default: 1
-#' @param verbose TODO
+#' @param verbose Default: FALSE
 #' @return A list of with the following objects: matrix_size, column_names, row_names,
 #' non_zero, num_switch_functions, asymptotic_stability_start,
 #' asymptotic_stability_end, num_switch_funcs_r
 #' @export
-#' @examples PreProsMatrix <- PreprocessMatrix(input_file = infile, 
-#' output_folder = NULL, max_bound = 10, threads = 2)
+#' @examples
+#' \dontrun{
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg") 
+#' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+#'     output_folder = NULL, max_bound = 10, threads = 2)
+#' }
 
 
 PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bound=10, 

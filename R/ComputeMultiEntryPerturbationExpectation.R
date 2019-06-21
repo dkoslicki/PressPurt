@@ -1,7 +1,7 @@
 #' Compute Multi Entry Perturbation Expectation
 #'
-#' This function pre-processes a matrix by figuring out what the intervals of asymptotic 
-#' stability are, as well as finding which perturbation values lead to a sign switch.
+#' This function takes a jacobian matrix and computes the multi-entry 
+#' perturbation expectation.
 #' @param input_file Input comma separated file for the jacobian matrix.
 #' @param num_iterates Number of iterates in the Monte Carlo sampling to perform.
 #' Default: 10000
@@ -10,7 +10,12 @@
 #' @param threads Number of threads to use. Default: 1
 #' @return returns a scalar
 #' @export
-#' @examples ComputeMultiEntryPerturbationExpectation(input_file = infile)
+#' @examples
+#' \dontrun{
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg") 
+#' ComputeMultiEntryPerturbationExpectation(input_file = infile)
+#' }
 
 ComputeMultiEntryPerturbationExpectation <- function(
   input_file, num_iterates=1000, 

@@ -13,12 +13,38 @@
 #' @param list_of_numswitch_to_plot List of entries you want visualized with num switch. 
 #' Should be a list of vectors. Example: list(c(0, 0), c(0, 1))
 #' @export
-#' @examples list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
-#' GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
-#' @examples GenerateEntryWiseFigures(input_folder = "test_r/test3", 
-#' all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
-#' @examples GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = TRUE)
+#' @examples
+#' \dontrun{
+#' # Set input file
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg")
+#' # Preprocess the matrix
+#' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+#'     output_folder = NULL, max_bound = 10, threads = 2)
+#'
+#' # Run ComputeEntryWisePerturbationExpectation
+#' Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix,
+#'     distribution_type = "truncnorm", 
+#'     input_a = 0, input_b = -2, threads = 1)
+#'
+#' # Plot specific entries using entrywise object
+#' list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
+#' GenerateEntryWiseFigures(EntryWise=Entrywise, 
+#'     all_numswitch_plots = FALSE, 
+#'     list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+#'      
+#' 
+#' # Plot specific entries from folder
+#' GenerateEntryWiseFigures(input_folder = "test_r/test3", 
+#'     all_numswitch_plots = FALSE, 
+#'     list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+#'
+#' # Plot all numswitch plots
+#' GenerateEntryWiseFigures(EntryWise=Entrywise, 
+#'     all_numswitch_plots = TRUE)
+#' }
 #' @import ggplot2
+#' @import utils
 
 
 GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=NULL, 
@@ -35,7 +61,8 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
   if(!is.null(input_folder)){
     # Convert to R object
     # Need distributions and Num Switch
-    EntryWise <- process_data(matrix = NULL, type = "csv", folder = input_folder)
+    EntryWise <- process_data(matrix = NULL, type = "csv", 
+                              folder = input_folder, prefix = prefix)
   }
   n <- EntryWise$matrix_size
   m <- n
@@ -58,8 +85,8 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
       # where x is the fraction to get axis to match up
       dists.2$dist_vals.trans <- dists.2$dist_vals/
         (max(dists.2$dist_vals)/max(ns.df$nsy))
-      p <- ggplot() + geom_step(data = ns.df, aes(nsx, nsy), size = 1.25, direction = 'vh') + 
-        geom_area(data = dists.2, aes(x=x_range, y= dist_vals.trans),
+      p <- ggplot() + geom_step(data = ns.df, aes_string("nsx", "nsy"), size = 1.25, direction = 'vh') + 
+        geom_area(data = dists.2, aes_string(x="x_range", y="dist_vals.trans"),
                   alpha = .2, color = "grey") + 
         theme_bw() +
         ggtitle(paste("(", entry[1], ", ", entry[2], ")", " entry", sep = '')) +
@@ -94,16 +121,20 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
       # where x is the fraction to get axis to match up
       dists.2$dist_vals.trans <- dists.2$dist_vals/
         (max(dists.2$dist_vals)/max(ns.df$nsy))
-      p <- ggplot() + geom_step(data = ns.df, aes(nsx, nsy), size = 1.25, direction = 'vh') + 
-        geom_area(data = dists.2, aes(x=x_range, y= dist_vals.trans),
+      p <- ggplot() + geom_step(data = ns.df, aes_string("nsx", "nsy"), size = 1.25, direction = 'vh') + 
+        geom_area(data = dists.2, aes_string(x="x_range", y="dist_vals.trans"),
                   alpha = .2, color = "grey") + 
         theme_bw() +
         ggtitle(paste("(", entry[1], ", ", entry[2], ")", " entry", sep = '')) +
-        scale_x_continuous("Epsilon value") +
-        scale_y_continuous("Number of incorrect predictions",
-                           sec.axis = sec_axis(~ . * (max(dists.2$dist_vals)/max(ns.df$nsy)), 
-                                               name = "Probability density")) +
+        #scale_x_continuous("Epsilon value") +
+        #scale_y_continuous("Number of incorrect predictions",
+                           #sec.axis = sec_axis(~ . * (max(dists.2$dist_vals)/max(ns.df$nsy)), 
+                                               #name = "Probability density")) +
+        scale_y_continuous(sec.axis = 
+                             sec_axis(~ . * (max(dists.2$dist_vals)/max(ns.df$nsy)))) +
         theme(plot.title = element_text(hjust = 0.5),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
               axis.line.y.right = element_line(color = "grey"), 
               axis.ticks.y.right = element_line(colour = "grey"),
               axis.text.y.right = element_text(color = "grey"),
@@ -116,6 +147,7 @@ GenerateEntryWiseFigures <- function(input_folder=NULL, EntryWise=NULL, prefix=N
       top = "Number of mis-predictions versus perturbation value,\noverlaid with distribution over stable perturbation values",
       left = "Number of incorrect predictions",
       right = grid::textGrob("Probability density", rot =270, gp=grid::gpar(col="grey")),
+      bottom = "Epsilon value",
       layout_matrix = filled.grid
     )  
   }

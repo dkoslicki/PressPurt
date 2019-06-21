@@ -11,9 +11,9 @@
 #' @param prefix Prefix of output files, if you so choose.
 #' @param distribution_type Kind of distribution to use. Valid choices are: 
 #' truncnorm, uniform, trunc_lognorm, beta. Default: “truncnorm”
-#' @param a First parameter to the distribution you choose. For truncnorm, this is the mean.
+#' @param input_a First parameter to the distribution you choose. For truncnorm, this is the mean.
 #' Default: 0
-#' @param b First parameter to the distribution you choose. For truncnorm, this is the variance.
+#' @param input_b First parameter to the distribution you choose. For truncnorm, this is the variance.
 #' Using a negative value indicates you want the standard deviation to be the length of the 
 #' interval divided by the absolute value of the input parameter. Default: -2
 #' @param threads Number of threads to use. Default: 1
@@ -24,8 +24,19 @@
 #' asymptotic_stability_end, num_switch_funcs_r, distributions,
 #' expected_num_switch, distributions_object
 #' @export
-#' @examples Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix,
-#' distribution_type = "truncnorm", input_a = 0, input_b = -2, threads = 1)
+#' @examples
+#' \dontrun{
+#' # Set input file
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg")
+#' # Preprocess the matrix
+#' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+#'     output_folder = NULL, max_bound = 10, threads = 2)
+#' # Run ComputeEntryWisePerturbationExpectation
+#' Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix,
+#'     distribution_type = "truncnorm", 
+#'     input_a = 0, input_b = -2, threads = 1)
+#' }
 
 
 ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL, 
@@ -76,6 +87,11 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
     combined <- c(PreProsMatrix, entrywise)
     #names(combined$num_switch_functions) <- .r_index(
     #  names = combined$num_switch_functions, to_r = T)
+    # For some reason, py_to_r is not changing expected_num_switch (pandas df)
+    # to r object...guessing this is a bug. So for now:
+    if (class(combined$expected_num_switch)[1] == "pandas.core.frame.DataFrame"){
+      combined$expected_num_switch <- reticulate::py_to_r(combined$expected_num_switch)
+    }
     names(combined$distributions) <- .r_index(
       names = combined$distributions, to_r = T)
     distributions_object <- lapply(names(combined$distributions), function(x){

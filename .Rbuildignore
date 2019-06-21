@@ -1,3 +1,12 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^src$
+^Depreciated$
+^docs$
+^ExampleJacobians$
+^README.md$
+^requirements.txt$
+^scripts$
+^test_2$
+^test_r$
+^LICENSE\.md$
