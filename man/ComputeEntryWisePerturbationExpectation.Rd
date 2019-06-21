@@ -23,14 +23,14 @@ Must specify an input_folder OR PreProsMatrix. Default: NULL}
 \item{distribution_type}{Kind of distribution to use. Valid choices are: 
 truncnorm, uniform, trunc_lognorm, beta. Default: “truncnorm”}
 
-\item{threads}{Number of threads to use. Default: 1}
-
-\item{a}{First parameter to the distribution you choose. For truncnorm, this is the mean.
+\item{input_a}{First parameter to the distribution you choose. For truncnorm, this is the mean.
 Default: 0}
 
-\item{b}{First parameter to the distribution you choose. For truncnorm, this is the variance.
+\item{input_b}{First parameter to the distribution you choose. For truncnorm, this is the variance.
 Using a negative value indicates you want the standard deviation to be the length of the 
 interval divided by the absolute value of the input parameter. Default: -2}
+
+\item{threads}{Number of threads to use. Default: 1}
 }
 \value{
 If an input folder is specified the objects will be saved to that folder.
@@ -45,6 +45,16 @@ This function computes the expected number of sign switches from perturbing
 each entry individually. Run after PreprocessMatrix().
 }
 \examples{
+\dontrun{
+# Set input file
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg")
+# Preprocess the matrix
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+    output_folder = NULL, max_bound = 10, threads = 2)
+# Run ComputeEntryWisePerturbationExpectation
 Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix,
-distribution_type = "truncnorm", input_a = 0, input_b = -2, threads = 1)
+    distribution_type = "truncnorm", 
+    input_a = 0, input_b = -2, threads = 1)
+}
 }

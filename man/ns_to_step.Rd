@@ -19,7 +19,23 @@ to a plot ready step function with x and y values.
 Returns a data frame of x and y values to plot.
 }
 \examples{
-ns_step <- ns_to_step(asymp_stab_start = Entrywise$asymptotic_stability_start[1,1],
-asymp_stab_end = Entrywise$asymptotic_stability_end[1,1],
-num_switch_func = Entrywise$num_switch_funcs_r$`(1, 1)`)
+\dontrun{
+# Set input file
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg")
+# Preprocess the matrix
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+    output_folder = NULL, max_bound = 10, threads = 2)
+
+# Run ComputeEntryWisePerturbationExpectation
+Entrywise <- ComputeEntryWisePerturbationExpectation(
+    PreProsMatrix = PreProsMatrix,
+    distribution_type = "truncnorm", 
+    input_a = 0, input_b = -2, threads = 1)
+
+ns_step <- ns_to_step(
+    asymp_stab_start = Entrywise$asymptotic_stability_start[1,1],
+    asymp_stab_end = Entrywise$asymptotic_stability_end[1,1],
+    num_switch_func = Entrywise$num_switch_funcs_r$`(1, 1)`)
+}
 }

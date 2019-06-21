@@ -24,5 +24,9 @@ When making a new conda environment, if the python version isn't set, then
 your default one will be used.
 }
 \examples{
-set_python(version = "~/anaconda3/bin/python", condaenv = "r-reticulate", verbose = TRUE)
+\dontrun{
+set_python(version = "~/anaconda3/bin/python", 
+    condaenv = "r-reticulate", 
+    verbose = TRUE)
+}
 }

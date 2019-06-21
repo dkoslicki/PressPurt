@@ -24,5 +24,9 @@ When making a new virtual environment, if the python version isn't set, then
 your default one will be used.
 }
 \examples{
-set_python_virtual(version = "/usr/bin/python3", virtualenv = "r-reticulate", verbose = TRUE)
+\dontrun{
+set_python_virtual(version = "/usr/bin/python3", 
+    virtualenv = "r-reticulate", 
+    verbose = TRUE)
+}
 }

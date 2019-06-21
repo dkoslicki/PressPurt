@@ -29,9 +29,33 @@ value, overlaid with distribution over stable pertrubation values.
 Run after ComputeEntryWisePerturbationExpectation()
 }
 \examples{
+\dontrun{
+# Set input file
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg")
+# Preprocess the matrix
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+    output_folder = NULL, max_bound = 10, threads = 2)
+
+# Run ComputeEntryWisePerturbationExpectation
+Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix,
+    distribution_type = "truncnorm", 
+    input_a = 0, input_b = -2, threads = 1)
+
+# Plot specific entries using entrywise object
 list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
-GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+    all_numswitch_plots = FALSE, 
+    list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+     
+
+# Plot specific entries from folder
 GenerateEntryWiseFigures(input_folder = "test_r/test3", 
-all_numswitch_plots = FALSE, list_of_numswitch_to_plot=list_of_numswitch_to_plot)
-GenerateEntryWiseFigures(EntryWise=Entrywise, all_numswitch_plots = TRUE)
+    all_numswitch_plots = FALSE, 
+    list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+
+# Plot all numswitch plots
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+    all_numswitch_plots = TRUE)
+}
 }

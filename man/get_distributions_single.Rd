@@ -10,7 +10,7 @@ get_distributions_single(matrix_entry, distribution_list, asymp_stab,
 \arguments{
 \item{matrix_entry}{Position in the matrix. Example: c(1, 1)}
 
-\item{distribution_list}{list of scipy distribution}
+\item{distribution_list}{list of scipy distributions}
 
 \item{asymp_stab}{asymptotic stability interval}
 
@@ -22,8 +22,14 @@ object from the scipy method
 <scipy.stats._distn_infrastructure.rv_frozen>.
 }
 \examples{
+\dontrun{
+k <- 1
+l <- 1
+np <- reticulate::import("numpy")
+distributions <- reticulate::py_load_object("distributions.pkl")
 single_dist <- get_distributions_single(matrix_entry = c(k,l), 
-distribution_list = combined$distributions, 
-asymp_stab = c(combined$asymptotic_stability_start[k,l], 
-combined$asymptotic_stability_end[k,l]))
+    distribution_list = distributions, 
+    asymp_stab = c(combined$asymptotic_stability_start[k,l], 
+    combined$asymptotic_stability_end[k,l]))
+}
 }

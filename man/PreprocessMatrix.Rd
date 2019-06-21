@@ -20,12 +20,12 @@ Default is NULL.}
 \item{max_bound}{some of the matrices are unbounded stable towards one end, this 
 is the limit the user imposes. Default: 10}
 
-\item{zero_perturb}{Flag to indicate you want to pertub the zero entries. 
+\item{zero_perturb}{Flag to indicate you want to perturb the zero entries. 
 Default: FALSE}
 
 \item{threads}{Number of threads to use. Default: 1}
 
-\item{verbose}{TODO}
+\item{verbose}{Default: FALSE}
 }
 \value{
 A list of with the following objects: matrix_size, column_names, row_names,
@@ -37,6 +37,10 @@ This script pre-processes a matrix by figuring out what the intervals of asympto
 stability are, as well as finding which perturbation values lead to a sign switch.
 }
 \examples{
+\dontrun{
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg") 
 PreProsMatrix <- PreprocessMatrix(input_file = infile, 
-output_folder = NULL, max_bound = 10, threads = 2)
+    output_folder = NULL, max_bound = 10, threads = 2)
+}
 }

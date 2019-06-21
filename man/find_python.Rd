@@ -26,5 +26,7 @@ environments, and virtual environments. One may show
 all three or just one.
 }
 \examples{
+\dontrun{
 find_python()
+}
 }

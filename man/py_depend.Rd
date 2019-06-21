@@ -25,6 +25,12 @@ from the command line. Will get the error: /lib/libstdc++.so.6: version
 See vingette for more information.
 }
 \examples{
-py_depend(condaenv = "r-reticulate", virtualenv = NULL)
-py_depend(virtualenv = "r-reticulate", condaenv = NULL)
+\dontrun{
+# Cond env
+py_depend(condaenv = "r-reticulate", 
+    virtualenv = NULL)
+# virtualenv:
+py_depend(virtualenv = "r-reticulate", 
+    condaenv = NULL)
+}
 }

@@ -4,7 +4,7 @@
 \alias{process_data}
 \title{Convert data to R format if saved to disk}
 \usage{
-process_data(matrix, type = "csv", folder)
+process_data(matrix, type = "csv", folder, prefix = NULL)
 }
 \arguments{
 \item{matrix}{path to the original matrix.}
@@ -13,6 +13,8 @@ process_data(matrix, type = "csv", folder)
 or tab separated? Default: csv}
 
 \item{folder}{path to the folder where output data was saved.}
+
+\item{prefix}{optional prefix to file names}
 }
 \value{
 object formatted in the same way the output of 
@@ -32,5 +34,10 @@ Note how most of these objects are python based objects-
 numpy or pickle objects.
 }
 \examples{
-data <- process_data(matrix = infile, type = "csv", folder = "test_r/test3")
+\dontrun{
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg")
+data <- process_data(matrix = infile, 
+    type = "csv", folder = "output")
+}
 }

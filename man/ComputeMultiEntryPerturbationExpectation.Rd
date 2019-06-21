@@ -22,9 +22,13 @@ Default: 0.01}
 returns a scalar
 }
 \description{
-This function pre-processes a matrix by figuring out what the intervals of asymptotic 
-stability are, as well as finding which perturbation values lead to a sign switch.
+This function takes a jacobian matrix and computes the multi-entry 
+perturbation expectation.
 }
 \examples{
+\dontrun{
+infile <- system.file("extdata", "Modules", "IGP.csv", 
+    package = "PressPurtCoreAlg") 
 ComputeMultiEntryPerturbationExpectation(input_file = infile)
+}
 }

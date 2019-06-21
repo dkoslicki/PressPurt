@@ -59,7 +59,7 @@ class Helper(object):
             val = NumSwitch.exp_num_switch_from_crit_eps(n, k, l, num_switch_funcs, asymp_stab, dist=dists[k, l])
         except KeyError:
             val = None
-            return (val, k, l)
+        return (val, k, l)
     def helper_star(self, arg):
         return self.helper(*arg)
 
@@ -218,12 +218,11 @@ def run_EntryWise(input_folder, prefix, distribution_type,
             helper_obj = Helper()
             pool = Pool(processes=num_threads)
             res = pool.map(helper_obj.helper_star, to_compute_args)
-
+            #return(res)
             # collect the results
             for val, k, l in res:
                 if val is not None:
                     exp_num_switch_array[k, l] = val
-
 
         # export the results
         #np.savetxt(exp_num_switch_file, exp_num_switch_array, delimiter=',')
