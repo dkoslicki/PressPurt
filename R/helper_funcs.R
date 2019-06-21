@@ -12,7 +12,10 @@
 #' @return Returns a list of python versions, conda envs and 
 #' virtual envs.
 #' @export
-#' @examples find_python()
+#' @examples 
+#' \dontrun{
+#' find_python()
+#' }
 #' @import reticulate
 
 find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
@@ -53,7 +56,12 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
 #' Default: TRUE
 #' @export
-#' @examples set_python(version = "~/anaconda3/bin/python", condaenv = "r-reticulate", verbose = TRUE)
+#' @examples 
+#' \dontrun{
+#' set_python(version = "~/anaconda3/bin/python", 
+#'     condaenv = "r-reticulate", 
+#'     verbose = TRUE)
+#' }
 #' @import reticulate
 
 set_python <- function(condaenv, version=NULL, verbose = TRUE){
@@ -99,7 +107,12 @@ set_python <- function(condaenv, version=NULL, verbose = TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
 #' Default: TRUE
 #' @export
-#' @examples set_python_virtual(version = "/usr/bin/python3", virtualenv = "r-reticulate", verbose = TRUE)
+#' @examples 
+#' \dontrun{
+#' set_python_virtual(version = "/usr/bin/python3", 
+#'     virtualenv = "r-reticulate", 
+#'     verbose = TRUE)
+#' }
 #' @import reticulate
 
 set_python_virtual <- function(virtualenv, version=NULL, verbose = TRUE){
@@ -147,8 +160,15 @@ set_python_virtual <- function(virtualenv, version=NULL, verbose = TRUE){
 #' @param virtualenv Name of virtual environment to install python libraries to.
 #' Default: NULL
 #' @export
-#' @examples py_depend(condaenv = "r-reticulate", virtualenv = NULL)
-#' @examples py_depend(virtualenv = "r-reticulate", condaenv = NULL)
+#' @examples 
+#' \dontrun{
+#' # Cond env
+#' py_depend(condaenv = "r-reticulate", 
+#'     virtualenv = NULL)
+#' # virtualenv:
+#' py_depend(virtualenv = "r-reticulate", 
+#'     condaenv = NULL)
+#' }
 #' @import reticulate
 
 py_depend <- function(condaenv=NULL, virtualenv=NULL){
@@ -184,13 +204,20 @@ py_depend <- function(condaenv=NULL, virtualenv=NULL){
 #' @param type csv or tab. Is the oringal matrix comma separated
 #' or tab separated? Default: csv
 #' @param folder path to the folder where output data was saved.
+#' @param prefix optional prefix to file names
 #' @return object formatted in the same way the output of 
 #' ComputeEntryWisePerturbationExpectation
 #' @export
-#' @examples data <- process_data(matrix = infile, type = "csv", folder = "test_r/test3")
+#' @examples 
+#' \dontrun{
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg")
+#' data <- process_data(matrix = infile, 
+#'     type = "csv", folder = "output")
+#' }
 #' @import reticulate
 
-process_data <- function(matrix, type="csv", folder){
+process_data <- function(matrix, type="csv", folder, prefix=NULL){
   np <- reticulate::import("numpy")
   if(type == "csv"){
     if(!is.null(matrix)){
@@ -212,25 +239,67 @@ process_data <- function(matrix, type="csv", folder){
   }
   out_files <- list.files(folder, full.names = T)
   # matrix size
-  matrix_size <- as.integer(np$load(out_files[
-    grep("size.npy", out_files)]))
+  if(!is.null(prefix)){
+    matrix_size <- as.integer(np$load(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_size.npy")]))
+  } else {
+    matrix_size <- as.integer(np$load(
+      out_files[basename(out_files) 
+                %in% "size.npy"]))
+  }
   # col names
-  column_names <- as.character(read.table(out_files[
-    grep("column_names.txt", out_files)])$V1)
+  if(!is.null(prefix)){
+    column_names <- as.character(read.table(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_column_names.txt")], sep = '\t')$V1)
+  } else {
+    column_names <- as.character(read.table(
+      out_files[basename(out_files) %in% 
+                  "column_names.txt"], sep = '\t')$V1)
+  }
   # row names
-  row_names <- as.character(read.table(out_files[
-    grep("row_names.txt", out_files)])$V1)
+  if(!is.null(prefix)){
+    row_names <- as.character(read.table(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_row_names.txt")], sep = '\t')$V1)
+  } else {
+    row_names <- as.character(read.table(
+      out_files[basename(out_files) %in% 
+                  "row_names.txt"], sep = '\t')$V1)
+  }
   # non zero
-  non_zero <- as.integer(np$load(out_files[
-    grep("num_non_zero.npy", out_files)]))
+  if(!is.null(prefix)){
+    non_zero <- as.integer(np$load(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_num_non_zero.npy")]))
+  } else {
+    non_zero <- as.integer(np$load(
+      out_files[basename(out_files) %in% 
+                  "num_non_zero.npy"]))
+  }
   # get AS and split into start and stop
-  asymptotic_stability <- np$load(out_files[
-    grep("asymptotic_stability.npy", out_files)])
+  if(!is.null(prefix)){
+    asymptotic_stability <- np$load(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_asymptotic_stability.npy")])
+  } else {
+    asymptotic_stability <- np$load(
+      out_files[basename(out_files) %in% 
+        "asymptotic_stability.npy"])
+  }
   asymptotic_stability_start <- asymptotic_stability[,,1]
   asymptotic_stability_end <- asymptotic_stability[,,2]
   # load num switch funcs
-  num_switch_functions <- reticulate::py_load_object(out_files[
-    grep("num_switch_funcs.pkl", out_files)])
+  if(!is.null(prefix)){
+    num_switch_functions <- reticulate::py_load_object(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_num_switch_funcs.pkl")])
+  } else {
+    num_switch_functions <- reticulate::py_load_object(
+      out_files[basename(out_files) %in% 
+                  "num_switch_funcs.pkl"])
+  }
   # convert to R format
   names(num_switch_functions) <- .r_index(
     names = num_switch_functions, to_r = T)
@@ -238,12 +307,29 @@ process_data <- function(matrix, type="csv", folder){
     .NS_func_r(num_switch_funcs = num_switch_functions, name = x))
   names(num_switch_funcs_r) <- names(num_switch_functions)
   # expected num switch
-  expected_num_switch <- read.csv(out_files[
-    grep("expected_num_switch.csv", out_files)], 
-    header = T, row.names = 1)
+  if(!is.null(prefix)){
+    expected_num_switch <- read.csv(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_expected_num_switch.csv")], 
+      header = T, row.names = 1)
+  } else {
+    expected_num_switch <- read.csv(
+      out_files[basename(out_files) %in% 
+                  "expected_num_switch.csv"], 
+      header = T, row.names = 1)
+  }
   colnames(expected_num_switch) <- 1:ncol(expected_num_switch)
   rownames(expected_num_switch) <- 1:nrow(expected_num_switch)
   # distributions
+  if(!is.null(prefix)){
+    distributions <- reticulate::py_load_object(
+      out_files[basename(out_files) %in% 
+                  paste0(prefix, "_distributions.pkl")])
+  } else {
+    distributions <- reticulate::py_load_object(
+      out_files[basename(out_files) %in% 
+                  "distributions.pkl"])
+  }
   distributions <- reticulate::py_load_object(out_files[
     grep("distributions.pkl", out_files)])
   names(distributions) <- .r_index(
@@ -281,7 +367,8 @@ process_data <- function(matrix, type="csv", folder){
                  column_names, row_names, non_zero,
                  asymptotic_stability_start,
                  asymptotic_stability_end,
-                 num_switch_funcs_r, distributions_object,
+                 num_switch_funcs_r, expected_num_switch, 
+                 distributions_object,
                  ns_object)
   names(output) <- c("original_matrix", "matrix_size",
                      "column_names", "row_names",
@@ -289,6 +376,7 @@ process_data <- function(matrix, type="csv", folder){
                      "asymptotic_stability_start",
                      "asymptotic_stability_end",
                      "num_switch_funcs_r",
+                     "expected_num_switch",
                      "distributions_object",
                      "ns_object_plot")
   return(output)
@@ -302,14 +390,21 @@ process_data <- function(matrix, type="csv", folder){
 #' object from the scipy method 
 #' <scipy.stats._distn_infrastructure.rv_frozen>.
 #' @param matrix_entry Position in the matrix. Example: c(1, 1)
-#' @param distribution_list list of scipy distribution
+#' @param distribution_list list of scipy distributions
 #' @param asymp_stab asymptotic stability interval
 #' @param points the number of values in x range
 #' @export
-#' @examples single_dist <- get_distributions_single(matrix_entry = c(k,l), 
-#' distribution_list = combined$distributions, 
-#' asymp_stab = c(combined$asymptotic_stability_start[k,l], 
-#' combined$asymptotic_stability_end[k,l]))
+#' @examples
+#' \dontrun{
+#' k <- 1
+#' l <- 1
+#' np <- reticulate::import("numpy")
+#' distributions <- reticulate::py_load_object("distributions.pkl")
+#' single_dist <- get_distributions_single(matrix_entry = c(k,l), 
+#'     distribution_list = distributions, 
+#'     asymp_stab = c(combined$asymptotic_stability_start[k,l], 
+#'     combined$asymptotic_stability_end[k,l]))
+#' }
 #' @import reticulate
 
 get_distributions_single <- function(matrix_entry, 
@@ -339,36 +434,74 @@ get_distributions_single <- function(matrix_entry,
 #' @param asymp_stab_end end interval from asymptotic_stability
 #' @param num_switch_func a single num switch function
 #' @export
-#' @examples ns_step <- ns_to_step(asymp_stab_start = Entrywise$asymptotic_stability_start[1,1],
-#' asymp_stab_end = Entrywise$asymptotic_stability_end[1,1],
-#' num_switch_func = Entrywise$num_switch_funcs_r$`(1, 1)`)
+#' @examples
+#' \dontrun{
+#' # Set input file
+#' infile <- system.file("extdata", "Modules", "IGP.csv", 
+#'     package = "PressPurtCoreAlg")
+#' # Preprocess the matrix
+#' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+#'     output_folder = NULL, max_bound = 10, threads = 2)
+#'
+#' # Run ComputeEntryWisePerturbationExpectation
+#' Entrywise <- ComputeEntryWisePerturbationExpectation(
+#'     PreProsMatrix = PreProsMatrix,
+#'     distribution_type = "truncnorm", 
+#'     input_a = 0, input_b = -2, threads = 1)
+#' 
+#' ns_step <- ns_to_step(
+#'     asymp_stab_start = Entrywise$asymptotic_stability_start[1,1],
+#'     asymp_stab_end = Entrywise$asymptotic_stability_end[1,1],
+#'     num_switch_func = Entrywise$num_switch_funcs_r$`(1, 1)`)
+#' }
 #' @import reticulate
 
 ns_to_step <- function(asymp_stab_start, asymp_stab_end, 
                        num_switch_func){
   asymp_stab <- c(asymp_stab_start, asymp_stab_end)
-  # check which AS interval is already in NS
-  asymp_stab.df <- data.frame("AS" = asymp_stab, 
-                              "in_NS" = c(asymp_stab[1] %in% num_switch_func,
-                                          asymp_stab[2] %in% num_switch_func))
-  AS_to_add <- asymp_stab.df[asymp_stab.df$in_NS == FALSE, 1]
-  if(abs(num_switch_func[1,3]) - abs(num_switch_func[1,2]) > 0){
-    # increasing
-    nsx <- c(AS_to_add, num_switch_func[1,2], 
-             num_switch_func[,3]) # AS, start, ends
-    nsy <- c(0, 0, num_switch_func[,1])
+  # check if zero is the only num switch values
+  if (num_switch_func[1,1] == 0){
+    nsx <- asymp_stab
+    nsy <- c(0, 0)
     out.df <- data.frame(nsx, nsy)
-  } else if(abs(num_switch_func[1,3]) - 
-            abs(num_switch_func[1,2]) < 0){
-    # decreasing
-    nsx <- c(AS_to_add, num_switch_func[,3], 
-             num_switch_func[nrow(num_switch_func),2]) # AS, ends, start
-    nsy <- c(0, num_switch_func[,1], 
-             num_switch_func[nrow(num_switch_func),1])
-    out.df <- data.frame(nsx, nsy)
-    out.df <- out.df[order(out.df$nsx),]
   } else{
-    print("No change in interval")
+    # check which AS interval is already in NS
+    asymp_stab.df <- data.frame("AS" = asymp_stab, 
+                                "in_NS" = c(asymp_stab[1] %in% num_switch_func,
+                                            asymp_stab[2] %in% num_switch_func))
+    AS_to_add <- asymp_stab.df[asymp_stab.df$in_NS == FALSE, 1]
+    # check if BOTH the AS intervals are found in the NS func
+    if (length(AS_to_add) == 0){
+      # y should be increasing in both x directions as you go away from zero
+      # ends, first row: start, last row: start
+      df.temp <- rbind(cbind(num_switch_func[,3], num_switch_func[,1]), 
+                       cbind(num_switch_func[1,2], 0),
+                       cbind(num_switch_func[nrow(num_switch_func),2], 
+                             num_switch_func[nrow(num_switch_func),1]))
+      out.df <- data.frame(df.temp[order(df.temp[,1]),], 
+                           row.names = 1:nrow(df.temp))
+      colnames(out.df) <- c("nsx", "nsy")
+    } else {
+      # Need to cap one of the ends w/ other AS interval
+      if (abs(num_switch_func[1,3]) - abs(num_switch_func[1,2]) > 0){
+        # increasing
+        nsx <- c(AS_to_add, num_switch_func[1,2], 
+                 num_switch_func[,3]) # AS, start, ends
+        nsy <- c(0, 0, num_switch_func[,1])
+        out.df <- data.frame(nsx, nsy)
+      } else if(abs(num_switch_func[1,3]) - 
+                abs(num_switch_func[1,2]) < 0){
+        # decreasing
+        nsx <- c(AS_to_add, num_switch_func[,3], 
+                 num_switch_func[nrow(num_switch_func),2]) # AS, ends, start
+        nsy <- c(0, num_switch_func[,1], 
+                 num_switch_func[nrow(num_switch_func),1])
+        out.df <- data.frame(nsx, nsy)
+        out.df <- out.df[order(out.df$nsx),]
+      } else{
+        print("No change in interval - are we missing test case?")
+      }
+    }
   }
   return(out.df)
 }
@@ -440,8 +573,15 @@ ns_to_step <- function(asymp_stab_start, asymp_stab_end,
 # unlist num_switch_funcs
 
 .NS_func_r <- function(num_switch_funcs, name){
-  num_test <- do.call(rbind, lapply(num_switch_funcs[[name]], unlist))
-  rownames(num_test) <- num_test[,1]
-  colnames(num_test) <- c("num_switch_val", "start", "end")
+  if(length(num_switch_funcs[[name]]) == 0){
+    num_test <- matrix(cbind(0, 0, 0), 
+                       nrow = 1, ncol = 3)
+    rownames(num_test) <- num_test[,1]
+    colnames(num_test) <- c("num_switch_val", "start", "end")
+  } else {
+    num_test <- do.call(rbind, lapply(num_switch_funcs[[name]], unlist))
+    rownames(num_test) <- num_test[,1]
+    colnames(num_test) <- c("num_switch_val", "start", "end")
+  }
   return(num_test)
 }
