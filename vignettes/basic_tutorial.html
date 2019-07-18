@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dana Gibbon" />
 
-<meta name="date" content="2019-06-21" />
+<meta name="date" content="2019-07-18" />
 
 <title>Basic Tutorial</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Basic Tutorial</h1>
 <h4 class="author"><em>Dana Gibbon</em></h4>
-<h4 class="date"><em>2019-06-21</em></h4>
+<h4 class="date"><em>2019-07-18</em></h4>
 
 
 
@@ -81,7 +81,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Specify branch and build vignettes</span>
 devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;dkoslicki/PressPurtCoreAlg&quot;</span>, 
-                         <span class="dt">ref =</span> <span class="st">&quot;gibbond&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
+                         <span class="dt">ref =</span> <span class="st">&quot;gibbond&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <ul>
 <li>Load the library</li>
 <li>Check available python versions</li>
@@ -101,10 +101,10 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Python versions found:</span>
-<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /home/gibbond/anaconda3/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/.virtualenvs/PressPurt/bin/python /home/gibbond/.virtualenvs/Test/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/picrust2/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
+<span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python /home/gibbond/anaconda3/bin/python /usr/bin/python /usr/bin/python3 /home/gibbond/.virtualenvs/PressPurt/bin/python /home/gibbond/.virtualenvs/Test/bin/python /home/gibbond/anaconda3/envs/lpi-asms/bin/python /home/gibbond/anaconda3/envs/pb-assembly/bin/python /home/gibbond/anaconda3/envs/picrust2/bin/python /home/gibbond/anaconda3/envs/r-tensorflow/bin/python /home/gibbond/anaconda3/envs/test_r_versions/bin/python /home/gibbond/anaconda3/envs/test-env/bin/python </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  List of condaenvironments:</span>
-<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, picrust2: /home/gibbond/anaconda3/envs/picrust2/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python, </span>
+<span class="co">#&gt;  anaconda3: /home/gibbond/anaconda3/bin/python, lpi-asms: /home/gibbond/anaconda3/envs/lpi-asms/bin/python, pb-assembly: /home/gibbond/anaconda3/envs/pb-assembly/bin/python, picrust2: /home/gibbond/anaconda3/envs/picrust2/bin/python, r-reticulate: /home/gibbond/anaconda3/envs/r-reticulate/bin/python, r-tensorflow: /home/gibbond/anaconda3/envs/r-tensorflow/bin/python, test-env: /home/gibbond/anaconda3/envs/test-env/bin/python, test_press: /home/gibbond/anaconda3/envs/test_press/bin/python, test_r_versions: /home/gibbond/anaconda3/envs/test_r_versions/bin/python, </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  List of virtualenvs:</span>
 <span class="co">#&gt;  PressPurt Test</span>
@@ -162,7 +162,7 @@ list_of_numswitch_to_plot &lt;-<span class="st"> </span><span class="kw">list</s
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">infile &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Modules&quot;</span>, <span class="st">&quot;IGP.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;PressPurtCoreAlg&quot;</span>)
 MultiPert &lt;-<span class="st"> </span><span class="kw">ComputeMultiEntryPerturbationExpectation</span>(<span class="dt">input_file =</span> infile)
 MultiPert
-<span class="co">#&gt; [1] 0.266</span></code></pre></div>
+<span class="co">#&gt; [1] 0.264</span></code></pre></div>
 </div>
 <div id="preprocessmatrix" class="section level3">
 <h3>PreprocessMatrix</h3>

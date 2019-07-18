@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 ```{r install, eval=FALSE}
 # Specify branch and build vignettes
 devtools::install_github("dkoslicki/PressPurtCoreAlg", 
-                         ref = "gibbond", build_vignettes = TRUE)
+                         ref = "gibbond", build_vignettes = FALSE)
 ```
 
 * Load the library
