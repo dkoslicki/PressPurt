@@ -18,7 +18,7 @@ except ImportError:
 
 
 def get_parser():
-	parser = argparse.ArgumentParser(description="This script pre-processes a matrix by figuring out what the intervals of asymptotic stability are, as well as finding which perturbation values lead to a sign switch.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	parser = argparse.ArgumentParser(description="Computes the sign sensitivity (expected fraction of perturbations that lead to a sign switch in the inverse Jacobian) when perturbing multiple entries via Monte Carlo Sampling.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('input_file', type=str, help="Input comma separated file for the jacobian matrix.")
 	parser.add_argument('-n', '--num_iterates', type=int, help="Number of iterates in the Monte Carlo sampling to perform.", default=10000)
 	parser.add_argument('-l', '--interval_length', type=float, help="Interval length over which to make the perturbations.", default=0.01)
