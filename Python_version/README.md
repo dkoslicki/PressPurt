@@ -144,6 +144,10 @@ python ../scripts/GenerateQuantitativeSensitivityFigure.py Results
 ```
 The value returned is the same as the one contained in `MRS.csv`.
 
+### Multiple edge uncertainty
+
+#### Qualtitative analysis
+
 
 # Complete documentation
 The complete documentation can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).
