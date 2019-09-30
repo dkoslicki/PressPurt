@@ -73,10 +73,10 @@ python ComputeMultiEntryPerturbationExpectation.py ../ExampleJacobians/IGP.csv
 
 In general, there are three kinds of analyses:
 1. Single edge uncertainty
-    a. Qualitative analysis
-    b. Quantitative analysis
+    - Qualitative analysis
+    - Quantitative analysis
 2. Multiple edge uncertainty
-    a. Qualitative analysis
+    - Qualitative analysis
 
 Each analysis requires a Jacobian matrix evaluated at an equilibrium point. This can be provided in, 
 for example, a CSV file. The following examples will use data provided in this repository, so feel free 
