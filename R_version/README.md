@@ -12,6 +12,7 @@
     + [Virtualenv](#virtualenv)
       - [Installing python dependencies](#installing-python-dependencies)
         * [From R](#from-r-1)
+
 This repository contains a *R* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
 In short, this is a computational package designed to identify the most sensitive interactions 
