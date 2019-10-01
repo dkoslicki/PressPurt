@@ -93,6 +93,9 @@ python ../scripts/PreprocessMatrix.py Modules/IGP.csv Results  # preprocess the 
 ```
 You will notice that the `Results` folder now contains a number of files that are required for downstream analysis.
 
+Note that you need only preprocess the Jacobian once, as changing parameters in the following analyses does not require 
+you to re-run `PreprocessMatrix.py`.
+
 ### Single edge uncertainty
 This set of analyses are for the situation in which you wish to (press) perturb a single node in the 
 network and quantify how uncertainty in the edge interaction strengths affects the predictions contained 
@@ -108,6 +111,9 @@ python ../scripts/ComputeEntryWisePerturbationExpectation.py --distribution_type
 The results will also be placed in the `Results` subfolder. The file ``Results/expected_num_switch.csv`` 
 is a matrix whose (i,j) entry shows the expected fraction of sign switches/mispredictions in the net effects 
 matrix when the edge between nodes i and j experiences uncertainty (according to the distribution specified).
+
+Use `ComputeEntryWisePerturbationExpectation.py -h` to view the different kinds of distributions available and a more detailed 
+description of the flags `-a` and `-b`.
 
 You can then visualize the results using the script `GenerateEntryWiseFigures.py`:
 ```python
@@ -146,7 +152,21 @@ The value returned is the same as the one contained in `MRS.csv`.
 
 ### Multiple edge uncertainty
 
-#### Qualtitative analysis
+While the above analysis analyses the network sensitivity when edges individually experience uncertainty, the following 
+allows multiple edges to simultaneously experience uncertainty.
+
+#### Qualitative analysis
+The script `ComputeMultiEntryPerturbationExpectation.py` performs a Monte Carlo sampling of edge uncertainties according 
+to a uniform distribution (within a specified interval length) and reports the average fraction of sampled uncertainties 
+that lead to a sign switch/misprediction in the net effects matrix (considering only uncertainties that result in a stable Jacobian).
+
+The command can be called with
+```python
+python ../scripts/ComputeMultiEntryPerturbationExpectation.py Modules/IGP.csv --num_iterates 1000 --interval_length 0.01 --threads 4
+```
+The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) centered around the respective 
+Jacobian value +-0.005, and reports the fraction of samples that led to a misprediction. For example, a returned value of 0.306 
+would indicate that 306 of the 1000 samples led to a misprediction in the net effects matrix.
 
 
 # Complete documentation
