@@ -278,7 +278,7 @@ py_depend("r-reticulate")
 
 ```
 # Path to your matrix
-infile <- "../ExampleJacobians/Modules/IGP.csv"
+infile <- "../Python_version/ExampleJacobians/Modules/IGP.csv"
 PreProsMatrix <- PreprocessMatrix(input_file = infile, output_folder = NULL, max_bound = 10, threads = 2)
 Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
                                         distribution_type="truncnorm", 
@@ -290,7 +290,7 @@ Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatr
     * all figures
 
 ```
-list_of_numswitch_to_plot <- list(c(0, 0), c(0, 1))
+list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
 GenerateEntryWiseFigures(EntryWise=Entrywise, 
                          all_numswitch_plots = FALSE, 
                          list_of_numswitch_to_plot=list_of_numswitch_to_plot)
