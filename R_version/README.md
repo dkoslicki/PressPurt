@@ -12,6 +12,16 @@
     + [Virtualenv](#virtualenv)
       - [Installing python dependencies](#installing-python-dependencies)
         * [From R](#from-r-1)
+- [Usage](#usage)
+  * [Quick start](#quick-start)
+  * [Detailed usage](#detailed-usage)
+    + [Single edge uncertainty](#single-edge-uncertainty)
+      - [Qualitative analysis](#qualitative-analysis)
+      - [Quantitative analysis](#quantitative-analysis)
+    + [Multiple edge uncertainty](#multiple-edge-uncertainty)
+      - [Qualitative analysis](#qualitative-analysis-1)
+- [Complete documentation](#complete-documentation)
+- [Citations](#citations)
 
 This repository contains an *R* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
@@ -239,25 +249,21 @@ set_python_virtual(virtualenv = "PressPurt")
 ```
 
 
+# Usage
 
+**Please note! A detailed guide about how to use the R version (including visualizations and how to interact with the 
+data structures) is included [in this vignette](https://htmlpreview.github.io/?https://github.com/dkoslicki/PressPurt/blob/master/R_version/vignettes/basic_tutorial.html).**
 
-
-
-
-
-
-## R Usage
-
-### Quick start
+## Quick start
 
 * Load the library
 * Check available python versions
 * Set python version and conda environment. You can set up a new conda env or use a previous one.
 
 ```
-library(PressPurtCoreAlg)
+library(PressPurt)
 find_python()
-set_python("r-reticulate", verbose = TRUE)
+set_python("r-reticulate", verbose = TRUE)  # or whatever version of python you want to install the dependencies on
 ```
 
 * install python dependencies
@@ -292,9 +298,116 @@ GenerateEntryWiseFigures(EntryWise=Entrywise,
                          all_numswitch_plots = TRUE)
 ```
 
+## Detailed usage
+This section contains details about what the various scripts are actually computing and mirrors the information contained 
+in the [Python_version Readme](https://github.com/dkoslicki/PressPurt/blob/master/Python_version/README.md).
+
+
+In general, there are three kinds of analyses:
+1. Single edge uncertainty
+    - Qualitative analysis
+    - Quantitative analysis
+2. Multiple edge uncertainty
+    - Qualitative analysis
+
+Each analysis requires a Jacobian matrix evaluated at an equilibrium point. This can be provided in, 
+for example, a CSV file. The following examples will use data provided in this repository, so feel free 
+to change the appropriate lines to point to your code.
+
+Before any analysis can be performed, you must first pre-process a matrix so that the intervals 
+of asymptotic stability can be determined, as well as a calculation that will determine which 
+uncertainty values on which edges will result in a sign change in the net effects matrix. This 
+can be accomplished via:
+```R
+# Use the build in example data, otherwise make this point to your Jacobian CSV file
+infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurt")  
+# preprocess the IGP.csv example and store the results in memory
+PreProsMatrix <- PreprocessMatrix(input_file = infile, 
+                                  output_folder = NULL, 
+                                  max_bound = 10, 
+                                  threads = 2)   
+```
+You will notice that your workspace now contains a number of files that are required for downstream analysis. Details about 
+the workspace data structures can be found [in this vignette](https://htmlpreview.github.io/?https://github.com/dkoslicki/PressPurt/blob/master/R_version/vignettes/basic_tutorial.html).
+
+Note that you need only preprocess the Jacobian once, as changing parameters in the following analyses does not require 
+you to re-run `PreprocessMatrix`.
+
+### Single edge uncertainty
+This set of analyses are for the situation in which you wish to (press) perturb a single node in the 
+network and quantify how uncertainty in the edge interaction strengths affects the predictions contained 
+in the net effects matrix.
+
+#### Qualitative analysis
+The function `ComputeEntryWisePerturbationExpectation` will compute the expected number of sign 
+switches/mispredictions in the net effects matrix when perturbing each node individually by a unit amount.
+This can be run with:
+```R
+# run the script on the preprocessed matrix contained in the Results folder assuming the edge uncertainties are distributed according to a truncated normal distribution using a mean of 0 and a variance equal to (the length of the interval divided by the absolute value of the input parameter)^2
+Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatrix, 
+                                        distribution_type="truncnorm", 
+                                        input_a=0, input_b=-2, threads=1)   
+```
+The results will also be placed your workspace. Details about 
+the workspace data structures can be found [in this vignette](https://htmlpreview.github.io/?https://github.com/dkoslicki/PressPurt/blob/master/R_version/vignettes/basic_tutorial.html).
+But in short, the matrix `Entrywise$expected_num_switch` is a matrix whose (i,j) entry shows the expected fraction of sign switches/mispredictions in the net effects 
+matrix when the edge between nodes i and j experiences uncertainty (according to the distribution specified). You can then 
+make your own heat map of this matrix if you wish (similar to the python version). 
+
+Averaging the non-zero entries in `Entrywise$expected_num_switch` calculates the expected percentage of mispredictions 
+when each edge individually experiences uncertainty.
+
+Use `?ComputeEntryWisePerturbationExpectation` to view the different kinds of distributions available.
+
+You can then visualize the results using the function `GenerateEntryWiseFigures`:
+```R
+# List of a few entries to plot
+list_of_numswitch_to_plot <- list(c(1, 1), c(1, 2))
+# plot just those entries
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = FALSE, 
+                         list_of_numswitch_to_plot=list_of_numswitch_to_plot)
+# plot everything
+GenerateEntryWiseFigures(EntryWise=Entrywise, 
+                         all_numswitch_plots = TRUE)
+```
+This command generates a plot of the (edge uncertainty value) versus 
+(number of sign switches/mispredictions) in the net effects matrix overlaid with the edge uncertainty distribution (truncated by the 
+region of asymptotic stability). The option `list_of_numswitch_to_plot` specifies that only the (1,1) and (1,2) edges should be shown. 
+If you use `-all_numswitch_plots = TRUE` instead, this will show similar plots for *all* edges (warning: this may be uninterpretable if you matrix is large). 
+
+
+#### Quantitative analysis
+Instead of asking "does a misprediction occur?" one might be interested in quantifying by how much you mispredict 
+the change in abundance of other nodes when edge interactions (individually) are under uncertainty and you press perturb 
+a single node.
+
+As of yet, this analysis can only be performed using the [Python version](https://github.com/dkoslicki/PressPurt/tree/master/Python_version). 
+
+
+### Multiple edge uncertainty
+
+While the above analysis analyses the network sensitivity when edges individually experience uncertainty, the following 
+allows multiple edges to simultaneously experience uncertainty.
+
+#### Qualitative analysis
+The function `ComputeMultiEntryPerturbationExpectation` performs a Monte Carlo sampling of edge uncertainties according 
+to a uniform distribution (within a specified interval length) and reports the average fraction of sampled uncertainties 
+that lead to a sign switch/misprediction in the net effects matrix (considering only uncertainties that result in a stable Jacobian).
+
+The command can be called with
+```R
+MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file, num_iterates = 1000,
+  interval_length = 0.01, threads = 4)
+```
+The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) centered around the respective 
+Jacobian value +-0.005, and reports the fraction of samples that led to a misprediction. For example, a returned value of 0.306 
+would indicate that 306 of the 1000 samples led to a misprediction in the net effects matrix.
+
+
 
 # Complete documentation
-The complete documentation can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).
+The complete documentation of the underlying python code can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).
 
 # Citations
 1. Koslicki, D., & Novak, M. (2018). Exact probabilities for the indeterminacy of complex networks as perceived through press perturbations. Journal of mathematical biology, 76(4), 877-909. DOI: [ https://doi.org/10.1007/s00285-017-1163-0]( https://doi.org/10.1007/s00285-017-1163-0)
