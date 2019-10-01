@@ -164,14 +164,14 @@ set_python(condaenv="test-r")
 
 ### Virtualenv
 Instead of using conda, you can use a virtual python environment instead. If needed, install `virtualenv` with `pip`:
-``bash
+```bash
 # install virtualenv with pip
 pip install virtualenv
 # test your installation
 virtualenv --version
 # create a virtualenv
 virtualenv venv
-``
+```
 
 #### Installing python dependencies
 As above, you will need to install the python dependencies in this new virtual environment.
@@ -223,6 +223,14 @@ find_python()
 # Set your virtualenv
 set_python_virtual(virtualenv = "PressPurt")
 ```
+
+
+
+
+
+
+
+
 
 
 
