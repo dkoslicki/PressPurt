@@ -1,4 +1,15 @@
 # PressPurt
+- [Installation](#installation)
+- [Usage](#usage)
+  * [Quick Python Usage](#quick-python-usage)
+  * [Detailed Python Usage](#detailed-python-usage)
+    + [Single edge uncertainty](#single-edge-uncertainty)
+      - [Qualitative analysis](#qualitative-analysis)
+      - [Quantitative analysis](#quantitative-analysis)
+    + [Multiple edge uncertainty](#multiple-edge-uncertainty)
+      - [Qualitative analysis](#qualitative-analysis-1)
+- [Complete documentation](#complete-documentation)
+- [Citations](#citations)
 
 This repository contains a *python* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
