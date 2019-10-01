@@ -1,3 +1,16 @@
+- [Installation](#installation)
+  * [Required python installation](#required-python-installation)
+    + [Conda](#conda)
+        * [Linux](#linux)
+        * [MacOS](#macos)
+        * [Windows](#windows)
+      - [Install python dependencies](#install-python-dependencies)
+        * [From R](#from-r)
+        * [Via the command line](#via-the-command-line)
+    + [Virtualenv](#virtualenv)
+      - [Installing python dependencies](#installing-python-dependencies)
+        * [From R](#from-r-1)
+
 # PressPurtCoreAlg
 This repository contains a *R* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
@@ -231,55 +244,6 @@ set_python_virtual(virtualenv = "PressPurt")
 
 
 
-
-
-
-PressPurtCoreAlg is also available as an R package. You'll need to have python and conda installed.
-You will also need an R version greater than or equal to 3.1.0.
-
-Install as an R package:
-
-```
-install.packages("devtools")
-devtools::install_github("dkoslicki/PressPurtCoreAlg", 
-                         ref = "gibbond", build_vignettes = TRUE)
-```
-
-# Usage
-In the ``scripts`` folder are a number of command line scripts that can be used.
-The basic steps are:
-1. Preprocess the matrix 
-2. Compute statistics on it 
-3. Visualize the results 
-
-When any script is called, it will create a number of auxiliary files that are used by other scripts.
-A user will be interested in the produced ``*.csv`` files, as these contain the statistical information about their network.
-
-
-##  Python Usage
-What follows is a quick example using some data included in this repository.
-
-All these examples are run in the `scripts` directory.
-
-For single entry perturbation statistics, use the following:
-```bash
-python PreprocessMatrix.py ../ExampleJacobians/IGP.csv ../ExampleJacobians
-python ComputeEntryWisePerturbationExpectation.py ../ExampleJacobians
-python GenerateEntryWiseFigures.py ../ExampleJacobians -a
-```
-For any script, you can run use the ``-h`` flag to see all the ways in which you can use the script, as each allows for custom options to be set. 
-For example: ``python PreprocessMatrix.py -h``.
-
-To compute quantitative stability statistics, use the following:
-```bash
-python ComputeQuantitativeSensitivity.py ../ExampleJacobians/IGP.csv ../ExampleJacobians/
-python GenerateQuantitativeSensitivityFigure.py ../ExampleJacobians/
-```
-
-For multi-entry perturbation statistics, use:
-```bash
-python ComputeMultiEntryPerturbationExpectation.py ../ExampleJacobians/IGP.csv 
-```
 
 ## R Usage
 
