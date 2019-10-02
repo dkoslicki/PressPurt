@@ -1,4 +1,4 @@
-# PressPurtCoreAlg
+# PressPurt
 
 - [Installation](#installation)
   * [Required python installation](#required-python-installation)
@@ -242,7 +242,7 @@ Now that you have created the virtual environment and installed dependencies, yo
 
 ```R
 # load the library
-library(PressPurtCoreAlg)
+library(PressPurt)
 # You should see "test-r" listed as a conda env
 find_python()
 # Set your virtualenv
@@ -409,7 +409,7 @@ would indicate that 306 of the 1000 samples led to a misprediction in the net ef
 
 
 # Complete documentation
-The complete documentation of the underlying python code can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).
+The complete documentation of the underlying python code can be found at: [http://math.oregonstate.edu/~koslickd/PressPurt/html/](http://math.oregonstate.edu/~koslickd/PressPurt/html/).
 
 # Citations
 1. Koslicki, D., & Novak, M. (2018). Exact probabilities for the indeterminacy of complex networks as perceived through press perturbations. Journal of mathematical biology, 76(4), 877-909. DOI: [ https://doi.org/10.1007/s00285-017-1163-0]( https://doi.org/10.1007/s00285-017-1163-0)

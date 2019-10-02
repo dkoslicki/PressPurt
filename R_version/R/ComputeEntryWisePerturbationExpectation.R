@@ -28,7 +28,7 @@
 #' \dontrun{
 #' # Set input file
 #' infile <- system.file("extdata", "Modules", "IGP.csv", 
-#'     package = "PressPurtCoreAlg")
+#'     package = "PressPurt")
 #' # Preprocess the matrix
 #' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
 #'     output_folder = NULL, max_bound = 10, threads = 2)
@@ -51,17 +51,17 @@ ComputeEntryWisePerturbationExpectation <- function(input_folder=NULL,
   }
   # import NumSwitch, MRS & SS modules and source ComputeEntryWisePerturbationExpectation.py
   reticulate::import_from_path("NumSwitch", 
-                               system.file("python", package = "PressPurtCoreAlg"), 
+                               system.file("python", package = "PressPurt"), 
                                convert = F)
   reticulate::import_from_path("MRS", 
-                               system.file("python", package = "PressPurtCoreAlg"), 
+                               system.file("python", package = "PressPurt"), 
                                convert = F)
   reticulate::import_from_path("SS", 
-                               system.file("python", package = "PressPurtCoreAlg"), 
+                               system.file("python", package = "PressPurt"), 
                                convert = F)
   reticulate::source_python(system.file("python", 
                                         "ComputeEntryWisePerturbationExpectation.py", 
-                                        package = "PressPurtCoreAlg"), convert = F)
+                                        package = "PressPurt"), convert = F)
   # If input/output folder is specified, don't output R object
   if(!is.null(input_folder)){
     entrywise <- py_to_r(run_EntryWise(input_folder, prefix, distribution_type, 

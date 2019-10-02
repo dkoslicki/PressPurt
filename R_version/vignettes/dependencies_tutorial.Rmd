@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## R
 
-PressPurtCoreAlg depends on R >= 3.1.0. To check your R version run `version` from the R console.
+PressPurt depends on R >= 3.1.0. To check your R version run `version` from the R console.
 
 This package also depends on the following R libraries:
 
@@ -30,7 +30,7 @@ This package also depends on the following R libraries:
 * `gridExtra`
 * `reticulate >= 1.11`
 
-If not already installed, these packages will be installed upon the installation of `PressPurtCoreAlg`.
+If not already installed, these packages will be installed upon the installation of `PressPurt`.
 
 ## Python
 
@@ -41,7 +41,7 @@ There are two suggested approaches:
 * Conda (Anaconda/miniconda) which supports Linux/Mac/Windows
 * Virtual environments which supports Linux/Mac OS
 
-It is also possible to set a specific version of python with `reticulate::use_python("/path/to/python")` before you run any of the `PressPurtCoreAlg` commands but it is not recommended. You'll also have to ensure that the dependent python packages are installed. For more information on using `reticulate` directly: [see the reticulate docs](https://rstudio.github.io/reticulate/articles/python_packages.html).
+It is also possible to set a specific version of python with `reticulate::use_python("/path/to/python")` before you run any of the `PressPurt` commands but it is not recommended. You'll also have to ensure that the dependent python packages are installed. For more information on using `reticulate` directly: [see the reticulate docs](https://rstudio.github.io/reticulate/articles/python_packages.html).
 
 ### Conda
 
@@ -81,11 +81,11 @@ This document will show you how to install Miniconda via the command-line. For m
 
 ##### From R
 
-First you'll need to load `PressPurtCoreAlg`, check which versions of python are found and if any Conda envrionments exists.
+First you'll need to load `PressPurt`, check which versions of python are found and if any Conda envrionments exists.
 
 ```{r}
 # load the library
-library(PressPurtCoreAlg)
+library(PressPurt)
 # Find the versions of python, conda environments and virtualenvs available on your machine:
 find_python()
 
@@ -148,7 +148,7 @@ Now that you have created the conda environments and installed dependencies, you
 
 ```{r, eval=FALSE}
 # load the library
-library(PressPurtCoreAlg)
+library(PressPurt)
 # You should see "test-r" listed as a conda env
 find_python()
 # Set your conda env
@@ -211,7 +211,7 @@ Now that you have created the virtual environment and installed dependencies, yo
 
 ```{r, eval=FALSE}
 # load the library
-library(PressPurtCoreAlg)
+library(PressPurt)
 # You should see "test-r" listed as a conda env
 find_python()
 # Set your virtualenv

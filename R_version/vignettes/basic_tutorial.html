@@ -77,10 +77,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="quick-start" class="section level1">
 <h1>Quick start</h1>
 <ul>
-<li>Install <code>PressPurtCoreAlg</code></li>
+<li>Install <code>PressPurt</code></li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Specify branch and build vignettes</span>
-devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;dkoslicki/PressPurtCoreAlg&quot;</span>, 
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;dkoslicki/PressPurt&quot;</span>, 
                          <span class="dt">ref =</span> <span class="st">&quot;gibbond&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <ul>
 <li>Load the library</li>
@@ -95,7 +95,7 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <li>all figures</li>
 </ul></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(PressPurtCoreAlg)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(PressPurt)
 <span class="kw">find_python</span>()
 <span class="co">#&gt; Default Python:</span>
 <span class="co">#&gt;  /home/gibbond/anaconda3/envs/r-reticulate/bin/python </span>
@@ -125,7 +125,7 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <span class="co">#&gt; </span><span class="al">NOTE</span><span class="co">: Python version was forced by use_python function</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">py_depend</span>(<span class="st">&quot;r-reticulate&quot;</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Path to your matrix</span>
-infile &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Modules&quot;</span>, <span class="st">&quot;IGP.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;PressPurtCoreAlg&quot;</span>)
+infile &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Modules&quot;</span>, <span class="st">&quot;IGP.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;PressPurt&quot;</span>)
 MultiPert &lt;-<span class="st"> </span><span class="kw">ComputeMultiEntryPerturbationExpectation</span>(<span class="dt">input_file =</span> infile)
 PreProsMatrix &lt;-<span class="st"> </span><span class="kw">PreprocessMatrix</span>(<span class="dt">input_file =</span> infile, 
                                   <span class="dt">output_folder =</span> <span class="ot">NULL</span>, 
@@ -159,7 +159,7 @@ list_of_numswitch_to_plot &lt;-<span class="st"> </span><span class="kw">list</s
 <h3>Compute Multi Entry Perturbation Expectation</h3>
 <p>This function takes a jacobian matrix and computes the multi-entry perturbation expectation.</p>
 <p>In this example we take the <code>IGP.csv</code> matrix and use the default <code>num_iterates</code> and <code>interval_length</code> values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">infile &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Modules&quot;</span>, <span class="st">&quot;IGP.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;PressPurtCoreAlg&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">infile &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Modules&quot;</span>, <span class="st">&quot;IGP.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;PressPurt&quot;</span>)
 MultiPert &lt;-<span class="st"> </span><span class="kw">ComputeMultiEntryPerturbationExpectation</span>(<span class="dt">input_file =</span> infile)
 MultiPert
 <span class="co">#&gt; [1] 0.264</span></code></pre></div>

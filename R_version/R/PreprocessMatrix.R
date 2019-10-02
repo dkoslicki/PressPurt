@@ -20,7 +20,7 @@
 #' @examples
 #' \dontrun{
 #' infile <- system.file("extdata", "Modules", "IGP.csv", 
-#'     package = "PressPurtCoreAlg") 
+#'     package = "PressPurt") 
 #' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
 #'     output_folder = NULL, max_bound = 10, threads = 2)
 #' }
@@ -30,10 +30,10 @@ PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bo
                              zero_perturb=FALSE, threads=1, verbose=FALSE){
   # import NumSwitch module and source PreprocessMatrix.py
   reticulate::import_from_path("NumSwitch", 
-                               system.file("python", package = "PressPurtCoreAlg"), 
+                               system.file("python", package = "PressPurt"), 
                                convert = F)
   reticulate::source_python(system.file("python", "PreprocessMatrix.py", 
-                                        package = "PressPurtCoreAlg"), 
+                                        package = "PressPurt"), 
                             convert = F)
   # If output folder is specified, don't output R object
   if(!is.null(output_folder)){

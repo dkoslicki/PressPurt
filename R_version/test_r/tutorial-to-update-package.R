@@ -8,7 +8,7 @@
 
 # For Continued package development:
 ## From RStudio:
-### Open the R project: file -> open project -> navigate to project folder -> click on PressPurtCoreAlg.Rproj
+### Open the R project: file -> open project -> navigate to project folder -> click on PressPurt.Rproj
 
 ## Important files/folders (from project top directory)
 ### R scripts: R/

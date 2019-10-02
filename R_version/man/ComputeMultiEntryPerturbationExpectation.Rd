@@ -28,7 +28,7 @@ perturbation expectation.
 \examples{
 \dontrun{
 infile <- system.file("extdata", "Modules", "IGP.csv", 
-    package = "PressPurtCoreAlg") 
+    package = "PressPurt") 
 ComputeMultiEntryPerturbationExpectation(input_file = infile)
 }
 }

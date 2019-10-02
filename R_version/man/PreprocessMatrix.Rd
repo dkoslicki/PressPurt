@@ -39,7 +39,7 @@ stability are, as well as finding which perturbation values lead to a sign switc
 \examples{
 \dontrun{
 infile <- system.file("extdata", "Modules", "IGP.csv", 
-    package = "PressPurtCoreAlg") 
+    package = "PressPurt") 
 PreProsMatrix <- PreprocessMatrix(input_file = infile, 
     output_folder = NULL, max_bound = 10, threads = 2)
 }

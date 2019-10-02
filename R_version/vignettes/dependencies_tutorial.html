@@ -78,7 +78,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1>Installing Dependencies</h1>
 <div id="r" class="section level2">
 <h2>R</h2>
-<p>PressPurtCoreAlg depends on R &gt;= 3.1.0. To check your R version run <code>version</code> from the R console.</p>
+<p>PressPurt depends on R &gt;= 3.1.0. To check your R version run <code>version</code> from the R console.</p>
 <p>This package also depends on the following R libraries:</p>
 <ul>
 <li><code>data.table</code></li>
@@ -86,7 +86,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>gridExtra</code></li>
 <li><code>reticulate &gt;= 1.11</code></li>
 </ul>
-<p>If not already installed, these packages will be installed upon the installation of <code>PressPurtCoreAlg</code>.</p>
+<p>If not already installed, these packages will be installed upon the installation of <code>PressPurt</code>.</p>
 </div>
 <div id="python" class="section level2">
 <h2>Python</h2>
@@ -96,7 +96,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Conda (Anaconda/miniconda) which supports Linux/Mac/Windows</li>
 <li>Virtual environments which supports Linux/Mac OS</li>
 </ul>
-<p>It is also possible to set a specific version of python with <code>reticulate::use_python(&quot;/path/to/python&quot;)</code> before you run any of the <code>PressPurtCoreAlg</code> commands but it is not recommended. You’ll also have to ensure that the dependent python packages are installed. For more information on using <code>reticulate</code> directly: <a href="https://rstudio.github.io/reticulate/articles/python_packages.html">see the reticulate docs</a>.</p>
+<p>It is also possible to set a specific version of python with <code>reticulate::use_python(&quot;/path/to/python&quot;)</code> before you run any of the <code>PressPurt</code> commands but it is not recommended. You’ll also have to ensure that the dependent python packages are installed. For more information on using <code>reticulate</code> directly: <a href="https://rstudio.github.io/reticulate/articles/python_packages.html">see the reticulate docs</a>.</p>
 <div id="conda" class="section level3">
 <h3>Conda</h3>
 <div id="install-anaconda-or-miniconda" class="section level4">
@@ -146,9 +146,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h4>Installing python dependencies</h4>
 <div id="from-r" class="section level5">
 <h5>From R</h5>
-<p>First you’ll need to load <code>PressPurtCoreAlg</code>, check which versions of python are found and if any Conda envrionments exists.</p>
+<p>First you’ll need to load <code>PressPurt</code>, check which versions of python are found and if any Conda envrionments exists.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
-<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="kw">library</span>(PressPurt)
 <span class="co"># Find the versions of python, conda environments and virtualenvs available on your machine:</span>
 <span class="kw">find_python</span>()
 <span class="co">#&gt; Default Python:</span>
@@ -200,7 +200,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="ex">conda</span> list</code></pre></div>
 <p>Now that you have created the conda environments and installed dependencies, you can use the new env in R! Run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
-<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="kw">library</span>(PressPurt)
 <span class="co"># You should see &quot;test-r&quot; listed as a conda env</span>
 <span class="kw">find_python</span>()
 <span class="co"># Set your conda env</span>
@@ -247,7 +247,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set_python_virtual</span>(<span class="dt">virtualenv =</span> <span class="st">&quot;PressPurt&quot;</span>)</code></pre></div>
 <p>Now that you have created the virtual environment and installed dependencies, you can use the new env in R! Run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the library</span>
-<span class="kw">library</span>(PressPurtCoreAlg)
+<span class="kw">library</span>(PressPurt)
 <span class="co"># You should see &quot;test-r&quot; listed as a conda env</span>
 <span class="kw">find_python</span>()
 <span class="co"># Set your virtualenv</span>

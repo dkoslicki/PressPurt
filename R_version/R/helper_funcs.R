@@ -211,7 +211,7 @@ py_depend <- function(condaenv=NULL, virtualenv=NULL){
 #' @examples 
 #' \dontrun{
 #' infile <- system.file("extdata", "Modules", "IGP.csv", 
-#'     package = "PressPurtCoreAlg")
+#'     package = "PressPurt")
 #' data <- process_data(matrix = infile, 
 #'     type = "csv", folder = "output")
 #' }
@@ -438,7 +438,7 @@ get_distributions_single <- function(matrix_entry,
 #' \dontrun{
 #' # Set input file
 #' infile <- system.file("extdata", "Modules", "IGP.csv", 
-#'     package = "PressPurtCoreAlg")
+#'     package = "PressPurt")
 #' # Preprocess the matrix
 #' PreProsMatrix <- PreprocessMatrix(input_file = infile, 
 #'     output_folder = NULL, max_bound = 10, threads = 2)

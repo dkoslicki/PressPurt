@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 
 # Quick start
 
-* Install `PressPurtCoreAlg`
+* Install `PressPurt`
 
 ```{r install, eval=FALSE}
 # Specify branch and build vignettes
-devtools::install_github("dkoslicki/PressPurtCoreAlg", 
+devtools::install_github("dkoslicki/PressPurt", 
                          ref = "gibbond", build_vignettes = FALSE)
 ```
 
@@ -38,7 +38,7 @@ devtools::install_github("dkoslicki/PressPurtCoreAlg",
     * all figures
 
 ```{r quick_start_setup}
-library(PressPurtCoreAlg)
+library(PressPurt)
 find_python()
 set_python("r-reticulate", verbose = TRUE)
 ```
@@ -49,7 +49,7 @@ py_depend("r-reticulate")
 
 ```{r quick_start_run}
 # Path to your matrix
-infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurtCoreAlg")
+infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurt")
 MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file = infile)
 PreProsMatrix <- PreprocessMatrix(input_file = infile, 
                                   output_folder = NULL, 
@@ -91,7 +91,7 @@ This function takes a jacobian matrix and computes the multi-entry perturbation 
 In this example we take the `IGP.csv` matrix and use the default `num_iterates` and `interval_length` values.
 
 ```{r multi}
-infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurtCoreAlg")
+infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurt")
 MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file = infile)
 MultiPert
 ```

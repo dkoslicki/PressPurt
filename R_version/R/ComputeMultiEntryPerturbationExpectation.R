@@ -13,7 +13,7 @@
 #' @examples
 #' \dontrun{
 #' infile <- system.file("extdata", "Modules", "IGP.csv", 
-#'     package = "PressPurtCoreAlg") 
+#'     package = "PressPurt") 
 #' ComputeMultiEntryPerturbationExpectation(input_file = infile)
 #' }
 
@@ -23,15 +23,15 @@ ComputeMultiEntryPerturbationExpectation <- function(
   threads=1){
   NaiveSS <- reticulate::import_from_path(
     "NaiveSS", 
-    system.file("python", package = "PressPurtCoreAlg"), 
+    system.file("python", package = "PressPurt"), 
     convert = T)
   NumSwitch <- reticulate::import_from_path(
     "NumSwitch", 
-    system.file("python", package = "PressPurtCoreAlg"), 
+    system.file("python", package = "PressPurt"), 
     convert = T)
   reticulate::source_python(system.file("python", 
                                         "ComputeMultiEntryPerturbationExpectation.py", 
-                                        package = "PressPurtCoreAlg"), convert = F)
+                                        package = "PressPurt"), convert = F)
   MultiEntry <- py_to_r(run_MultiEntry(input_file=input_file, 
                                        num_iterates=num_iterates, 
                                        interval_length=interval_length, 

@@ -36,7 +36,7 @@ numpy or pickle objects.
 \examples{
 \dontrun{
 infile <- system.file("extdata", "Modules", "IGP.csv", 
-    package = "PressPurtCoreAlg")
+    package = "PressPurt")
 data <- process_data(matrix = infile, 
     type = "csv", folder = "output")
 }

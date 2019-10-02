@@ -22,7 +22,7 @@ Returns a data frame of x and y values to plot.
 \dontrun{
 # Set input file
 infile <- system.file("extdata", "Modules", "IGP.csv", 
-    package = "PressPurtCoreAlg")
+    package = "PressPurt")
 # Preprocess the matrix
 PreProsMatrix <- PreprocessMatrix(input_file = infile, 
     output_folder = NULL, max_bound = 10, threads = 2)
