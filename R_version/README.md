@@ -107,6 +107,7 @@ First you’ll need to load `PressPurt`, check which versions of python are foun
 ```R
 # Install PressPurt
 install.packages("devtools")
+# you may need to manually install libcurl4-openssl-dev via apt-get if using linux
 devtools::install_github("dkoslicki/PressPurt", subdir = "R_version", build_vignettes = FALSE)
 # load the library
 library(PressPurt)
@@ -250,8 +251,9 @@ set_python_virtual(virtualenv = "PressPurt")
 
 
 # Usage
+**Please note! After following the installation instructions above, you will need to restart your R session to complete the installation**
 
-**Please note! A detailed guide about how to use the R version (including visualizations and how to interact with the 
+**Please also note! A detailed guide about how to use the R version (including visualizations and how to interact with the 
 data structures) is included [in this vignette](https://htmlpreview.github.io/?https://github.com/dkoslicki/PressPurt/blob/master/R_version/vignettes/basic_tutorial.html).**
 
 ## Quick start
