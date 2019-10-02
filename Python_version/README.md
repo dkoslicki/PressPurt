@@ -62,7 +62,7 @@ All these examples are run in the `Python_version/scripts` directory.
 
 For single entry perturbation statistics, use the following:
 ```bash
-python PreprocessMatrix.py ../ExampleJacobians/IGP.csv ../ExampleJacobians
+python PreprocessMatrix.py ../ExampleJacobians/Modules/IGP.csv ../ExampleJacobians
 python ComputeEntryWisePerturbationExpectation.py ../ExampleJacobians
 python GenerateEntryWiseFigures.py ../ExampleJacobians -a
 ```
@@ -71,13 +71,13 @@ For example: ``python PreprocessMatrix.py -h``.
 
 To compute quantitative stability statistics, use the following:
 ```bash
-python ComputeQuantitativeSensitivity.py ../ExampleJacobians/IGP.csv ../ExampleJacobians/
+python ComputeQuantitativeSensitivity.py ../ExampleJacobians/Modules/IGP.csv ../ExampleJacobians/
 python GenerateQuantitativeSensitivityFigure.py ../ExampleJacobians/
 ```
 
 For multi-entry perturbation statistics, use:
 ```bash
-python ComputeMultiEntryPerturbationExpectation.py ../ExampleJacobians/IGP.csv 
+python ComputeMultiEntryPerturbationExpectation.py ../ExampleJacobians/Modules/IGP.csv 
 ```
 
 ## Detailed Python Usage
