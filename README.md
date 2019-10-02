@@ -17,8 +17,8 @@ my predictions to be robust?
 # About
 
 There are two flavors of the code (in case you find one easier to work with than the other):
-1. Python
-2. R
+1. [Python](https://github.com/dkoslicki/PressPurt/tree/master/Python_version)
+2. [R](https://github.com/dkoslicki/PressPurt/tree/master/R_version)
 
 Please click on the folders [Python_version](https://github.com/dkoslicki/PressPurt/tree/master/Python_version) or [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) to see the installation and usage instructions for each.
 
