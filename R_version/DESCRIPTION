@@ -7,7 +7,7 @@ Authors@R: c(
   person("Dana", "Gibbon", role = c("aut", "trl")),
   person("Mark", "Novak", role = c("aut"))
   )
-Description: What the package does (one paragraph).
+Description: This is a computational package designed to identify the most sensitive interactions within a network which must be estimated most accurately in order to produce qualitatively robust predictions to a press perturbation. This is accomplished by enumerating the number of sign switches (and their magnitude) in the net effects matrix when an edge experiences uncertainty. The package produces data and visualizations when uncertainty is associated to one or more edges in the network and according to a variety of distributions. The software requires the network to be described by a system of differential equations but only requires as input a numerical Jacobian matrix evaluated at an equilibrium point.
 Depends: 
   R (>= 3.1.0)
 License: MIT + file LICENSE
