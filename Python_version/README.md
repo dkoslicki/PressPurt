@@ -1,3 +1,5 @@
+This repository contains a *python* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].  See  [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) for an alternative implementation.
+
 # PressPurt
 - [Installation](#installation)
 - [Usage](#usage)
@@ -11,7 +13,6 @@
 - [Complete documentation](#complete-documentation)
 - [Citations](#citations)
 
-This repository contains a *python* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
 # Installation
 I suggest doing this in a [virtual environment](https://docs.python.org/3/library/venv.html). This repository is created for python3, so to create a virtual environment, enter these commands at the command line:
