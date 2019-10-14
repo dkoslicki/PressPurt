@@ -88,6 +88,7 @@ to install it graphically (no command-line) [see the conda docs](https://docs.co
 1. Close your Terminal window and re-open a new one.
 1. Test your installation by running: conda list
     * This should result in a list of installed packages.
+1. Download, install, and activate (by launching at least once after installation) [Xcode](https://developer.apple.com/xcode/) via the Apple App Store.
 
 ##### Windows
 1. [Download the Miniconda installer for Windows](https://docs.conda.io/en/latest/miniconda.html)
