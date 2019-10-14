@@ -1,18 +1,21 @@
 # PressPurt
 This repository contains an implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
-In short, this is a computational package designed to identify the most sensitive interactions 
-within a network which must be estimated most accurately in order to produce qualitatively 
-robust predictions to a press perturbation. The package produces data and visualization when 
-uncertainty is associated to one or more edges in the network and according to a variety of 
-distributions. The software requires the network to be described by a system of differential 
-equations but only requires as input a numerical Jacobian matrix.
 
-Use cases include modeling a food web using a system of differential equations and asking the question: 
-if I were cause a sustained increase in abundance of one organism, how robust would my predictions 
-be about the net change in abundance of other organisms given that the interaction strengths between 
-organisms is uncertain? Which edge interaction strengths would I need to accurately quantify in order for 
-my predictions to be robust?
+PressPurt is a computational package for identifying the interactions (edges) within a network 
+whose strengths (edge weights) must be estimated most accurately in order to produce qualitatively 
+robust predictions of the network's response to press perturbations. The package provides methods 
+for calculating and visualizing these edge-specific sensitivities (tolerances) when estimation-uncertainty 
+is associated to one or more edges according to a variety of different error distributions
+(e.g., uniform, truncated normal). The software requires the network to be described by a system of 
+differential equations and only requires as input a numerical Jacobian matrix and a specification of the 
+presumed error distribution.
+
+Use cases include the study of food web dynamics in the context of fisheries management, asking: 
+If the harvest of a focal species were to be increased, how robust would qualitative predictions of net 
+change in the abundance of all other species be given that their estimated interaction strength are 
+all subject to uncertainty? Which interaction strengths would need to be quantified most accurately for 
+predictions to be robust?
 
 # About
 

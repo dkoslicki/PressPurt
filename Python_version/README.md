@@ -1,3 +1,5 @@
+This repository contains a *python* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].  See  [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) for an alternative implementation.
+
 # PressPurt
 - [Installation](#installation)
 - [Usage](#usage)
@@ -11,20 +13,6 @@
 - [Complete documentation](#complete-documentation)
 - [Citations](#citations)
 
-This repository contains a *python* implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
-
-In short, this is a computational package designed to identify the most sensitive interactions 
-within a network which must be estimated most accurately in order to produce qualitatively 
-robust predictions to a press perturbation. The package produces data and visualization when 
-uncertainty is associated to one or more edges in the network and according to a variety of 
-distributions. The software requires the network to be described by a system of differential 
-equations but only requires as input a numerical Jacobian matrix.
-
-Use cases include modeling a food web using a system of differential equations and asking the question: 
-if I were cause a sustained increase in abundance of one organism, how robust would my predictions 
-be about the net change in abundance of other organisms given that the interaction strengths between 
-organisms is uncertain? Which edge interaction strengths would I need to accurately quantify in order for 
-my predictions to be robust?
 
 # Installation
 I suggest doing this in a [virtual environment](https://docs.python.org/3/library/venv.html). This repository is created for python3, so to create a virtual environment, enter these commands at the command line:
