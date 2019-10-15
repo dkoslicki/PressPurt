@@ -300,9 +300,10 @@ In general, there are three kinds of analyses:
 2. Multiple edge uncertainty
     - Qualitative analysis
 
-Each analysis requires a Jacobian matrix evaluated at an equilibrium point. This can be provided in, 
-for example, a CSV file. The following examples will use data provided in this repository, so feel free 
-to change the appropriate lines to point to your code.
+Each analysis requires a numeric Jacobian matrix evaluated at an equilibrium point. This must be 
+provided as a CSV file containing column and row names that are either non-numeric ("A","B","C",...) 
+or numeric (but not including zero) entries.  If you created your matrix within R, you will have to
+export it to a CSV file before proceeding.
 
 Before any analysis can be performed, you must first pre-process a matrix so that the intervals 
 of asymptotic stability can be determined, as well as a calculation that will determine which 
