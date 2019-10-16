@@ -93,15 +93,16 @@ find_python()
 
 This shows you your default Python path, other available python paths, a list of your conda environments and virtualenvs.
 
-The `set_python` function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you'll need to specify which python version to use in addition to the conda envirnment name.
+The `set_python` function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you'll need to specify which python version to use in addition to the conda environment name.
 
-You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed so it's important to specify which python to use. In this case I'll use the anaconda3 python.
+You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed, so you may need to specify which python to use.  If the environment doesn't exist, it will be created.
 
 ```{r, eval=FALSE}
-set_python(condaenv="test-r", version="/home/gibbond/anaconda3/bin/python",verbose = TRUE)
+set_python(condaenv="PressPurtEnv", verbose = TRUE)
+#set_python(condaenv="PressPurtEnv", version="/home/gibbond/anaconda3/bin/python",verbose = TRUE)
 ```
 
-Next you'll need to install the python dependencies in your conda environment. This will install the following into your `test-r` conda env: 
+Next you'll need to install some additional python dependencies that PressPurt needs into your conda environment. This will install the following into your `PressPurtEnv` conda env: 
 
 * `numpy`
 * `scipy`
@@ -111,15 +112,15 @@ Next you'll need to install the python dependencies in your conda environment. T
 * `pandas`
 
 ```{r, eval=FALSE}
-py_depend(condaenv = "test-r")
+py_depend(condaenv = "PressPurtEnv")
 ```
 
 If the dependencies don't install correctly see below for instructions on how to install via the command-line.
 
-If you want to use the `test-r` environment in a new R session you can access it via:
+If you want to use the `PressPurtEnv` environment in a new R session you can access it via:
 
 ```{r, eval=FALSE}
-set_python(condaenv="test-r")
+set_python(condaenv="PressPurtEnv")
 ```
 
 ##### Command-line
@@ -131,10 +132,10 @@ You can also install your Python dependencies via the command line with conda or
 conda --version
 # List conda envs
 conda info --envs
-# Create conda environment "test-r"
-conda create --name test-r
-# activate test-r
-source activate test-r
+# Create conda environment "PressPurtEnv"
+conda create --name PressPurtEnv
+# activate PressPurtEnv
+source activate PressPurtEnv
 # check installed packages
 conda list
 # install python dependencies
@@ -144,15 +145,15 @@ pip install pathos
 conda list
 ```
 
-Now that you have created the conda environments and installed dependencies, you can use the new env in R! Run:
+Now that you have created the conda environments and installed dependencies, you can use the new environment in R. Run:
 
 ```{r, eval=FALSE}
 # load the library
 library(PressPurt)
-# You should see "test-r" listed as a conda env
+# You should see "PressPurtEnv" listed as a conda env
 find_python()
 # Set your conda env
-set_python(condaenv="test-r")
+set_python(condaenv="PressPurtEnv")
 ```
 
 ### Virtualenv
@@ -163,7 +164,7 @@ If needed, install `virtualenv` with `pip`.
 
 ##### Command-line
 
-* Intall, test and (optionally) create a new virtenv from the commandline
+* Install, test and (optionally) create a new virtenv from the commandline
 
 ```{bash, eval=FALSE}
 # install virtualenv with pip
@@ -184,7 +185,7 @@ The `set_python_virtual` function lets one specify a virtual envrionemnt to use.
 You may check which version(s) of python you have in a fresh R session with `find_python()`. You should use the sample one you used to intall `virtualenv`.
 
 ```{r, eval=FALSE}
-set_python_virtual(version = "/usr/bin/python3", virtualenv = "r-reticulate", verbose = TRUE)
+set_python_virtual(version = "/usr/bin/python3", virtualenv = "PressPurtEnv", verbose = TRUE)
 ```
 
 Next you'll need to install the python dependencies in your virtual environment. This will install the following into your `PressPurt` virtual env: 
@@ -212,9 +213,10 @@ Now that you have created the virtual environment and installed dependencies, yo
 ```{r, eval=FALSE}
 # load the library
 library(PressPurt)
-# You should see "test-r" listed as a conda env
+# You should see "PressPurtEnv" listed as a conda env
 find_python()
 # Set your virtualenv
 set_python_virtual(virtualenv = "PressPurt")
 ```
 
+To you'd like to remove your conda environment, see [Removing an Environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment).
