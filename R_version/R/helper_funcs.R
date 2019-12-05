@@ -42,13 +42,14 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
   }
 }
 
-#' Set Up Python Conda Configuration
-#'
-#' This function sets your python version and conda environment.
-#' Run this command before PreprocessMatrix. Install python dependencies in the
-#' same conda environment that you set here.
-#' If conda environment does not exist, this function will make a new one.
-#' If the conda environment already exists, no need to set the python version.
+
+#' Make a new conda environment
+#' 
+#' This function creates a new conda environemnt and initializes
+#' the new conda environment.
+#' In doing so, this function sets your python version 
+#' and one may specify a specific python version. This is useful
+#' if you have multiple versions of python installed.
 #' When making a new conda environment, if the python version isn't set, then
 #' your default one will be used.
 #' @param condaenv Specify conda environment name
@@ -58,37 +59,76 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
 #' @export
 #' @examples 
 #' \dontrun{
-#' set_python(version = "~/anaconda3/bin/python", 
-#'     condaenv = "r-reticulate", 
+#' create_conda_env( 
+#'     condaenv = "r-reticulate",
+#'     version = "~/anaconda3/bin/python",
 #'     verbose = TRUE)
 #' }
 #' @import reticulate
 
-set_python <- function(condaenv, version=NULL, verbose = TRUE){
-  if(!is.null(version)){
-    # set python version
-    use_python(version, required = T)
-  } else {
-    f_py <- py_discover_config()
-    cat("No python version set. Default python is:\n", f_py$python, "\n")
-  }
+create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
   # check if conda environment exists, if not make it
   condalist <- conda_list()
   if(!(condaenv %in% condalist$name)){
     cat("\n Your specified conda environment, ", condaenv, 
         " was not found.\n Making new conda environment. \n")
+    if(!is.null(version)){
+      # set python version
+      use_python(version, required = T)
+    } else {
+      f_py <- py_discover_config()
+      cat("No python version set. Default python is:\n", f_py$python, "\n")
+    }
     # create conda env
     conda_create(condaenv, packages = "python", conda = "auto")
+    cat('\n Setting condaenvironment \n')
     # set conda environment
-    use_condaenv(condaenv = condaenv, required = T) 
+    use_condaenv(condaenv = condaenv, required = T)
+    if(verbose == TRUE){
+      cat("\n Python/conda environment created: \n", condaenv, "\n")
+      print(conda_list())
+      return(py_config())
+    }
+  } else {
+    cat('\n Your specifed Conda Environment already exists \n')
+    cat('\n Set your conda env with: set_python_conda \n')
+  }
+}
+
+
+#' Set Up Python Conda Configuration
+#'
+#' This function sets your conda environment.
+#' Run this command before PreprocessMatrix. Install python dependencies in the
+#' same conda environment that you set here.
+#' To make a new conda environment use the create_conda_env function.
+#' @param condaenv Specify conda environment name
+#' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
+#' Default: TRUE
+#' @export
+#' @examples 
+#' \dontrun{
+#' set_python_conda(
+#'     condaenv = "r-reticulate", 
+#'     verbose = TRUE)
+#' }
+#' @import reticulate
+
+set_python_conda <- function(condaenv, verbose = TRUE){
+  # check if conda environment exists, if not make it
+  condalist <- conda_list()
+  if(!(condaenv %in% condalist$name)){
+    cat("\n Your specified conda environment, ", condaenv, 
+        " was not found.\n Make a new env with create_conda_env. \n")
   } else {
     cat('\n Setting condaenvironment \n')
     # set conda environment
     use_condaenv(condaenv = condaenv, required = T)
-  }
-  if(verbose == TRUE){
-    cat("\n Python/conda environment in use: \n")
-    return(py_config())
+    # if verbose
+    if(verbose == TRUE){
+      cat("\n Python/conda environment in use: \n")
+      return(py_config())
+    }
   }
 }
 
