@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_funcs.R
 \name{set_python_conda}
 \alias{set_python_conda}
-\title{Set Up Python Conda Configuration}
+\title{Set Python Conda environment}
 \usage{
 set_python_conda(condaenv, verbose = TRUE)
 }

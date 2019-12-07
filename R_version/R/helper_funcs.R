@@ -96,7 +96,7 @@ create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
 }
 
 
-#' Set Up Python Conda Configuration
+#' Set Python Conda environment
 #'
 #' This function sets your conda environment.
 #' Run this command before PreprocessMatrix. Install python dependencies in the
@@ -133,13 +133,13 @@ set_python_conda <- function(condaenv, verbose = TRUE){
 }
 
 
-#' Set Up Virtual Environment for Python Configuration
+#' Make a new virtual environment
 #'
-#' This function sets your python version and Virtual environment.
-#' Run this command before PreprocessMatrix. Install python dependencies in the
-#' same Virtual environment that you set here.
-#' If the virtual environment does not exist, this function will make a new one.
-#' If the virtual environment already exists, no need to set the python version.
+#' This function creates a new virtual environemnt and initializes
+#' the new virtual environment.
+#' In doing so, this function sets your python version 
+#' and one may specify a specific python version. This is useful
+#' if you have multiple versions of python installed.
 #' When making a new virtual environment, if the python version isn't set, then
 #' your default one will be used.
 #' @param virtualenv Specify conda environment name
@@ -149,36 +149,73 @@ set_python_conda <- function(condaenv, verbose = TRUE){
 #' @export
 #' @examples 
 #' \dontrun{
-#' set_python_virtual(version = "/usr/bin/python3", 
+#' create_virtual_env(version = "/usr/bin/python3", 
 #'     virtualenv = "r-reticulate", 
 #'     verbose = TRUE)
 #' }
 #' @import reticulate
 
-set_python_virtual <- function(virtualenv, version=NULL, verbose = TRUE){
-  if(!is.null(version)){
-    # set python version
-    use_python(version, required = T)
-  } else {
-    f_py <- py_discover_config()
-    cat("No python version set. Default python is:\n", f_py$python, "\n")
-  }
+create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
   # check if virtual environment exists, if not make it
   virtlist <- virtualenv_list()
   if(!(virtualenv %in% virtlist)){
     cat("\n Your specified virtual environment, ", virtualenv, 
         " was not found.\n Making new virtual environment. \n")
+    if(!is.null(version)){
+      # set python version
+      use_python(version, required = T)
+    } else {
+      f_py <- py_discover_config()
+      cat("No python version set. Default python is:\n", f_py$python, "\n")
+    }
     # create virtual env
     virtualenv_create(envname = virtualenv)
+    cat('\n Setting virtual environment \n')
     # set virtual environment
-    use_virtualenv(virtualenv = virtualenv, required = T) 
+    use_virtualenv(virtualenv = virtualenv, required = T)
+    if(verbose == TRUE){
+      cat("\n Python/virtual environment in use: \n")
+      return(py_config())
+    }
+  } else {
+    cat('\n Your specifed Virtual Environment already exists \n')
+    cat('\n Set your virtual env with: set_python_virtual \n')
+  }
+}
+
+#' Set your Python Virtual environment
+#'
+#' This function sets your virtual environment.
+#' Run this command before PreprocessMatrix. Install python dependencies in the
+#' same virtual environment that you set here.
+#' To make a new virtial environment use the create_virtual_env function.
+#' @param virtualenv Specify virtual environment name
+#' @param verbose TRUE or FALSE. When TRUE, shows python and virtual environment configuration.
+#' Default: TRUE
+#' @export
+#' @examples 
+#' \dontrun{
+#' set_python_virtual(
+#'     virtualenv = "r-reticulate", 
+#'     verbose = TRUE)
+#' }
+#' @import reticulate
+
+set_python_virtual <- function(virtualenv, verbose = TRUE){
+  # check if virtual environment exists, if not make it
+  virtlist <- virtualenv_list()
+  if(!(virtualenv %in% virtlist)){
+    cat("\n Your specified virtual environment, ", virtualenv, 
+        " was not found.\n Make a new env with create_virtual_env. \n")
   } else {
     cat('\n Setting virtual environment \n')
+    # set virtual environment
     use_virtualenv(virtualenv = virtualenv, required = T)
-  }
-  if(verbose == TRUE){
-    cat("\n Python/virtual environment in use: \n")
-    return(py_config())
+    # if verbose
+    if(verbose == TRUE){
+      cat("\n Python/virtual environment in use: \n")
+      return(py_config())
+    }
   }
 }
 

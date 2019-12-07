@@ -2,30 +2,25 @@
 % Please edit documentation in R/helper_funcs.R
 \name{set_python_virtual}
 \alias{set_python_virtual}
-\title{Set Up Virtual Environment for Python Configuration}
+\title{Set your Python Virtual environment}
 \usage{
-set_python_virtual(virtualenv, version = NULL, verbose = TRUE)
+set_python_virtual(virtualenv, verbose = TRUE)
 }
 \arguments{
-\item{virtualenv}{Specify conda environment name}
+\item{virtualenv}{Specify virtual environment name}
 
-\item{version}{Set path to specific version of python.}
-
-\item{verbose}{TRUE or FALSE. When TRUE, shows python and conda configuration.
+\item{verbose}{TRUE or FALSE. When TRUE, shows python and virtual environment configuration.
 Default: TRUE}
 }
 \description{
-This function sets your python version and Virtual environment.
+This function sets your virtual environment.
 Run this command before PreprocessMatrix. Install python dependencies in the
-same Virtual environment that you set here.
-If the virtual environment does not exist, this function will make a new one.
-If the virtual environment already exists, no need to set the python version.
-When making a new virtual environment, if the python version isn't set, then
-your default one will be used.
+same virtual environment that you set here.
+To make a new virtial environment use the create_virtual_env function.
 }
 \examples{
 \dontrun{
-set_python_virtual(version = "/usr/bin/python3", 
+set_python_virtual(
     virtualenv = "r-reticulate", 
     verbose = TRUE)
 }
