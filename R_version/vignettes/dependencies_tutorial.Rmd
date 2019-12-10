@@ -34,14 +34,81 @@ If not already installed, these packages will be installed upon the installation
 
 ## Python
 
-This package is dependent on python and uses the R package `reticulate` under the hood to use python. Thus python and the dependant packages must be installed. 
+This package is dependent on python and uses the R package `reticulate` under the hood to use python. Thus python and the dependent packages must be installed. 
 
 There are two suggested approaches: 
 
+* Virtual environments which supports Linux/Mac OS (recommended)
 * Conda (Anaconda/miniconda) which supports Linux/Mac/Windows
-* Virtual environments which supports Linux/Mac OS
 
 It is also possible to set a specific version of python with `reticulate::use_python("/path/to/python")` before you run any of the `PressPurt` commands but it is not recommended. You'll also have to ensure that the dependent python packages are installed. For more information on using `reticulate` directly: [see the reticulate docs](https://rstudio.github.io/reticulate/articles/python_packages.html).
+
+### Virtualenv
+
+#### Install virtual environment
+
+If needed, install `virtualenv` with `pip`.
+
+##### Command-line
+
+* Install, test and (optionally) create a new virtual environment from the command line
+
+```{bash, eval=FALSE}
+# install virtualenv with pip
+pip install virtualenv
+# test your installation
+virtualenv --version
+# create a virtualenv
+virtualenv venv
+```
+
+
+#### Installing python dependencies
+
+##### From R
+
+The `create_virtual_env` function lets one create a virtual environment to use. If you want to make a new virtual environment, you'll need to specify which python version to use in addition to the virtual environment name.
+
+You may check which version(s) of python you have in a fresh R session with `find_python()`. You should use the sample one you used to install `virtualenv`.
+
+```{r, eval=FALSE}
+create_virtual_env(version = "/usr/bin/python3",
+                   virtualenv = "PressPurtEnv",
+                   verbose = TRUE)
+```
+
+Next you'll need to install the python dependencies in your virtual environment. This will install the following into your `PressPurtEnv` virtual env: 
+
+* `numpy`
+* `scipy`
+* `matplotlib`
+* `sympy`
+* `pathos`
+* `pandas`
+
+```{r, eval=FALSE}
+py_depend(virtualenv = "PressPurtEnv")
+```
+
+If you want to use the `PressPurtEnv` environment in a new R session you can access it via:
+
+```{r, eval=FALSE}
+set_python_virtual(virtualenv = "PressPurtEnv")
+```
+
+
+Now that you have created the virtual environment and installed dependencies, you can use the new env in R! Run:
+
+```{r, eval=FALSE}
+# load the library
+library(PressPurt)
+# You should see "PressPurtEnv" listed as a conda env
+find_python()
+# Set your virtualenv
+set_python_virtual(virtualenv = "PressPurtEnv")
+```
+
+
 
 ### Conda
 
@@ -74,16 +141,16 @@ This document will show you how to install Miniconda via the command-line. For m
 1. [Download the Miniconda installer for Windows](https://docs.conda.io/en/latest/miniconda.html)
 2. Run the `.exe` file by double clicking.
 3. Follow the prompts - accepting defaults should be fine.
-5. Test your installation by opeing the Anacond Prompt from the Start menu and running running: `conda list`
+5. Test your installation by opening the Anaconda Prompt from the Start menu and running running: `conda list`
     * This should result in a list of installed packages.
 
 #### Installing python dependencies
 
 ##### From R
 
-First you'll need to load `PressPurt`, check which versions of python are found and if any Conda envrionments exists.
+First you'll need to load `PressPurt`, check which versions of python are found and if any Conda environments exists.
 
-```{r}
+```{r, eval=FALSE}
 # load the library
 library(PressPurt)
 # Find the versions of python, conda environments and virtualenvs available on your machine:
@@ -91,15 +158,16 @@ find_python()
 
 ```
 
-This shows you your default Python path, other available python paths, a list of your conda environments and virtualenvs.
+This shows you your default Python path, other available python paths, a list of your conda environments and virtual environments.
 
-The `set_python` function lets one specify a conda envrionemnt to use. If you want to make a new conda environment, you'll need to specify which python version to use in addition to the conda environment name.
+The `create_conda_env` function lets one create a new conda environment -- you'll most likely need to specify which python version to use in addition to the conda environment name. This function also sets your conda environment to the newly created one.
 
-You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed, so you may need to specify which python to use.  If the environment doesn't exist, it will be created.
+You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed, so you may need to specify which python to use. 
 
 ```{r, eval=FALSE}
-set_python(condaenv="PressPurtEnv", verbose = TRUE)
-#set_python(condaenv="PressPurtEnv", version="/home/gibbond/anaconda3/bin/python",verbose = TRUE)
+create_conda_env`(condaenv="PressPurtEnv", 
+                  version="~/anaconda3/bin/python", 
+                  verbose = TRUE)
 ```
 
 Next you'll need to install some additional python dependencies that PressPurt needs into your conda environment. This will install the following into your `PressPurtEnv` conda env: 
@@ -120,12 +188,14 @@ If the dependencies don't install correctly see below for instructions on how to
 If you want to use the `PressPurtEnv` environment in a new R session you can access it via:
 
 ```{r, eval=FALSE}
-set_python(condaenv="PressPurtEnv")
+set_python_conda(condaenv="PressPurtEnv")
 ```
 
 ##### Command-line
 
 You can also install your Python dependencies via the command line with conda or with the Anaconda Prompt (Windows).
+
+When you activate conda it starts the "base" environment. You'll want to create a specific environment to install all of the PressPurt requirements.
 
 ```{bash, eval=FALSE}
 # Check that conda is running
@@ -153,70 +223,5 @@ library(PressPurt)
 # You should see "PressPurtEnv" listed as a conda env
 find_python()
 # Set your conda env
-set_python(condaenv="PressPurtEnv")
+set_python_conda(condaenv="PressPurtEnv")
 ```
-
-### Virtualenv
-
-#### Install virtual environment
-
-If needed, install `virtualenv` with `pip`.
-
-##### Command-line
-
-* Install, test and (optionally) create a new virtenv from the commandline
-
-```{bash, eval=FALSE}
-# install virtualenv with pip
-pip install virtualenv
-# test your installation
-virtualenv --version
-# create a virtualenv
-virtualenv venv
-```
-
-
-#### Installing python dependencies
-
-##### From R
-
-The `set_python_virtual` function lets one specify a virtual envrionemnt to use. If you want to make a new virtual environment, you'll need to specify which python version to use in addition to the virtual envirnment name.
-
-You may check which version(s) of python you have in a fresh R session with `find_python()`. You should use the sample one you used to intall `virtualenv`.
-
-```{r, eval=FALSE}
-set_python_virtual(version = "/usr/bin/python3", virtualenv = "PressPurtEnv", verbose = TRUE)
-```
-
-Next you'll need to install the python dependencies in your virtual environment. This will install the following into your `PressPurt` virtual env: 
-
-* `numpy`
-* `scipy`
-* `matplotlib`
-* `sympy`
-* `pathos`
-* `pandas`
-
-```{r, eval=FALSE}
-py_depend(virtualenv = "PressPurt")
-```
-
-If you want to use the `PressPurt` environment in a new R session you can access it via:
-
-```{r, eval=FALSE}
-set_python_virtual(virtualenv = "PressPurt")
-```
-
-
-Now that you have created the virtual environment and installed dependencies, you can use the new env in R! Run:
-
-```{r, eval=FALSE}
-# load the library
-library(PressPurt)
-# You should see "PressPurtEnv" listed as a conda env
-find_python()
-# Set your virtualenv
-set_python_virtual(virtualenv = "PressPurt")
-```
-
-To you'd like to remove your conda environment, see [Removing an Environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment).
