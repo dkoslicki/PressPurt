@@ -41,11 +41,11 @@ devtools::install_github("dkoslicki/PressPurt",
 ```{r quick_start_setup}
 library(PressPurt)
 find_python()
-set_python("PressPurtEnv", verbose = TRUE)
+set_python_virtual("PressPurt", verbose = TRUE)
 ```
 
 ```{r quick_start_install, eval=FALSE}
-py_depend("PressPurtEnv")
+py_depend(virtualenv = "PressPurt")
 ```
 
 ```{r quick_start_run}
@@ -74,11 +74,11 @@ GenerateEntryWiseFigures(EntryWise=Entrywise,
 
 This package uses python through the R package `reticulate`. You'll need to install the needed python libraries into a conda env or a virtualenv. The "dependencies_tutorial" walks you through how to do this. Once this is done, you'll need to load your conda env or virtualenv.
 
-Note: If you want to change conda envs, you'll need to restart R because of how `reticulate` works.
+Note: If you want to change conda envs or virtual envs, you'll need to restart R because of how `reticulate` works.
 
 ```{r load_py, eval=FALSE}
 # set the conda env
-set_python("PressPurtEnv", verbose = TRUE)
+set_python_virtual("PressPurtEnv", verbose = TRUE)
 ```
 
 # Example: IGP.csv
