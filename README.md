@@ -23,7 +23,7 @@ There are two flavors of the code (in case you find one easier to work with than
 1. [Python](https://github.com/dkoslicki/PressPurt/tree/master/Python_version)
 2. [R](https://github.com/dkoslicki/PressPurt/tree/master/R_version)
 
-Please click on the folders [Python_version](https://github.com/dkoslicki/PressPurt/tree/master/Python_version) or [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) to see the installation and usage instructions for each. (Note that the [R_version] also requires the installation of Python.)
+Please click on the folders [Python_version](https://github.com/dkoslicki/PressPurt/tree/master/Python_version) or [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) to see the installation and usage instructions for each. (Note that the [R_version](https://github.com/dkoslicki/PressPurt/tree/master/R_version) also requires the installation of Python.)
 
 # Citations
 1. Koslicki, D., & Novak, M. (2018). Exact probabilities for the indeterminacy of complex networks as perceived through press perturbations. Journal of mathematical biology, 76(4), 877-909. DOI: [ https://doi.org/10.1007/s00285-017-1163-0]( https://doi.org/10.1007/s00285-017-1163-0)
