@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -13,7 +12,7 @@
 
 <meta name="author" content="Dana Gibbon" />
 
-<meta name="date" content="2019-12-09" />
+<meta name="date" content="2019-12-13" />
 
 <title>Set up</title>
 
@@ -96,7 +95,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Set up</h1>
 <h4 class="author">Dana Gibbon</h4>
-<h4 class="date">2019-12-09</h4>
+<h4 class="date">2019-12-13</h4>
 
 
 
@@ -228,7 +227,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">find_python</span>()</code></pre></div>
 <p>This shows you your default Python path, other available python paths, a list of your conda environments and virtual environments.</p>
 <p>The <code>create_conda_env</code> function lets one create a new conda environment – you’ll most likely need to specify which python version to use in addition to the conda environment name. This function also sets your conda environment to the newly created one.</p>
-<p>You may have python installed under <code>/usr/bin/python3</code>, Anaconda2 and/or Anaconda3 installed, so you may need to specify which python to use.</p>
+<p>You may have python installed under <code>/usr/bin/python3</code>, Anaconda2 and/or Anaconda3, so you may need to specify which python to use.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">create_conda_env<span class="st">`</span><span class="dt">(condaenv=&quot;PressPurtEnv&quot;, </span>
 <span class="dt">                  version=&quot;~/anaconda3/bin/python&quot;, </span>
 <span class="dt">                  verbose = TRUE)</span></code></pre></div>

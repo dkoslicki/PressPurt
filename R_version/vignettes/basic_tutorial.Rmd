@@ -49,7 +49,7 @@ py_depend(virtualenv = "PressPurt")
 ```
 
 ```{r quick_start_run}
-# Path to your matrix
+# Path to your matrix - in this case a test dataset that comes with the package
 infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurt")
 MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file = infile)
 PreProsMatrix <- PreprocessMatrix(input_file = infile, 
@@ -90,6 +90,8 @@ When running this workflow, one may keep everything in R memory or save the outp
 This function takes a jacobian matrix and computes the multi-entry perturbation expectation.
 
 In this example we take the `IGP.csv` matrix and use the default `num_iterates` and `interval_length` values.
+
+The `IGP.csv` file is an example dataset that is included in the `PressPurt` package.
 
 ```{r multi}
 infile <- system.file("extdata", "Modules", "IGP.csv", package = "PressPurt")

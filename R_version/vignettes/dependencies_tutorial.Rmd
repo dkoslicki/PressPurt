@@ -162,7 +162,7 @@ This shows you your default Python path, other available python paths, a list of
 
 The `create_conda_env` function lets one create a new conda environment -- you'll most likely need to specify which python version to use in addition to the conda environment name. This function also sets your conda environment to the newly created one.
 
-You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3 installed, so you may need to specify which python to use. 
+You may have python installed under `/usr/bin/python3`, Anaconda2 and/or Anaconda3, so you may need to specify which python to use. 
 
 ```{r, eval=FALSE}
 create_conda_env`(condaenv="PressPurtEnv", 
