@@ -237,6 +237,7 @@ find_python()
 set_python_virtual(virtualenv = "PressPurt")
 ```
 
+Information on how to remove/delete an environment may be found in the following [conda documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment).
 
 # Usage
 **Please note! After following the installation instructions above, you will need to restart your R session to complete the installation**
