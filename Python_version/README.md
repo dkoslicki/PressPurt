@@ -98,20 +98,20 @@ Note that you need only preprocess the Jacobian once, as changing parameters in 
 you to re-run `PreprocessMatrix.py`.
 
 ### Single edge uncertainty
-This set of analyses are for the situation in which you wish to (press) perturb a single node in the 
-network and quantify how uncertainty in the edge interaction strengths affects the predictions contained 
-in the net effects matrix.
+This set of analyses are for the situation where you wish to assess how the presence of uncertainty 
+in the strength of the direct effect (edge weight) between a single focal pair of species (nodes) alters 
+the signs of the predicted press perturbation net effects between all pairs of species in the network.
 
 #### Qualitative analysis
 The script `ComputeEntryWisePerturbationExpectation.py` will compute the expected number of sign 
-switches/mispredictions in the net effects matrix when perturbing each node individually by a unit amount.
+switches/mispredictions in the net effects matrix when perturbing each entry of the Jacobian matrix individually.
 The script can be run with:
 ```python
 python ../scripts/ComputeEntryWisePerturbationExpectation.py --distribution_type 'truncnorm' -a 0 -b -2 Results  # run the script on the preprocessed matrix contained in the Results folder assuming the edge uncertainties are distributed according to a truncated normal distribution using a mean of 0 and a variance equal to (the length of the interval divided by the absolute value of the input parameter)^2
 ```
 The results will also be placed in the `Results` subfolder. The file ``Results/expected_num_switch.csv`` 
 is a matrix whose (i,j) entry shows the expected fraction of sign switches/mispredictions in the net effects 
-matrix when the edge between nodes i and j experiences uncertainty (according to the distribution specified).
+matrix when the edge between nodes i and j experiences uncertainty according to the distribution specified.
 
 Use `ComputeEntryWisePerturbationExpectation.py -h` to view the different kinds of distributions available and a more detailed 
 description of the flags `-a` and `-b`.
@@ -123,16 +123,15 @@ python ../scripts/GenerateEntryWiseFigures.py Results --list_of_numswitch_to_plo
 This command generates a heatmap of the `expected_num_switch.csv` file as well as a plot of the (edge uncertainty value) versus 
 (number of sign switches/mispredictions) in the net effects matrix overlaid with the edge uncertainty distribution (truncated by the 
 region of asymptotic stability). The flag `--list_of_numswitch_to_plot 1 1 1 2` specifies that only the (1,1) and (1,2) edges should be shown. 
-If you use `--all_numswitch_plot` instead, this will show similar plots for *all* edges (warning: this may be uninterpretable if you matrix is large). 
+If you use `--all_numswitch_plot` instead, this will show similar plots for *all* edges (warning: this may be uninterpretable if your matrix is large). 
 This script also calculates the expected percentage of mispredictions when each edge individually experiences uncertainty 
 (i.e. averaging the matrix `Results/expected_num_switch.csv`)
 
 #### Quantitative analysis
-Instead of asking "does a misprediction occur?" one might be interested in quantifying by how much you mispredict 
-the change in abundance of other nodes when edge interactions (individually) are under uncertainty and you press perturb 
-a single node. The script `ComputeQuantitativeSensitivity.py` allows you to do this. However, a decision needs to be made 
+Instead of asking whether a qualitative misprediction occurs, one might be interested in quantifying by how much you mispredict 
+the change in abundance of other nodes when edge weights (individually) are under uncertainty. The script `ComputeQuantitativeSensitivity.py` allows you to do this. However, a decision needs to be made 
 about what level of uncertainty the edge interactions have experienced (i.e. have they been changed to their mean uncertainty value, 
-median value, maximal value, etc). The script `ComputeQuantitativeSensitivity.py` takes a "worst case" analysis an assumes 
+median value, maximal value, etc). The script `ComputeQuantitativeSensitivity.py` takes a "worst case" analysis and assumes 
 that each edge (individually) has experienced a limited value of uncertainty (i.e. the maximal/limiting value). The script 
 is called with:
 ```python
@@ -140,8 +139,8 @@ python ../scripts/ComputeQuantitativeSensitivity.py Modules/IGP.csv Results
 ```  
 This runs the computation on the `IGP.csv` Jacobian and stores the results in the `Results` subfolder. 
 This folder will now contain a file called `MRS.csv` which gives the mean (averaged over all individually perturbed entries) 
-factor by which your net effects matrix predictions will be off by when an (averaged) single edge edge experiences maximal uncertainty. 
-The file `quantitative_sensitivity.csv` also depicts the mean factor by which your net effects matrix predictions will be off by when a 
+factor by which your net effects matrix predictions will be off when an (averaged) single edge edge experiences maximal uncertainty. 
+The file `quantitative_sensitivity.csv` also depicts the mean factor by which the net effects matrix predictions will be off by when a 
 single edge (i,j) experiences maximal/limiting uncertainty.
 
 The script `GenerateQuantitativeSensitivityFigure.py` visualizes the quantitative analysis by creating a heat map of the 
@@ -153,8 +152,8 @@ The value returned is the same as the one contained in `MRS.csv`.
 
 ### Multiple edge uncertainty
 
-While the above analysis analyses the network sensitivity when edges individually experience uncertainty, the following 
-allows multiple edges to simultaneously experience uncertainty.
+While the above analysis computes the sensitivity of the net effects matrix when edges individually experience
+uncertainty, the following allows multiple edges to experience uncertainty simultaneously.
 
 #### Qualitative analysis
 The script `ComputeMultiEntryPerturbationExpectation.py` performs a Monte Carlo sampling of edge uncertainties according 
@@ -165,9 +164,10 @@ The command can be called with
 ```python
 python ../scripts/ComputeMultiEntryPerturbationExpectation.py Modules/IGP.csv --num_iterates 1000 --interval_length 0.01 --threads 4
 ```
-The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) centered around the respective 
-Jacobian value +-0.005, and reports the fraction of samples that led to a misprediction. For example, a returned value of 0.306 
-would indicate that 306 of the 1000 samples led to a misprediction in the net effects matrix.
+The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) 
+centered around the respective Jacobian value +-0.005, and reports the fraction of samples that led to a 
+misprediction. For example, a returned value of 0.306 would indicate that 306 of the 1000 samples led 
+to a misprediction in the net effects matrix.
 
 
 # Complete documentation

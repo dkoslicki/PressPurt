@@ -138,7 +138,7 @@ This will install the following into your `test-r` conda env:
 py_depend(condaenv = "test-r")
 ```
 
-If the dependencies don’t install correctly see below for instructions on how to install via the command-line.
+If the dependencies don’t install correctly, see below for instructions on how to install via the command-line.
 
 If you want to use the `test-r` environment in a new R session you can access it via:
 ```R
@@ -325,13 +325,13 @@ Note that you need only preprocess the Jacobian once, as changing parameters in 
 you to re-run `PreprocessMatrix`.
 
 ### Single edge uncertainty
-This set of analyses are for the situation in which you wish to (press) perturb a single node in the 
-network and quantify how uncertainty in the edge interaction strengths affects the predictions contained 
-in the net effects matrix.
+This set of analyses are for the situation where you wish to assess how the presence of uncertainty 
+in the strength of the direct effect (edge weight) between a single focal pair of species (nodes) alters 
+the signs of the predicted press perturbation net effects between all pairs of species in the network.
 
 #### Qualitative analysis
 The function `ComputeEntryWisePerturbationExpectation` will compute the expected number of sign 
-switches/mispredictions in the net effects matrix when perturbing each node individually by a unit amount.
+switches/mispredictions in the net effects matrix when perturbing each entry of the Jacobian matrix individually.
 This can be run with:
 ```R
 # run the script on the preprocessed matrix contained in the Results folder assuming the edge uncertainties are distributed according to a truncated normal distribution using a mean of 0 and a variance equal to (the length of the interval divided by the absolute value of the input parameter)^2
@@ -341,14 +341,14 @@ Entrywise <- ComputeEntryWisePerturbationExpectation(PreProsMatrix = PreProsMatr
 ```
 The results will also be placed your workspace. Details about 
 the workspace data structures can be found [in this vignette](https://htmlpreview.github.io/?https://github.com/dkoslicki/PressPurt/blob/master/R_version/vignettes/basic_tutorial.html).
-But in short, the matrix `Entrywise$expected_num_switch` is a matrix whose (i,j) entry shows the expected fraction of sign switches/mispredictions in the net effects 
-matrix when the edge between nodes i and j experiences uncertainty (according to the distribution specified). You can then 
-make your own heat map of this matrix if you wish (similar to the python version). 
+In short, the matrix `Entrywise$expected_num_switch` is a matrix whose (i,j) entry shows the expected fraction of sign switches/mispredictions in the net effects 
+matrix when the edge between nodes i and j experiences uncertainty according to the distribution specified. You can then 
+make your own heat map of this matrix if you wish. 
 
-Averaging the non-zero entries in `Entrywise$expected_num_switch` calculates the expected percentage of mispredictions 
-when each edge individually experiences uncertainty.
+Averaging the non-zero entries in `Entrywise$expected_num_switch` calculates the expected percentage of mispredictions
+across the entire net effects matrix when each edge individually experiences uncertainty.
 
-Use `?ComputeEntryWisePerturbationExpectation` to view the different kinds of distributions available.
+Use `?ComputeEntryWisePerturbationExpectation` to view the different kinds of uncertainty distributions available.
 
 You can then visualize the results using the function `GenerateEntryWiseFigures`:
 ```R
@@ -363,23 +363,22 @@ GenerateEntryWiseFigures(EntryWise=Entrywise,
                          all_numswitch_plots = TRUE)
 ```
 This command generates a plot of the (edge uncertainty value) versus 
-(number of sign switches/mispredictions) in the net effects matrix overlaid with the edge uncertainty distribution (truncated by the 
+(number of sign switches/mispredictions) in the net effects matrix, overlaid with the edge uncertainty distribution (truncated by the 
 region of asymptotic stability). The option `list_of_numswitch_to_plot` specifies that only the (1,1) and (1,2) edges should be shown. 
 If you use `-all_numswitch_plots = TRUE` instead, this will show similar plots for *all* edges (warning: this may be uninterpretable if you matrix is large). 
 
 
 #### Quantitative analysis
-Instead of asking "does a misprediction occur?" one might be interested in quantifying by how much you mispredict 
-the change in abundance of other nodes when edge interactions (individually) are under uncertainty and you press perturb 
-a single node.
+Instead of asking whether a qualitative misprediction occurs, one might be interested in quantifying by how much you mispredict 
+the change in abundance of other nodes when edge weights (individually) are under uncertainty.
 
 As of yet, this analysis can only be performed using the [Python version](https://github.com/dkoslicki/PressPurt/tree/master/Python_version). 
 
 
 ### Multiple edge uncertainty
 
-While the above analysis analyses the network sensitivity when edges individually experience uncertainty, the following 
-allows multiple edges to simultaneously experience uncertainty.
+While the above analysis computes the sensitivity of the net effects matrix when edges individually experience
+uncertainty, the following allows multiple edges to experience uncertainty simultaneously.
 
 #### Qualitative analysis
 The function `ComputeMultiEntryPerturbationExpectation` performs a Monte Carlo sampling of edge uncertainties according 
@@ -391,9 +390,10 @@ The command can be called with
 MultiPert <- ComputeMultiEntryPerturbationExpectation(input_file, num_iterates = 1000,
   interval_length = 0.01, threads = 4)
 ```
-The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) centered around the respective 
-Jacobian value +-0.005, and reports the fraction of samples that led to a misprediction. For example, a returned value of 0.306 
-would indicate that 306 of the 1000 samples led to a misprediction in the net effects matrix.
+The above command samples uncertainties 1000 times on all edges (non zero entries of the input Jacobian `IGP.csv`) 
+centered around the respective Jacobian value +-0.005, and reports the fraction of samples that led to a 
+misprediction. For example, a returned value of 0.306 would indicate that 306 of the 1000 samples led to a
+misprediction in the net effects matrix.
 
 
 
