@@ -4,8 +4,12 @@
 \alias{get_distributions_single}
 \title{Get PDF distribution}
 \usage{
-get_distributions_single(matrix_entry, distribution_list, asymp_stab,
-  points = 250)
+get_distributions_single(
+  matrix_entry,
+  distribution_list,
+  asymp_stab,
+  points = 250
+)
 }
 \arguments{
 \item{matrix_entry}{Position in the matrix. Example: c(1, 1)}
@@ -17,7 +21,7 @@ get_distributions_single(matrix_entry, distribution_list, asymp_stab,
 \item{points}{the number of values in x range}
 }
 \description{
-This function retrieves the PDF (Probablity Distribution Function)
+This function retrieves the PDF (Probability Distribution Function)
 object from the scipy method 
 <scipy.stats._distn_infrastructure.rv_frozen>.
 }

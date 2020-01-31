@@ -4,9 +4,13 @@
 \alias{GenerateEntryWiseFigures}
 \title{Generate Entry Wise Figures}
 \usage{
-GenerateEntryWiseFigures(input_folder = NULL, EntryWise = NULL,
-  prefix = NULL, all_numswitch_plots = FALSE,
-  list_of_numswitch_to_plot = NULL)
+GenerateEntryWiseFigures(
+  input_folder = NULL,
+  EntryWise = NULL,
+  prefix = NULL,
+  all_numswitch_plots = FALSE,
+  list_of_numswitch_to_plot = NULL
+)
 }
 \arguments{
 \item{input_folder}{Input folder. The location of the files created by PreprocessMatrix
@@ -25,7 +29,7 @@ Should be a list of vectors. Example: list(c(0, 0), c(0, 1))}
 }
 \description{
 This function plots the number of mis-predictions versus perturbation
-value, overlaid with distribution over stable pertrubation values.
+value, overlaid with distribution over stable perturbation values.
 Run after ComputeEntryWisePerturbationExpectation()
 }
 \examples{

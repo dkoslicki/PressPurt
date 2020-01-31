@@ -9,7 +9,7 @@ process_data(matrix, type = "csv", folder, prefix = NULL)
 \arguments{
 \item{matrix}{path to the original matrix.}
 
-\item{type}{csv or tab. Is the oringal matrix comma separated
+\item{type}{csv or tab. Is the original matrix comma separated
 or tab separated? Default: csv}
 
 \item{folder}{path to the folder where output data was saved.}

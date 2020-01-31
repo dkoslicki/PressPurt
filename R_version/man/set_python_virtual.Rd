@@ -16,7 +16,7 @@ Default: TRUE}
 This function sets your virtual environment.
 Run this command before PreprocessMatrix. Install python dependencies in the
 same virtual environment that you set here.
-To make a new virtial environment use the create_virtual_env function.
+To make a new virtual environment use the create_virtual_env function.
 }
 \examples{
 \dontrun{

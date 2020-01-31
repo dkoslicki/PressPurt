@@ -15,7 +15,7 @@ create_virtual_env(virtualenv, version = NULL, verbose = TRUE)
 Default: TRUE}
 }
 \description{
-This function creates a new virtual environemnt and initializes
+This function creates a new virtual environment and initializes
 the new virtual environment.
 In doing so, this function sets your python version 
 and one may specify a specific python version. This is useful

@@ -4,8 +4,12 @@
 \alias{ComputeMultiEntryPerturbationExpectation}
 \title{Compute Multi Entry Perturbation Expectation}
 \usage{
-ComputeMultiEntryPerturbationExpectation(input_file, num_iterates = 1000,
-  interval_length = 0.01, threads = 1)
+ComputeMultiEntryPerturbationExpectation(
+  input_file,
+  num_iterates = 1000,
+  interval_length = 0.01,
+  threads = 1
+)
 }
 \arguments{
 \item{input_file}{Input comma separated file for the jacobian matrix.}

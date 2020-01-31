@@ -4,9 +4,15 @@
 \alias{PreprocessMatrix}
 \title{Preprocess Matrix}
 \usage{
-PreprocessMatrix(input_file, output_folder = NULL, prefix = NULL,
-  max_bound = 10, zero_perturb = FALSE, threads = 1,
-  verbose = FALSE)
+PreprocessMatrix(
+  input_file,
+  output_folder = NULL,
+  prefix = NULL,
+  max_bound = 10,
+  zero_perturb = FALSE,
+  threads = 1,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{input_file}{Input comma separated file for the jacobian matrix.}

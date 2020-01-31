@@ -22,7 +22,7 @@ scipy and sympy
 On CentOS 7 pandas & scipy may need to be installed with pip install 
 from the command line. Will get the error: /lib/libstdc++.so.6: version
 `CXXABI_1.3.9' not found
-See vingette for more information.
+See vignette for more information.
 }
 \examples{
 \dontrun{

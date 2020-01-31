@@ -1,7 +1,7 @@
 #' Generate Entry Wise Figures
 #' 
 #' This function plots the number of mis-predictions versus perturbation
-#' value, overlaid with distribution over stable pertrubation values.
+#' value, overlaid with distribution over stable perturbation values.
 #' Run after ComputeEntryWisePerturbationExpectation()
 #' @param input_folder Input folder. The location of the files created by PreprocessMatrix
 #' if you specified an output_folder. This is also where the num switch array was saved. 

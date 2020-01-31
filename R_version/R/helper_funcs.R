@@ -45,7 +45,7 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
 
 #' Make a new conda environment
 #' 
-#' This function creates a new conda environemnt and initializes
+#' This function creates a new conda environment and initializes
 #' the new conda environment.
 #' In doing so, this function sets your python version 
 #' and one may specify a specific python version. This is useful
@@ -135,7 +135,7 @@ set_python_conda <- function(condaenv, verbose = TRUE){
 
 #' Make a new virtual environment
 #'
-#' This function creates a new virtual environemnt and initializes
+#' This function creates a new virtual environment and initializes
 #' the new virtual environment.
 #' In doing so, this function sets your python version 
 #' and one may specify a specific python version. This is useful
@@ -188,7 +188,7 @@ create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
 #' This function sets your virtual environment.
 #' Run this command before PreprocessMatrix. Install python dependencies in the
 #' same virtual environment that you set here.
-#' To make a new virtial environment use the create_virtual_env function.
+#' To make a new virtual environment use the create_virtual_env function.
 #' @param virtualenv Specify virtual environment name
 #' @param verbose TRUE or FALSE. When TRUE, shows python and virtual environment configuration.
 #' Default: TRUE
@@ -231,7 +231,7 @@ set_python_virtual <- function(virtualenv, verbose = TRUE){
 #' On CentOS 7 pandas & scipy may need to be installed with pip install 
 #' from the command line. Will get the error: /lib/libstdc++.so.6: version
 #' `CXXABI_1.3.9' not found
-#' See vingette for more information.
+#' See vignette for more information.
 #' @param condaenv Name of conda environment to install python libraries to.
 #' Default: NULL
 #' @param virtualenv Name of virtual environment to install python libraries to.
@@ -278,7 +278,7 @@ py_depend <- function(condaenv=NULL, virtualenv=NULL){
 #' Note how most of these objects are python based objects-
 #' numpy or pickle objects. 
 #' @param matrix path to the original matrix.
-#' @param type csv or tab. Is the oringal matrix comma separated
+#' @param type csv or tab. Is the original matrix comma separated
 #' or tab separated? Default: csv
 #' @param folder path to the folder where output data was saved.
 #' @param prefix optional prefix to file names
@@ -463,7 +463,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
 
 #' Get PDF distribution
 #'
-#' This function retrieves the PDF (Probablity Distribution Function)
+#' This function retrieves the PDF (Probability Distribution Function)
 #' object from the scipy method 
 #' <scipy.stats._distn_infrastructure.rv_frozen>.
 #' @param matrix_entry Position in the matrix. Example: c(1, 1)

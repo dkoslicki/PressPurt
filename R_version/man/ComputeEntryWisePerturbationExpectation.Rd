@@ -4,10 +4,15 @@
 \alias{ComputeEntryWisePerturbationExpectation}
 \title{Compute Entry Wise Perturbation Expectation}
 \usage{
-ComputeEntryWisePerturbationExpectation(input_folder = NULL,
-  PreProsMatrix = NULL, prefix = NULL,
-  distribution_type = "truncnorm", input_a = 0, input_b = -2,
-  threads = 1)
+ComputeEntryWisePerturbationExpectation(
+  input_folder = NULL,
+  PreProsMatrix = NULL,
+  prefix = NULL,
+  distribution_type = "truncnorm",
+  input_a = 0,
+  input_b = -2,
+  threads = 1
+)
 }
 \arguments{
 \item{input_folder}{Input folder. The location of the files created by PreprocessMatrix
