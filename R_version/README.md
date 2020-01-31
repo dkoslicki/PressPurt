@@ -69,7 +69,7 @@ to install it graphically (no command-line) [see the conda docs](https://docs.co
     * This should result in a list of installed packages.
 
 ##### MacOS
-1. [Download the Miniconda installer for macOS](https://docs.conda.io/en/latest/miniconda.html)
+1. [Download the Miniconda installer for MacOS](https://docs.conda.io/en/latest/miniconda.html)
 1. In a terminal window run: bash Miniconda3-latest-MacOSX-x86_64.sh
 1. Follow the prompts - accepting defaults should be fine.
 1. Close your Terminal window and re-open a new one.
@@ -81,7 +81,7 @@ to install it graphically (no command-line) [see the conda docs](https://docs.co
 1. [Download the Miniconda installer for Windows](https://docs.conda.io/en/latest/miniconda.html)
 1. Run the .exe file by double clicking.
 1. Follow the prompts - accepting defaults should be fine.
-1. Test your installation by opeing the Anacond Prompt from the Start menu and running running: conda list
+1. Test your installation by opening the Anaconda Prompt from the Start menu and running running: conda list
     * This should result in a list of installed packages.
 
 #### Install python dependencies

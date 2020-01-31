@@ -1,12 +1,17 @@
 Package: PressPurt
-Title: Indeterminacy of Networks Via Press Perturbations
+Title: Indeterminacy of Networks via Press Perturbations
 Version: 1.0.0
-Authors@R: c(
-  person("David", "Koslicki", 
-  email = "dmkoslicki@gmail.com", role = c("aut", "cre")),
-  person("Dana", "Gibbon", role = c("aut", "trl")),
-  person("Mark", "Novak", role = c("aut"))
-  )
+Authors@R: 
+    c(person(given = "David",
+             family = "Koslicki",
+             role = c("aut", "cre"),
+             email = "dana.gibbon@cgrb.oregonstate.edu"),
+      person(given = "Dana",
+             family = "Gibbon",
+             role = c("aut", "trl")),
+      person(given = "Mark",
+             family = "Novak",
+             role = "aut"))
 Description: This is a computational package designed to identify the most sensitive interactions within a network which must be estimated most accurately in order to produce qualitatively robust predictions to a press perturbation. This is accomplished by enumerating the number of sign switches (and their magnitude) in the net effects matrix when an edge experiences uncertainty. The package produces data and visualizations when uncertainty is associated to one or more edges in the network and according to a variety of distributions. The software requires the network to be described by a system of differential equations but only requires as input a numerical Jacobian matrix evaluated at an equilibrium point.
 URL: https://github.com/dkoslicki/PressPurt
 BugReports: https://github.com/dkoslicki/PressPurt/issues
@@ -15,7 +20,7 @@ Depends:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Imports:
   data.table,
   ggplot2,
@@ -25,5 +30,7 @@ Imports:
   utils
 Suggests: 
     knitr,
-    rmarkdown
-VignetteBuilder: knitr
+    rmarkdown,
+    R.rsp,
+    testthat
+VignetteBuilder: R.rsp
