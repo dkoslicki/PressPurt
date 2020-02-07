@@ -492,7 +492,7 @@ get_distributions_single <- function(matrix_entry,
   l <- matrix_entry[2]
   interval <- asymp_stab
   padding <- (interval[2] - interval[1])/points
-  x_range <- np$linspace((interval[1] - padding), (interval[2] + padding), points)
+  x_range <- np$linspace((interval[1] - padding), (interval[2] + padding), as.integer(points))
   dist.py <- distribution_list[paste("(", k, ", ", l, ")", sep = '')]
   dist_vals <- sapply(x_range, function(x){dist.py[[1]]$pdf(x)})
   ax2 <- data.frame(x_range = as.numeric(x_range), dist_vals = dist_vals)
