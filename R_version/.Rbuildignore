@@ -11,3 +11,5 @@
 ^test_r$
 ^LICENSE\.md$
 ^cran-comments.md$
+^doc$
+^Meta$
