@@ -27,10 +27,10 @@ Imports:
   grid,
   gridExtra,
   reticulate (>= 1.11),
-  utils
+  utils,
+  R.rsp
 Suggests: 
     knitr,
     rmarkdown,
-    R.rsp,
     testthat
 VignetteBuilder: R.rsp
