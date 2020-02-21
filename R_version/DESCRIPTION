@@ -5,7 +5,7 @@ Authors@R:
     c(person(given = "David",
              family = "Koslicki",
              role = c("aut", "cre"),
-             email = "dmk333@psu.edu"),
+             email = "dana.gibbon@cgrb.oregonstate.edu"),
       person(given = "Dana",
              family = "Gibbon",
              role = c("aut", "trl")),
@@ -29,5 +29,8 @@ Imports:
   reticulate (>= 1.11),
   utils
 Suggests:
-    R.rsp
+    knitr,
+    rmarkdown,
+    R.rsp,
+    testthat
 VignetteBuilder: R.rsp
