@@ -9,8 +9,7 @@
 #' Default: TRUE
 #' @param virtualenv If TRUE will list available virtual environments.
 #' Default: TRUE
-#' @return Returns a list of python versions, conda envs and 
-#' virtual envs.
+#' @return None
 #' @export
 #' @examples 
 #' \dontrun{
@@ -22,23 +21,23 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
   f_py <- py_discover_config()
   condalist <- conda_list()
   virtlist <- virtualenv_list()
-  if(python == TRUE & conda == TRUE & virtualenv == TRUE){
-    cat("Default Python:\n", f_py$python, "\n\n",
+  if python == TRUE & conda == TRUE & virtualenv == TRUE){
+    message("Default Python:\n", f_py$python, "\n\n",
         "Python versions found:\n", f_py$python_versions, "\n\n",
         "List of condaenvironments:\n",
         paste0(condalist$name, ": ", condalist$python, ","),
         "\n\n",
         "List of virtualenvs:\n", virtlist)
   } else if(python == TRUE & conda == FALSE & virtualenv == FALSE){
-    cat("Default Python:\n", f_py$python, "\n\n",
+    message("Default Python:\n", f_py$python, "\n\n",
         "Python versions found:\n", f_py$python_versions, "\n\n")
   } else if(python == FALSE & conda == TRUE & virtualenv == FALSE){
-    cat("List of condaenvironments:\n", 
+    message("List of condaenvironments:\n", 
         paste0(condalist$name, ": ", condalist$python, ","))
   } else if(python == FALSE & conda == FALSE & virtualenv == TRUE){
-    cat("List of virtualenvs:\n", virtlist)
+    message("List of virtualenvs:\n", virtlist)
   } else {
-    cat("Please set python, virtualevl, and/or conda to TRUE")
+    message("Please set python, virtualevl, and/or conda to TRUE")
   }
 }
 
@@ -57,6 +56,7 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
 #' Default: TRUE
 #' @export
+#' @return None
 #' @examples 
 #' \dontrun{
 #' create_conda_env( 
@@ -70,28 +70,28 @@ create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
   # check if conda environment exists, if not make it
   condalist <- conda_list()
   if(!(condaenv %in% condalist$name)){
-    cat("\n Your specified conda environment, ", condaenv, 
+    message("\n Your specified conda environment, ", condaenv, 
         " was not found.\n Making new conda environment. \n")
     if(!is.null(version)){
       # set python version
       use_python(version, required = T)
     } else {
       f_py <- py_discover_config()
-      cat("No python version set. Default python is:\n", f_py$python, "\n")
+      message("No python version set. Default python is:\n", f_py$python, "\n")
     }
     # create conda env
     conda_create(condaenv, packages = "python", conda = "auto")
-    cat('\n Setting condaenvironment \n')
+    message('\n Setting condaenvironment \n')
     # set conda environment
     use_condaenv(condaenv = condaenv, required = T)
     if(verbose == TRUE){
-      cat("\n Python/conda environment created: \n", condaenv, "\n")
+      message("\n Python/conda environment created: \n", condaenv, "\n")
       print(conda_list())
       return(py_config())
     }
   } else {
-    cat('\n Your specifed Conda Environment already exists \n')
-    cat('\n Set your conda env with: set_python_conda \n')
+    message('\n Your specifed Conda Environment already exists \n')
+    message('\n Set your conda env with: set_python_conda \n')
   }
 }
 
@@ -106,6 +106,7 @@ create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
 #' Default: TRUE
 #' @export
+#' @return None
 #' @examples 
 #' \dontrun{
 #' set_python_conda(
@@ -118,15 +119,15 @@ set_python_conda <- function(condaenv, verbose = TRUE){
   # check if conda environment exists, if not make it
   condalist <- conda_list()
   if(!(condaenv %in% condalist$name)){
-    cat("\n Your specified conda environment, ", condaenv, 
+    message("\n Your specified conda environment, ", condaenv, 
         " was not found.\n Make a new env with create_conda_env. \n")
   } else {
-    cat('\n Setting condaenvironment \n')
+    message('\n Setting condaenvironment \n')
     # set conda environment
     use_condaenv(condaenv = condaenv, required = T)
     # if verbose
     if(verbose == TRUE){
-      cat("\n Python/conda environment in use: \n")
+      message("\n Python/conda environment in use: \n")
       return(py_config())
     }
   }
@@ -147,6 +148,7 @@ set_python_conda <- function(condaenv, verbose = TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and conda configuration.
 #' Default: TRUE
 #' @export
+#' @return None
 #' @examples 
 #' \dontrun{
 #' create_virtual_env(version = "/usr/bin/python3", 
@@ -159,27 +161,27 @@ create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
   # check if virtual environment exists, if not make it
   virtlist <- virtualenv_list()
   if(!(virtualenv %in% virtlist)){
-    cat("\n Your specified virtual environment, ", virtualenv, 
+    message("\n Your specified virtual environment, ", virtualenv, 
         " was not found.\n Making new virtual environment. \n")
     if(!is.null(version)){
       # set python version
       use_python(version, required = T)
     } else {
       f_py <- py_discover_config()
-      cat("No python version set. Default python is:\n", f_py$python, "\n")
+      message("No python version set. Default python is:\n", f_py$python, "\n")
     }
     # create virtual env
     virtualenv_create(envname = virtualenv)
-    cat('\n Setting virtual environment \n')
+    message('\n Setting virtual environment \n')
     # set virtual environment
     use_virtualenv(virtualenv = virtualenv, required = T)
     if(verbose == TRUE){
-      cat("\n Python/virtual environment in use: \n")
+      message("\n Python/virtual environment in use: \n")
       return(py_config())
     }
   } else {
-    cat('\n Your specifed Virtual Environment already exists \n')
-    cat('\n Set your virtual env with: set_python_virtual \n')
+    message('\n Your specifed Virtual Environment already exists \n')
+    message('\n Set your virtual env with: set_python_virtual \n')
   }
 }
 
@@ -193,6 +195,7 @@ create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
 #' @param verbose TRUE or FALSE. When TRUE, shows python and virtual environment configuration.
 #' Default: TRUE
 #' @export
+#' @return None
 #' @examples 
 #' \dontrun{
 #' set_python_virtual(
@@ -205,15 +208,15 @@ set_python_virtual <- function(virtualenv, verbose = TRUE){
   # check if virtual environment exists, if not make it
   virtlist <- virtualenv_list()
   if(!(virtualenv %in% virtlist)){
-    cat("\n Your specified virtual environment, ", virtualenv, 
+    message("\n Your specified virtual environment, ", virtualenv, 
         " was not found.\n Make a new env with create_virtual_env. \n")
   } else {
-    cat('\n Setting virtual environment \n')
+    message('\n Setting virtual environment \n')
     # set virtual environment
     use_virtualenv(virtualenv = virtualenv, required = T)
     # if verbose
     if(verbose == TRUE){
-      cat("\n Python/virtual environment in use: \n")
+      message("\n Python/virtual environment in use: \n")
       return(py_config())
     }
   }
@@ -237,6 +240,7 @@ set_python_virtual <- function(virtualenv, verbose = TRUE){
 #' @param virtualenv Name of virtual environment to install python libraries to.
 #' Default: NULL
 #' @export
+#' @return None
 #' @examples 
 #' \dontrun{
 #' # Cond env
@@ -311,7 +315,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
       original_matrix <- matrix
     }
   } else {
-    cat("Please specify csv file or tab separated file in type")
+    message("Please specify csv file or tab separated file in type")
     stop()
   }
   out_files <- list.files(folder, full.names = T)
@@ -471,6 +475,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
 #' @param asymp_stab asymptotic stability interval
 #' @param points the number of values in x range
 #' @export
+#' @return Probability Distribution Function from scipy
 #' @examples
 #' \dontrun{
 #' k <- 1
@@ -511,6 +516,7 @@ get_distributions_single <- function(matrix_entry,
 #' @param asymp_stab_end end interval from asymptotic_stability
 #' @param num_switch_func a single num switch function
 #' @export
+#' @return plot ready x and y values from the Num Switch Function
 #' @examples
 #' \dontrun{
 #' # Set input file
@@ -576,7 +582,7 @@ ns_to_step <- function(asymp_stab_start, asymp_stab_end,
         out.df <- data.frame(nsx, nsy)
         out.df <- out.df[order(out.df$nsx),]
       } else{
-        print("No change in interval - are we missing test case?")
+        message("No change in interval - are we missing test case?")
       }
     }
   }
@@ -634,7 +640,7 @@ ns_to_step <- function(asymp_stab_start, asymp_stab_end,
   } else if (to_r == F) {
     index <- -1
   } else {
-    print("Set to_r to T or F")
+    message("Set to_r to TRUE or FALSE")
   }
   # remove par, split str, convert to num
   remove_par <- gsub("\\(", "", gsub(")", "", names(names)))

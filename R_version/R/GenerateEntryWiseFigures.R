@@ -13,6 +13,7 @@
 #' @param list_of_numswitch_to_plot List of entries you want visualized with num switch. 
 #' Should be a list of vectors. Example: list(c(0, 0), c(0, 1))
 #' @export
+#' @return plot or plots
 #' @examples
 #' \dontrun{
 #' # Set input file
