@@ -31,10 +31,10 @@ PreprocessMatrix <- function(input_file, output_folder=NULL, prefix=NULL, max_bo
   # import NumSwitch module and source PreprocessMatrix.py
   reticulate::import_from_path("NumSwitch", 
                                system.file("python", package = "PressPurt"), 
-                               convert = F)
+                               convert = FALSE)
   reticulate::source_python(system.file("python", "PreprocessMatrix.py", 
                                         package = "PressPurt"), 
-                            convert = F)
+                            convert = FALSE)
   # If output folder is specified, don't output R object
   if(!is.null(output_folder)){
     tt <- py_to_r(run_preproc(input_file, output_folder, prefix, max_bound, 

@@ -74,7 +74,7 @@ create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
         " was not found.\n Making new conda environment. \n")
     if(!is.null(version)){
       # set python version
-      use_python(version, required = T)
+      use_python(version, required = TRUE)
     } else {
       f_py <- py_discover_config()
       message("No python version set. Default python is:\n", f_py$python, "\n")
@@ -83,7 +83,7 @@ create_conda_env <- function(condaenv, version=NULL, verbose = TRUE){
     conda_create(condaenv, packages = "python", conda = "auto")
     message('\n Setting condaenvironment \n')
     # set conda environment
-    use_condaenv(condaenv = condaenv, required = T)
+    use_condaenv(condaenv = condaenv, required = TRUE)
     if(verbose == TRUE){
       message("\n Python/conda environment created: \n", condaenv, "\n")
       print(conda_list())
@@ -124,7 +124,7 @@ set_python_conda <- function(condaenv, verbose = TRUE){
   } else {
     message('\n Setting condaenvironment \n')
     # set conda environment
-    use_condaenv(condaenv = condaenv, required = T)
+    use_condaenv(condaenv = condaenv, required = TRUE)
     # if verbose
     if(verbose == TRUE){
       message("\n Python/conda environment in use: \n")
@@ -165,7 +165,7 @@ create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
         " was not found.\n Making new virtual environment. \n")
     if(!is.null(version)){
       # set python version
-      use_python(version, required = T)
+      use_python(version, required = TRUE)
     } else {
       f_py <- py_discover_config()
       message("No python version set. Default python is:\n", f_py$python, "\n")
@@ -174,7 +174,7 @@ create_virtual_env <- function(virtualenv, version=NULL, verbose = TRUE){
     virtualenv_create(envname = virtualenv)
     message('\n Setting virtual environment \n')
     # set virtual environment
-    use_virtualenv(virtualenv = virtualenv, required = T)
+    use_virtualenv(virtualenv = virtualenv, required = TRUE)
     if(verbose == TRUE){
       message("\n Python/virtual environment in use: \n")
       return(py_config())
@@ -213,7 +213,7 @@ set_python_virtual <- function(virtualenv, verbose = TRUE){
   } else {
     message('\n Setting virtual environment \n')
     # set virtual environment
-    use_virtualenv(virtualenv = virtualenv, required = T)
+    use_virtualenv(virtualenv = virtualenv, required = TRUE)
     # if verbose
     if(verbose == TRUE){
       message("\n Python/virtual environment in use: \n")
@@ -302,7 +302,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
   np <- reticulate::import("numpy")
   if(type == "csv"){
     if(!is.null(matrix)){
-      original_matrix <- as.matrix(read.csv(matrix, header = F))
+      original_matrix <- as.matrix(read.csv(matrix, header = FALSE))
       colnames(original_matrix) <- 1:ncol(original_matrix)
     } else {
       original_matrix <- matrix
@@ -318,7 +318,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
     message("Please specify csv file or tab separated file in type")
     stop()
   }
-  out_files <- list.files(folder, full.names = T)
+  out_files <- list.files(folder, full.names = TRUE)
   # matrix size
   if(!is.null(prefix)){
     matrix_size <- as.integer(np$load(
@@ -383,7 +383,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
   }
   # convert to R format
   names(num_switch_functions) <- .r_index(
-    names = num_switch_functions, to_r = T)
+    names = num_switch_functions, to_r = TRUE)
   num_switch_funcs_r <- lapply(names(num_switch_functions), function(x) 
     .NS_func_r(num_switch_funcs = num_switch_functions, name = x))
   names(num_switch_funcs_r) <- names(num_switch_functions)
@@ -392,12 +392,12 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
     expected_num_switch <- read.csv(
       out_files[basename(out_files) %in% 
                   paste0(prefix, "_expected_num_switch.csv")], 
-      header = T, row.names = 1)
+      header = TRUE, row.names = 1)
   } else {
     expected_num_switch <- read.csv(
       out_files[basename(out_files) %in% 
                   "expected_num_switch.csv"], 
-      header = T, row.names = 1)
+      header = TRUE, row.names = 1)
   }
   colnames(expected_num_switch) <- 1:ncol(expected_num_switch)
   rownames(expected_num_switch) <- 1:nrow(expected_num_switch)
@@ -414,7 +414,7 @@ process_data <- function(matrix, type="csv", folder, prefix=NULL){
   distributions <- reticulate::py_load_object(out_files[
     grep("distributions.pkl", out_files)])
   names(distributions) <- .r_index(
-    names = distributions, to_r = T)
+    names = distributions, to_r = TRUE)
   # get in format
   distributions_object <- lapply(names(distributions), function(x){
     split_name <- unlist(lapply(
@@ -637,7 +637,7 @@ ns_to_step <- function(asymp_stab_start, asymp_stab_end,
 .r_index <- function(names, to_r=TRUE){
   if (to_r == T) {
     index <- 1
-  } else if (to_r == F) {
+  } else if (to_r == FALSE) {
     index <- -1
   } else {
     message("Set to_r to TRUE or FALSE")

@@ -24,14 +24,14 @@ ComputeMultiEntryPerturbationExpectation <- function(
   NaiveSS <- reticulate::import_from_path(
     "NaiveSS", 
     system.file("python", package = "PressPurt"), 
-    convert = T)
+    convert = TRUE)
   NumSwitch <- reticulate::import_from_path(
     "NumSwitch", 
     system.file("python", package = "PressPurt"), 
-    convert = T)
+    convert = TRUE)
   reticulate::source_python(system.file("python", 
                                         "ComputeMultiEntryPerturbationExpectation.py", 
-                                        package = "PressPurt"), convert = F)
+                                        package = "PressPurt"), convert = FALSE)
   MultiEntry <- py_to_r(run_MultiEntry(input_file=input_file, 
                                        num_iterates=num_iterates, 
                                        interval_length=interval_length, 
