@@ -14,6 +14,9 @@ create_virtual_env(virtualenv, version = NULL, verbose = TRUE)
 \item{verbose}{TRUE or FALSE. When TRUE, shows python and conda configuration.
 Default: TRUE}
 }
+\value{
+None
+}
 \description{
 This function creates a new virtual environment and initializes
 the new virtual environment.

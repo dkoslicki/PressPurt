@@ -13,6 +13,9 @@ ns_to_step(asymp_stab_start, asymp_stab_end, num_switch_func)
 
 \item{num_switch_func}{a single num switch function}
 }
+\value{
+plot ready x and y values from the Num Switch Function
+}
 \description{
 This function transforms a Num Switch Function
 to a plot ready step function with x and y values.

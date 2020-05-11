@@ -20,6 +20,9 @@ get_distributions_single(
 
 \item{points}{the number of values in x range}
 }
+\value{
+Probability Distribution Function from scipy
+}
 \description{
 This function retrieves the PDF (Probability Distribution Function)
 object from the scipy method 

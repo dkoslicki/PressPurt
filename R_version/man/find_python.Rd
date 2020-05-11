@@ -17,8 +17,7 @@ Default: TRUE}
 Default: TRUE}
 }
 \value{
-Returns a list of python versions, conda envs and 
-virtual envs.
+None
 }
 \description{
 This function lists available python versions, conda

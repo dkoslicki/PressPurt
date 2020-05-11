@@ -12,6 +12,9 @@ set_python_conda(condaenv, verbose = TRUE)
 \item{verbose}{TRUE or FALSE. When TRUE, shows python and conda configuration.
 Default: TRUE}
 }
+\value{
+None
+}
 \description{
 This function sets your conda environment.
 Run this command before PreprocessMatrix. Install python dependencies in the

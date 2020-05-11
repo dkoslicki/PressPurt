@@ -13,6 +13,9 @@ Default: NULL}
 \item{virtualenv}{Name of virtual environment to install python libraries to.
 Default: NULL}
 }
+\value{
+None
+}
 \description{
 This function installs needed python libraries into the specified conda
 environment OR virtual environment. Should be the same as the one 

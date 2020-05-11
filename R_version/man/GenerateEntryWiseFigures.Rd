@@ -27,6 +27,9 @@ Must specify an input_folder OR EntryWise object. Default: NULL}
 \item{list_of_numswitch_to_plot}{List of entries you want visualized with num switch. 
 Should be a list of vectors. Example: list(c(0, 0), c(0, 1))}
 }
+\value{
+plot or plots
+}
 \description{
 This function plots the number of mis-predictions versus perturbation
 value, overlaid with distribution over stable perturbation values.

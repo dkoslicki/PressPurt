@@ -12,6 +12,9 @@ set_python_virtual(virtualenv, verbose = TRUE)
 \item{verbose}{TRUE or FALSE. When TRUE, shows python and virtual environment configuration.
 Default: TRUE}
 }
+\value{
+None
+}
 \description{
 This function sets your virtual environment.
 Run this command before PreprocessMatrix. Install python dependencies in the
