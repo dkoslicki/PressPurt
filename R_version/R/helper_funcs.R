@@ -21,7 +21,7 @@ find_python <- function(python=TRUE, conda=TRUE, virtualenv=TRUE){
   f_py <- py_discover_config()
   condalist <- conda_list()
   virtlist <- virtualenv_list()
-  if python == TRUE & conda == TRUE & virtualenv == TRUE){
+  if(python == TRUE & conda == TRUE & virtualenv == TRUE){
     message("Default Python:\n", f_py$python, "\n\n",
         "Python versions found:\n", f_py$python_versions, "\n\n",
         "List of condaenvironments:\n",
