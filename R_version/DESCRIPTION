@@ -1,7 +1,7 @@
 Package: PressPurt
 Title: Indeterminacy of Networks via Press Perturbations
-Version: 1.0.0
-Authors@R: 
+Version: 1.0.1
+Authors@R:
     c(person(given = "David",
              family = "Koslicki",
              role = c("aut", "cre"),
@@ -12,10 +12,10 @@ Authors@R:
       person(given = "Mark",
              family = "Novak",
              role = "aut"))
-Description: This is a computational package designed to identify the most sensitive interactions within a network which must be estimated most accurately in order to produce qualitatively robust predictions to a press perturbation. This is accomplished by enumerating the number of sign switches (and their magnitude) in the net effects matrix when an edge experiences uncertainty. The package produces data and visualizations when uncertainty is associated to one or more edges in the network and according to a variety of distributions. The software requires the network to be described by a system of differential equations but only requires as input a numerical Jacobian matrix evaluated at an equilibrium point.
+Description: This is a computational package designed to identify the most sensitive interactions within a network which must be estimated most accurately in order to produce qualitatively robust predictions to a press perturbation. This is accomplished by enumerating the number of sign switches (and their magnitude) in the net effects matrix when an edge experiences uncertainty. The package produces data and visualizations when uncertainty is associated to one or more edges in the network and according to a variety of distributions. The software requires the network to be described by a system of differential equations but only requires as input a numerical Jacobian matrix evaluated at an equilibrium point. This package is based on Koslicki, D., & Novak, M. (2017) <doi:10.1007/s00285-017-1163-0>
 URL: https://github.com/dkoslicki/PressPurt
 BugReports: https://github.com/dkoslicki/PressPurt/issues
-Depends: 
+Depends:
   R (>= 3.1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
