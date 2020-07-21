@@ -3,7 +3,7 @@
 This is the resubmission addressing the comments after the first submission of `PressPurt`
 
 
-# Addressing CRAN comments:
+## Addressing CRAN comments:
 
 * DESCRIPTION:
     * Description: added Koslicki, D., & Novak, M.
@@ -34,12 +34,32 @@ This is the resubmission addressing the comments after the first submission of `
     * PreprocessMatrix.R:
         * Lines: 34, 37
 * Did not find any variables named `T` or `F`
+* `dont_run{}` is used for all functions as this package is dependent on python (and several python packages) AND conda/virtual environments.
 
-# First time submission
+## Test environments
+
+* No ERRORs, WARNINGs or NOTEs when `devtools::check()` was run
+* Tested locally on:
+  * R version 4.0.2 (2020-07-20), Platform: centos-release-7-7.1908.0.el7.centos.x86_64
+  * R version 4.0.2 (2020-07-20), Platform: x86_64-pc-linux-gnu (64-bit), Running under: Ubuntu 18.04.2 LTS
+* Tested with:
+  * `devtools::check_win_release()`: 1 NOTE: New submission
+  * `devtools::check_win_devel()`: 1 NOTE: New submission
+  * `devtools::check_win_oldrelease()`: 1 NOTE: New submission
+* Tested using rhub:
+  * `rhub::check_on_linux()`: 1 NOTE: New submission
+
+## Downstream Dependencies
+
+This package is dependent on python, using `reticulate`, which is why the vignettes aren't built in this submission. This is also why none of the examples are run.
+
+# CRAN notes: version 1.0.0
+
+## First time submission
 
 This is the first submission for `PressPurt`
 
-# Test environments
+## Test environments
 
 * No ERRORs, WARNINGs or NOTEs when `devtools::check()` was run
 * Tested locally on:
@@ -53,6 +73,6 @@ This is the first submission for `PressPurt`
 * Tested using rhub:
   * `rhub::check_for_cran()`: 1 NOTE: New submission
 
-# Downstream Dependencies
+## Downstream Dependencies
 
 This package is dependent on python, using `reticulate`, which is why the vignettes aren't built in this submission.

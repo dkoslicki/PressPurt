@@ -40,7 +40,7 @@ If not already installed, these packages will be installed upon the installation
 
 
 ## Required python installation
-This package is dependent on python and uses the R package `reticulate` under the hood to use python. Thus python and the dependant packages must be installed.
+This package is dependent on python and uses the R package `reticulate` under the hood to use python. Thus python and the dependent packages must be installed.
 
 There are two suggested approaches:
 
