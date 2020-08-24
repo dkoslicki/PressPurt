@@ -1,6 +1,6 @@
 Package: PressPurt
 Title: Indeterminacy of Networks via Press Perturbations
-Version: 1.0.1
+Version: 1.0.2
 Authors@R:
     c(person(given = "David",
              family = "Koslicki",

@@ -1,3 +1,13 @@
+# Version 1.0.2
+
+**Date:** 08/24/2020
+
+## Updated per CRAN comments
+
+* DESCRIPTION: 
+    * Version: 1.0.1 -> 1.0.2
+* NEWS.md: removed doi link from 05/07/2020 update
+
 # Version 1.0.1
 
 **Date:** 05/07/2020
@@ -5,7 +15,7 @@
 ## Updated per CRAN comments
 
 * DESCRIPTION: 
-    * Description: added Koslicki, D., & Novak, M. (2017)<doi:10.1007/s00285-017-1163-0>
+    * Description: added citation
     * Version: 1.0.0 -> 1.0.1
 * Added `@return None` -> `\value{None}` to:
     * find_python

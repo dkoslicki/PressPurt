@@ -1,3 +1,11 @@
+# Resubmission 2
+
+This is the resubmission addresing the comments after the first resubmission of `PressPurt`.
+
+## Addressing CRAN comments:
+
+* NEWS.md: removed the doi link
+
 # Resubmission
 
 This is the resubmission addressing the comments after the first submission of `PressPurt`
