@@ -171,7 +171,7 @@ to a misprediction in the net effects matrix.
 
 
 # Complete documentation
-The complete documentation can be found at: [http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/](http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/).
+The complete documentation can be found at: [https://dkoslicki.github.io/PressPurt/html/index.html](https://dkoslicki.github.io/PressPurt/html/index.html).
 
 # Citations
 1. Koslicki, D., & Novak, M. (2018). Exact probabilities for the indeterminacy of complex networks as perceived through press perturbations. Journal of mathematical biology, 76(4), 877-909. DOI: [ https://doi.org/10.1007/s00285-017-1163-0]( https://doi.org/10.1007/s00285-017-1163-0)
