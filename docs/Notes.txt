@@ -1,0 +1,9 @@
+in docs: make html
+then the _build/html contains the relevant html files
+in docs: cp _build/html .
+git commit
+git push
+for some reason, github pages isn't taking the new style, so instead:
+upload these to :/home/math/koslickd/public_html/PressPurtCoreAlg/ on science server
+the link is then:
+http://math.oregonstate.edu/~koslickd/PressPurtCoreAlg/html/

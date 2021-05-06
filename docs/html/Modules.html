@@ -1,0 +1,667 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API documentation for modules &#8212; Indeterminacy of Networks Via Press Perturbations 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Command line scripts" href="Scripts.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Scripts.html" title="Command line scripts"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Indeterminacy of Networks Via Press Perturbations 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-documentation-for-modules">
+<h1>API documentation for modules<a class="headerlink" href="#api-documentation-for-modules" title="Permalink to this headline">¶</a></h1>
+<p>This document contains the help documentation for the modules and is intended for users who will be writing/using the python code itself. For everyone else, please look at the Scripts documentation.</p>
+<div class="section" id="module-NumSwitch">
+<span id="numswitch-py"></span><h2>NumSwitch.py<a class="headerlink" href="#module-NumSwitch" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="NumSwitch.NS">
+<code class="descclassname">NumSwitch.</code><code class="descname">NS</code><span class="sig-paren">(</span><em>Ainv</em>, <em>eps</em>, <em>k</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#NS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.NS" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function implements equation 3.5: gives the number of sign switches
+when perturbing the k, l entry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Ainv</strong> – inverse input matrix, numpy array</li>
+<li><strong>eps</strong> – perturbation size (scalar)</li>
+<li><strong>k</strong> – index</li>
+<li><strong>l</strong> – inex</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Natural number</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.critical_epsilon">
+<code class="descclassname">NumSwitch.</code><code class="descname">critical_epsilon</code><span class="sig-paren">(</span><em>Ainv</em>, <em>k</em>, <em>l</em>, <em>i</em>, <em>j</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#critical_epsilon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.critical_epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds which epsilon causes the sherman morrison ratio to
+equal 0 (indicating a switch will occur after this value).
+Takes advantage of the monotonicity of the SM ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Ainv</strong> – Inverse input matrix</li>
+<li><strong>k</strong> – index (row being perturbed)</li>
+<li><strong>l</strong> – index (column being perturbed)</li>
+<li><strong>i</strong> – index (entry looking for a switch)</li>
+<li><strong>j</strong> – index (entry looking for a switch)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">scalar (epsilon value)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.exp_num_switch">
+<code class="descclassname">NumSwitch.</code><code class="descname">exp_num_switch</code><span class="sig-paren">(</span><em>A</em>, <em>Ainv</em>, <em>k</em>, <em>l</em>, <em>num_sample=1000</em>, <em>dist=None</em>, <em>interval=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#exp_num_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.exp_num_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This implements equation 3.6: the expected number of sign switches</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> – The original input matrix (numpy array)</li>
+<li><strong>Ainv</strong> – The inverse of A (pre-computed), numpy array</li>
+<li><strong>k</strong> – index</li>
+<li><strong>l</strong> – index</li>
+<li><strong>num_sample</strong> – Number of samples to take to determine the interval of stability and expected value</li>
+<li><strong>dist</strong> – A probability density function: function of a single argument</li>
+<li><strong>interval</strong> – the interval of stability (optional, can be pre-computed with interval_of_stability())</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.exp_num_switch_from_crit_eps">
+<code class="descclassname">NumSwitch.</code><code class="descname">exp_num_switch_from_crit_eps</code><span class="sig-paren">(</span><em>n</em>, <em>k</em>, <em>l</em>, <em>num_switch_funcs</em>, <em>stab_intervals</em>, <em>dist=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#exp_num_switch_from_crit_eps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.exp_num_switch_from_crit_eps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the expectation using the num_switch function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> – dimension of the matrix</li>
+<li><strong>k</strong> – index (pert row)</li>
+<li><strong>l</strong> – index (pert column)</li>
+<li><strong>num_switch_funcs</strong> – The shape of the num_switch_function from num_switch_from_crit_eps</li>
+<li><strong>stab_intervals</strong> – all the intervals of stability</li>
+<li><strong>dist</strong> – probability distribution to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float (expected value)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.import_matrix">
+<code class="descclassname">NumSwitch.</code><code class="descname">import_matrix</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#import_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.import_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import a matrix, look for row/column labels, use pandas if they are, otherwise, use numpy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_path</strong> – input matrix file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(matrix:numpy.array, row_labels:Array[string], column_labels:Array[string]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.ind_switch">
+<code class="descclassname">NumSwitch.</code><code class="descname">ind_switch</code><span class="sig-paren">(</span><em>Ainv</em>, <em>eps</em>, <em>i</em>, <em>j</em>, <em>k</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#ind_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.ind_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function implements equation 3.4, telling if a sign switch has occured</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Ainv</strong> – input matrix, inverted, numpy array</li>
+<li><strong>eps</strong> – perturbation size (scalar)</li>
+<li><strong>i</strong> – index</li>
+<li><strong>j</strong> – index</li>
+<li><strong>k</strong> – index</li>
+<li><strong>l</strong> – index</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1 or 0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.interval_of_stability">
+<code class="descclassname">NumSwitch.</code><code class="descname">interval_of_stability</code><span class="sig-paren">(</span><em>A</em>, <em>Ainv</em>, <em>k</em>, <em>l</em>, <em>max_bound=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#interval_of_stability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.interval_of_stability" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will return the interval of stability when perturbing just the (k,l) entry of A</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> – numpy array</li>
+<li><strong>Ainv</strong> – inverse of A</li>
+<li><strong>k</strong> – index</li>
+<li><strong>l</strong> – index</li>
+<li><strong>max_bound</strong> – some are always stable on one side, only go out this far), scalar &gt; 0</li>
+<li><strong>num_sample</strong> – number of points (natural number) to sample to determine stability</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(a:scalar, b:scalar) the largest interval where A[k,l]+eps is stable</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.is_stable">
+<code class="descclassname">NumSwitch.</code><code class="descname">is_stable</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#is_stable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.is_stable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input matrix is asymptotically stable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool (1 iff asymptotically stable)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.largest_root">
+<code class="descclassname">NumSwitch.</code><code class="descname">largest_root</code><span class="sig-paren">(</span><em>A</em>, <em>k</em>, <em>l</em>, <em>eps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#largest_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.largest_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the largest real part of the eigenvalues of A when perturbing the (k,l) entry by eps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> – numpy matrix</li>
+<li><strong>k</strong> – int (row)</li>
+<li><strong>l</strong> – int (column)</li>
+<li><strong>eps</strong> – float (perturbation value)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.num_switch_from_crit_eps">
+<code class="descclassname">NumSwitch.</code><code class="descname">num_switch_from_crit_eps</code><span class="sig-paren">(</span><em>crit_epsilon_array</em>, <em>stab_int_array</em>, <em>k</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#num_switch_from_crit_eps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.num_switch_from_crit_eps" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the full description of the num_switch function
+(using interval notation).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>crit_epsilon_array</strong> – array of critical epsilon (tensor indexed by (k, l, i, j))</li>
+<li><strong>stab_int_array</strong> – array of intervals of stability (tensor index by (k, l, start, end))</li>
+<li><strong>k</strong> – index (row to perturb)</li>
+<li><strong>l</strong> – index (column to perturb)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list with entries (num_switch_value, (start, end))</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.num_switch_to_step">
+<code class="descclassname">NumSwitch.</code><code class="descname">num_switch_to_step</code><span class="sig-paren">(</span><em>num_switch_funcs</em>, <em>intervals</em>, <em>k</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#num_switch_to_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.num_switch_to_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to get input arguments for matplotlib step function plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_switch_funcs</strong> – the full num switch functions in interval notation</li>
+<li><strong>intervals</strong> – asympt stab intervals</li>
+<li><strong>k</strong> – row you’re looking at</li>
+<li><strong>l</strong> – column you’re looking at</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(x,y) suitable for input to plt.step(x,y)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NumSwitch.run_all_tests">
+<code class="descclassname">NumSwitch.</code><code class="descname">run_all_tests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/NumSwitch.html#run_all_tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NumSwitch.run_all_tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs all the tests.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-MRS">
+<span id="mrs-py"></span><h2>MRS.py<a class="headerlink" href="#module-MRS" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="MRS.MRS">
+<code class="descclassname">MRS.</code><code class="descname">MRS</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MRS.html#MRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MRS.MRS" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function implements equation 3.21 from the manuscript</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – a non-empty matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">MRS(A) (a scalar)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MRS.quant_sens">
+<code class="descclassname">MRS.</code><code class="descname">quant_sens</code><span class="sig-paren">(</span><em>A</em>, <em>k</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MRS.html#quant_sens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MRS.quant_sens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quantitative sensitivity of a matrix (as epsilon goes to infinity). See equation 3.20</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> – input numpy matrix</li>
+<li><strong>k</strong> – row index (int)</li>
+<li><strong>l</strong> – column index (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MRS.tests">
+<code class="descclassname">MRS.</code><code class="descname">tests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MRS.html#tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MRS.tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the test cases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-NaiveSS">
+<span id="naivess-py"></span><h2>NaiveSS.py<a class="headerlink" href="#module-NaiveSS" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="NaiveSS.exists_switch">
+<code class="descclassname">NaiveSS.</code><code class="descname">exists_switch</code><span class="sig-paren">(</span><em>Ainv</em>, <em>Apinv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#exists_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.exists_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
+Returns 1 if a switch has occurred, 0 otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps_dict</strong> – dictionary {eps_symbols: eps_values}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">0 or 1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NaiveSS.get_entries_to_perturb">
+<code class="descclassname">NaiveSS.</code><code class="descname">get_entries_to_perturb</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#get_entries_to_perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.get_entries_to_perturb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a binary matrix indicating which entries to perturb</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix (numpy or sympy matrix)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">binary matrix of same dimensions as A</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NaiveSS.intervals">
+<code class="descclassname">NaiveSS.</code><code class="descname">intervals</code><span class="sig-paren">(</span><em>aij</em>, <em>x=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#intervals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function defines an interval of size int_size around aij without changing the sign of aij</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>aij</strong> – the (i,j) entry of a matrix (scalar)</li>
+<li><strong>int_size</strong> – the size of the desired interval</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">an (ordered) list defining the endpoints of the interval</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NaiveSS.is_stable">
+<code class="descclassname">NaiveSS.</code><code class="descname">is_stable</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#is_stable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.is_stable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input matrix is asymptotically stable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool (1 iff asymptotically stable)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NaiveSS.naive_SS">
+<code class="descclassname">NaiveSS.</code><code class="descname">naive_SS</code><span class="sig-paren">(</span><em>A</em>, <em>num_iterates</em>, <em>interval_length</em>, <em>num_threads</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#naive_SS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.naive_SS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the sign sensitivity (expected number of perturbations that lead to a sign switch in the inverse Jacobian) when perturbing multiple entries via Monte Carlo Sampling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> – input matrix</li>
+<li><strong>num_iterates</strong> – number of Monte Carlo samples to make</li>
+<li><strong>interval_length</strong> – length of interval to draw samples from</li>
+<li><strong>num_threads</strong> – number of threads to use in the multithreading</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="NaiveSS.tests">
+<code class="descclassname">NaiveSS.</code><code class="descname">tests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/NaiveSS.html#tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NaiveSS.tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the tests</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-SS">
+<span id="ss-py"></span><h2>SS.py<a class="headerlink" href="#module-SS" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="SS.SS">
+<code class="descclassname">SS.</code><code class="descname">SS</code><span class="sig-paren">(</span><em>A</em>, <em>num_iterates=10000</em>, <em>interval_length=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#SS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.SS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes equation 3.42: the volume of the number of perturbations that cause a sign switch in some part of the matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix, numpy array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Scalar (percent of perturbations that caused some sign switch)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.check_switch_matrix">
+<code class="descclassname">SS.</code><code class="descname">check_switch_matrix</code><span class="sig-paren">(</span><em>eps_dict</em>, <em>AplusBinvDivAinvEval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#check_switch_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.check_switch_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
+Returns binary matrix telling if a switch occurred in that entry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps_dict</strong> – dictionary {eps_symbols: eps_values}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">binary numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.exists_switch">
+<code class="descclassname">SS.</code><code class="descname">exists_switch</code><span class="sig-paren">(</span><em>eps_dict</em>, <em>AplusBinvDivAinvEval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#exists_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.exists_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a dictionary of with keys eps symbols string (use symbol.name), values the values they are to be evaluated at.
+Returns 1 if a switch has occurred, 0 otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps_dict</strong> – dictionary {eps_symbols: eps_values}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">0 or 1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.get_entries_to_perturb">
+<code class="descclassname">SS.</code><code class="descname">get_entries_to_perturb</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#get_entries_to_perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.get_entries_to_perturb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a binary matrix indicating which entries to perturb</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix (numpy or sympy matrix)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">binary matrix of same dimensions as A</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.intervals">
+<code class="descclassname">SS.</code><code class="descname">intervals</code><span class="sig-paren">(</span><em>aij</em>, <em>x=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#intervals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function defines an interval of size int_size around aij without changing the sign of aij</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>aij</strong> – the (i,j) entry of a matrix (scalar)</li>
+<li><strong>int_size</strong> – the size of the desired interval</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">an (ordered) list defining the endpoints of the interval</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.is_stable">
+<code class="descclassname">SS.</code><code class="descname">is_stable</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#is_stable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.is_stable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input matrix is asymptotically stable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> – input matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool (1 iff asymptotically stable)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SS.tests">
+<code class="descclassname">SS.</code><code class="descname">tests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SS.html#tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SS.tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the tests</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API documentation for modules</a><ul>
+<li><a class="reference internal" href="#module-NumSwitch">NumSwitch.py</a></li>
+<li><a class="reference internal" href="#module-MRS">MRS.py</a></li>
+<li><a class="reference internal" href="#module-NaiveSS">NaiveSS.py</a></li>
+<li><a class="reference internal" href="#module-SS">SS.py</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Scripts.html"
+                        title="previous chapter">Command line scripts</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Modules.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Scripts.html" title="Command line scripts"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Indeterminacy of Networks Via Press Perturbations 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, David Koslicki &amp; Mark Novak.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
