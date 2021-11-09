@@ -1,3 +1,6 @@
+[![DOI](https://zenodo.org/badge/150350364.svg)](https://zenodo.org/badge/latestdoi/150350364)
+
+
 # PressPurt
 This repository contains an implementation of all the results contained in the Koslicki &amp; Novak JMB paper [1].
 
